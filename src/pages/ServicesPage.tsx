@@ -132,13 +132,8 @@ export const ServicesPage = () => {
         if (!formData.name.trim()) {
           errors.push('Please enter your full name');
         }
-        if (!formData.email.trim()) {
-          errors.push('Please enter your email address');
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        if (formData.email.trim() && !/\S+@\S+\.\S+/.test(formData.email)) {
           errors.push('Please enter a valid email address');
-        }
-        if (!formData.phone.trim()) {
-          errors.push('Please enter your phone number');
         }
         break;
     }
@@ -435,28 +430,26 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Email *</label>
+                <label className="text-sm font-medium mb-2 block">Email (Optional)</label>
                 <Input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="your.email@example.com"
                   className="h-12"
-                  required
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Phone Number *</label>
+                <label className="text-sm font-medium mb-2 block">Phone Number (Optional)</label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="+1 (234) 567-8900"
                   className="h-12"
-                  required
                 />
               </div>
               <div className="text-sm text-muted-foreground">
-                * Required fields for order processing
+                * Only name is required. Email and phone are optional for contact purposes.
               </div>
             </div>
           </div>
@@ -511,7 +504,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 <Button
                   onClick={handleSubmit}
                   className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full"
-                  disabled={!formData.name || !formData.email || !formData.phone}
+                  disabled={!formData.name}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Order via WhatsApp
@@ -519,7 +512,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 
                 <Button
                   onClick={handlePayment}
-                  disabled={!formData.name || !formData.email || !formData.phone || isProcessingPayment}
+                  disabled={!formData.name || isProcessingPayment}
                   className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
                 >
                   <CreditCard className="w-4 h-4 mr-2" />
@@ -633,7 +626,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 <div className="flex gap-2">
                   <Button
                     onClick={handleSubmit}
-                    disabled={!formData.name || !formData.email || !formData.phone}
+                    disabled={!formData.name}
                     className="bg-green-600 hover:bg-green-700 px-4 py-2 text-sm"
                   >
                     <MessageCircle className="w-3 h-3 mr-1" />
@@ -641,7 +634,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   </Button>
                   <Button
                     onClick={handlePayment}
-                    disabled={!formData.name || !formData.email || !formData.phone || isProcessingPayment}
+                    disabled={!formData.name || isProcessingPayment}
                     className="bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm"
                   >
                     <CreditCard className="w-3 h-3 mr-1" />

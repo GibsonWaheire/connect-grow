@@ -1,47 +1,69 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { OptimizedImage } from '@/shared/components/OptimizedImage';
-import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
+import { OptimizedImage } from "@/shared/components/OptimizedImage";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Check, Star, Zap, Clock, Shield, FileText, Code, Presentation, BookOpen, Calculator, DollarSign } from 'lucide-react';
 
-const chatMessages = [
+// Pricing data
+const pricingData = [
   {
-    id: 1,
-    name: "Sarah M.",
-    message: "Peter, the research paper you wrote for me got an A+! My professor was impressed with the quality.",
-    time: "2 days ago",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=center"
+    name: "Non-Technical Writing",
+    price: "$8",
+    unit: "per page",
+    description: "Essays, research papers, literature reviews",
+    features: ["275 words per page", "Turnitin report", "Plagiarism-free", "24/7 support"],
+    icon: FileText,
+    color: "bg-blue-500",
+    popular: false
   },
   {
-    id: 2,
-    name: "Michael R.",
-    message: "Thanks for the Python assignment help. The code was clean and well-documented. Got full marks!",
-    time: "1 week ago",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=center"
+    name: "Technical Writing", 
+    price: "$15",
+    unit: "per page",
+    description: "Programming, data analysis, technical reports",
+    features: ["275 words per page", "Code explanations", "Turnitin report", "Expert review"],
+    icon: Code,
+    color: "bg-green-500",
+    popular: true
   },
   {
-    id: 3,
-    name: "Emily T.",
-    message: "The presentation slides you created were perfect. My group presentation went really well.",
-    time: "3 days ago",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=center"
+    name: "PPT Presentations",
+    price: "$5",
+    unit: "per slide",
+    description: "Professional slides with transcripts included",
+    features: ["Transcript included", "Professional design", "Speaker notes", "Editable format"],
+    icon: Presentation,
+    color: "bg-purple-500",
+    popular: false
   },
   {
-    id: 4,
-    name: "David L.",
-    message: "Your help with the statistics assignment saved me. The explanations were clear and thorough.",
-    time: "5 days ago",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=center"
+    name: "Exam Help",
+    price: "$30",
+    unit: "per exam",
+    description: "Complete exam assistance and guidance",
+    features: ["Full exam support", "Study materials", "Practice questions", "Confidential"],
+    icon: BookOpen,
+    color: "bg-orange-500",
+    popular: false
   },
   {
-    id: 5,
-    name: "Jessica K.",
-    message: "The essay you wrote was exactly what I needed. No AI detection and plagiarism-free!",
-    time: "1 week ago",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=center"
+    name: "AI Work Refinement",
+    price: "$10",
+    unit: "per 500 words",
+    description: "Remove AI detection and improve quality",
+    features: ["AI detection removal", "Human-like writing", "Quality improvement", "Fast turnaround"],
+    icon: Shield,
+    color: "bg-red-500",
+    popular: false
   }
+];
+
+// Urgency pricing
+const urgencyOptions = [
+  { name: "Standard", multiplier: 1, time: "3-5 days", color: "bg-gray-100" },
+  { name: "Urgent", multiplier: 1.5, time: "24-48 hours", color: "bg-yellow-100" },
+  { name: "Express", multiplier: 2, time: "12-24 hours", color: "bg-red-100" }
 ];
 
 const courses = {
@@ -90,18 +112,18 @@ const samples = [
     description: "Comprehensive business analysis with real data"
   },
   { 
-    name: "Statistics Report", 
-    subject: "Statistics", 
-    type: "Report", 
-    download: "https://drive.google.com/uc?export=download&id=1mPcVy15xUwXqO5lDQg1EQQtY2QQ-eHe2",
-    description: "Statistical analysis with clear explanations"
-  },
-  { 
     name: "Literature Review", 
     subject: "English", 
     type: "Literature Review", 
     download: "https://drive.google.com/uc?export=download&id=1kIrygLick8hSlbzfSLCvaLic2LMkxIUq",
     description: "Academic literature review with proper citations"
+  },
+  { 
+    name: "Statistics Report", 
+    subject: "Statistics", 
+    type: "Report", 
+    download: "https://drive.google.com/uc?export=download&id=1mPcVy15xUwXqO5lDQg1EQQtY2QQ-eHe2",
+    description: "Statistical analysis with clear explanations"
   },
   { 
     name: "Marketing Presentation", 
@@ -115,86 +137,186 @@ const samples = [
 export const TrustSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<'technical' | 'nonTechnical'>('technical');
 
+  const handleDownload = (url: string, name: string) => {
+    if (url.includes('YOUR_FILE_ID_HERE')) {
+      alert('This sample is being updated. Please check back soon!');
+      return;
+    }
+    window.open(url, '_blank');
+  };
+
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Trust & Quality
+            Transparent Pricing & Services
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            See what others are saying and explore the subjects I can help with
+            Professional school help at unbeatable prices. No hidden fees, no surprises.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Chat Messages Modal */}
-          <div>
-            <h3 className="text-2xl font-bold text-foreground mb-6">Recent Messages</h3>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full h-12 text-lg">
-                  View Recent Chat Messages
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Recent Client Messages</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  {chatMessages.map((chat) => (
-                    <Card key={chat.id} className="p-4">
-                      <div className="flex items-start gap-3">
-                        <OptimizedImage
-                          src={chat.avatar}
-                          alt={chat.name}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-foreground">{chat.name}</span>
-                            <span className="text-xs text-muted-foreground">{chat.time}</span>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{chat.message}</p>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
+          {/* Pricing Section */}
+          <div className="space-y-8">
+            {/* Why Choose Me */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Star className="w-6 h-6 text-green-600" />
                 </div>
-              </DialogContent>
-            </Dialog>
+                <h3 className="text-2xl font-bold text-foreground">Why Choose Me</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Shield className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">100% Human-Written</h4>
+                    <p className="text-sm text-muted-foreground">No AI content. Every word is written by me personally.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Check className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Turnitin Reports</h4>
+                    <p className="text-sm text-muted-foreground">Every order comes with a detailed plagiarism report.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <Clock className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">Fast Turnaround</h4>
+                    <p className="text-sm text-muted-foreground">Standard delivery in 3-5 days, urgent options available.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg">
+                  <div className="p-2 bg-orange-100 rounded-lg">
+                    <Zap className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">24/7 Support</h4>
+                    <p className="text-sm text-muted-foreground">Always available on WhatsApp for questions and updates.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
+              <h3 className="text-xl font-bold mb-4">Quick Stats</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">500+</div>
+                  <div className="text-sm opacity-90">Happy Students</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">A+</div>
+                  <div className="text-sm opacity-90">Average Grade</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">24/7</div>
+                  <div className="text-sm opacity-90">Support Available</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">100%</div>
+                  <div className="text-sm opacity-90">Human-Written</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Course Categories */}
-          <div>
-            <h3 className="text-2xl font-bold text-foreground mb-6">Subjects I Help With</h3>
-            <div className="space-y-6">
-              <div className="flex gap-2 mb-4">
-                <Button
-                  variant={selectedCategory === 'technical' ? 'default' : 'outline'}
-                  onClick={() => setSelectedCategory('technical')}
-                  className="flex-1"
-                >
-                  Technical
-                </Button>
-                <Button
-                  variant={selectedCategory === 'nonTechnical' ? 'default' : 'outline'}
-                  onClick={() => setSelectedCategory('nonTechnical')}
-                  className="flex-1"
-                >
-                  Non-Technical
-                </Button>
+          <div className="space-y-8">
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <h3 className="text-2xl font-bold text-foreground mb-6">Subjects I Help With</h3>
+              <div className="space-y-6">
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    variant={selectedCategory === 'technical' ? 'default' : 'outline'}
+                    onClick={() => setSelectedCategory('technical')}
+                    className="flex-1"
+                  >
+                    Technical
+                  </Button>
+                  <Button
+                    variant={selectedCategory === 'nonTechnical' ? 'default' : 'outline'}
+                    onClick={() => setSelectedCategory('nonTechnical')}
+                    className="flex-1"
+                  >
+                    Non-Technical
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  {courses[selectedCategory].map((course, index) => (
+                    <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors">
+                      <span className="text-lg">{course.icon}</span>
+                      <span className="text-sm font-medium">{course.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Combined Urgency & Quality */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Clock className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground">Urgency & Quality</h3>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
-                {courses[selectedCategory].map((course, index) => (
-                  <div key={index} className="flex items-center gap-2 p-3 bg-white rounded-lg border">
-                    <span className="text-lg">{course.icon}</span>
-                    <span className="text-sm font-medium">{course.name}</span>
+              {/* Urgency Options */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-foreground mb-3">Delivery Options</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  {urgencyOptions.map((option, index) => (
+                    <div key={index} className={`p-3 rounded-lg border-2 ${option.color} hover:shadow-md transition-shadow`}>
+                      <div className="text-center">
+                        <h5 className="font-semibold text-foreground text-sm mb-1">{option.name}</h5>
+                        <div className="text-xs text-muted-foreground mb-1">{option.time}</div>
+                        <Badge variant="outline" className="bg-white text-xs">
+                          {option.multiplier === 1 ? 'No extra' : `${option.multiplier}x`}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quality Guarantee */}
+              <div>
+                <h4 className="font-semibold text-foreground mb-3">Quality Guarantee</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span>Turnitin Report</span>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span>No AI Detection</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span>Plagiarism-Free</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-green-600" />
+                    <span>24/7 Support</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
