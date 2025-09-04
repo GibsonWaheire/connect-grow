@@ -1,24 +1,33 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
-import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
 import { useNavigate } from 'react-router-dom';
 import heroImage from '@/assets/hero-image.jpg';
 
 export const HeroSection = () => {
   const navigate = useNavigate();
-  const { sendMessage } = useWhatsApp();
 
   const handleGetStarted = () => {
     navigate('/services');
   };
 
-  const handleWhatsApp = () => {
-    sendMessage("Hi Peter! I remember you. I'd like to get some school help. Can you tell me about your current services and pricing?");
-  };
+  const handleEmail = () => {
+    const subject = encodeURIComponent("School Help Inquiry - Services & Pricing");
+    const body = encodeURIComponent(`Hi Peter,
 
-  const handleCall = () => {
-    window.open('tel:+15636578107', '_self');
+I remember you from before and I'm interested in your school help services.
+
+Could you please tell me about:
+- Your current services and pricing
+- Turnaround times
+- Any special offers you have
+
+Looking forward to hearing from you!
+
+Best regards,
+[Your name]`);
+    
+    window.open(`mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`, '_blank');
   };
 
   return (
@@ -32,16 +41,16 @@ export const HeroSection = () => {
                 Hi there! I'm Peter 👋
               </h2>
               <p className="text-lg md:text-xl text-white/80">
-                Remember me? I'm still here to help with your school needs!
+                Remember me? I'm still here to help with your academic needs!
               </p>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Still Here to <br />
-              <span className="text-white/90">Help You Succeed</span>
+              Professional <br />
+              <span className="text-white/90">Academic Support</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
-              Professional school help as Always. Quality work you can always trust.
+              Essays, research papers, technical courses, presentations & exam help. 100% human research with Turnitin reports.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
@@ -61,27 +70,27 @@ export const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="xl" 
-                onClick={handleWhatsApp}
+                onClick={handleEmail}
                 className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
               >
                 <OptimizedImage 
-                  src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=20&h=20&fit=crop&crop=center" 
-                  alt="WhatsApp" 
+                  src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=20&h=20&fit=crop&crop=center" 
+                  alt="Email" 
                   className="h-5 w-5 rounded"
                 />
-                Chat on WhatsApp
+                Email Peter
               </Button>
             </div>
             
             <div className="mt-8 text-white/70 text-sm">
-              ✨ Human research only • No AI • 24/7 Support • 500+ satisfied students
+              ✨ Human research only • Turnitin reports • 24/7 Support • 500+ satisfied students
             </div>
           </div>
           <div className="relative animate-slide-up">
             <div className="relative rounded-2xl overflow-hidden shadow-hover">
               <img 
                 src={heroImage} 
-                alt="School help services" 
+                alt="Academic writing and school help services" 
                 className="w-full h-auto object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>

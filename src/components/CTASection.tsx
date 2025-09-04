@@ -1,12 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
 
 export const CTASection = () => {
-  const { sendMessage } = useWhatsApp();
-
   const handleGetStarted = () => {
-    sendMessage("Hi! I need school help. Can you tell me about your services and pricing?");
+    window.location.href = '/services';
+  };
+
+  const handleEmail = () => {
+    const subject = encodeURIComponent("School Help Inquiry - Ready to Get Started");
+    const body = encodeURIComponent(`Hi Peter,
+
+I'm ready to get started with your school help services!
+
+Could you please provide:
+- Current pricing for your services
+- Available turnaround times
+- How to place an order
+- Any current special offers
+
+I'm looking forward to working with you!
+
+Best regards,
+[Your name]`);
+    
+    window.open(`mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`, '_blank');
   };
 
   return (
@@ -18,7 +35,7 @@ export const CTASection = () => {
             Ready to Get Started?
           </h2>
           <p className="text-xl text-white/90 mb-12 leading-relaxed">
-            Join hundreds of satisfied students who trust us with their school needs.
+            Join hundreds of satisfied students who trust us with their academic needs. Professional writing, technical courses, and exam help with 100% human research.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -29,11 +46,24 @@ export const CTASection = () => {
               className="group bg-white text-primary hover:bg-white/90 shadow-hover"
             >
               <OptimizedImage 
-                src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=24&h=24&fit=crop&crop=center" 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=24&h=24&fit=crop&crop=center" 
                 alt="Get Started"
                 className="h-6 w-6 group-hover:scale-110 transition-transform rounded object-cover"
               />
-              Get Started Now
+              View Services & Order
+            </Button>
+            <Button 
+              variant="outline" 
+              size="xl" 
+              onClick={handleEmail}
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
+            >
+              <OptimizedImage 
+                src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=24&h=24&fit=crop&crop=center" 
+                alt="Email"
+                className="h-6 w-6 rounded object-cover"
+              />
+              Email Peter
             </Button>
           </div>
           
@@ -44,7 +74,7 @@ export const CTASection = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span className="text-sm">Quality Guarantee</span>
+              <span className="text-sm">Turnitin Reports</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>

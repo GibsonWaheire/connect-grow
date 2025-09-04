@@ -195,6 +195,16 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
       setIsProcessingPayment(true);
       const service = services.find(s => s.id === selectedService);
       
+      // Create detailed order summary
+      const orderSummary = `
+Service: ${service?.title}
+Subject: ${formData.subject}
+${service?.id === 'presentations' ? `Slides: ${formData.slides}` : `Words: ${formData.words} (${calculatePages()} pages)`}
+Urgency: ${formData.urgency}
+Instructions: ${formData.instructions || 'None provided'}
+Contact: ${formData.name} (${formData.email}, ${formData.phone})
+      `.trim();
+
       const paymentData = {
         amount: calculatePrice(),
         currency: 'USD',
@@ -202,14 +212,29 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
         phone: formData.phone,
         first_name: formData.name.split(' ')[0] || formData.name,
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
-        reference: `ORDER_${Date.now()}`,
-        description: `${formData.service} - ${formData.subject}`,
+        reference: `ORDER_${Date.now()}_${selectedService}`,
+        description: orderSummary,
       };
 
       const paymentResponse = await createPayment(paymentData);
       
-      // Redirect to Intasend payment page
-      window.location.href = paymentResponse.payment_url;
+      // Store order data in localStorage for potential use after payment
+      const orderData = {
+        ...formData,
+        serviceId: selectedService,
+        serviceTitle: service?.title,
+        totalPrice: calculatePrice(),
+        orderId: paymentResponse.invoice_id,
+        timestamp: new Date().toISOString(),
+      };
+      
+      localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+      
+      // Redirect to Intasend payment page with success URL
+      const successUrl = `${window.location.origin}/payment-success?invoice_id=${paymentResponse.invoice_id}`;
+      const paymentUrl = `${paymentResponse.payment_url}?success_url=${encodeURIComponent(successUrl)}`;
+      
+      window.location.href = paymentUrl;
     } catch (error) {
       console.error('Payment failed:', error);
       setIsProcessingPayment(false);
