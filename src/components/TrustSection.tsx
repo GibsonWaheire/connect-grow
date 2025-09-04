@@ -68,12 +68,48 @@ const courses = {
 };
 
 const samples = [
-  { name: "Research Paper - Psychology", subject: "Psychology", type: "Research Paper", download: "#" },
-  { name: "Python Code Analysis", subject: "Python", type: "Programming", download: "#" },
-  { name: "Business Case Study", subject: "Business", type: "Case Study", download: "#" },
-  { name: "Statistics Report", subject: "Statistics", type: "Report", download: "#" },
-  { name: "Literature Review", subject: "English", type: "Literature Review", download: "#" },
-  { name: "Marketing Presentation", subject: "Marketing", type: "PPT", download: "#" }
+  { 
+    name: "Research Paper - Psychology", 
+    subject: "Psychology", 
+    type: "Research Paper", 
+    download: "https://drive.google.com/uc?export=download&id=1POlzd7atqCJQq9B32fi57NhT3HFrzk7e",
+    description: "A+ quality research paper on cognitive psychology"
+  },
+  { 
+    name: "Python Code Analysis", 
+    subject: "Python", 
+    type: "Programming", 
+    download: "https://drive.google.com/uc?export=download&id=1FbD35TWHxrNBYww5siXK23vDS3Cuc1gx",
+    description: "Clean, well-documented Python assignment"
+  },
+  { 
+    name: "Business Case Study", 
+    subject: "Business", 
+    type: "Case Study", 
+    download: "https://drive.google.com/uc?export=download&id=11yuP8eMYWkwHXsIg_nkDxaY2VfOhf-8P",
+    description: "Comprehensive business analysis with real data"
+  },
+  { 
+    name: "Statistics Report", 
+    subject: "Statistics", 
+    type: "Report", 
+    download: "https://drive.google.com/uc?export=download&id=1mPcVy15xUwXqO5lDQg1EQQtY2QQ-eHe2",
+    description: "Statistical analysis with clear explanations"
+  },
+  { 
+    name: "Literature Review", 
+    subject: "English", 
+    type: "Literature Review", 
+    download: "https://drive.google.com/uc?export=download&id=1kIrygLick8hSlbzfSLCvaLic2LMkxIUq",
+    description: "Academic literature review with proper citations"
+  },
+  { 
+    name: "Marketing Presentation", 
+    subject: "Marketing", 
+    type: "PPT", 
+    download: "https://drive.google.com/uc?export=download&id=1FaqfrfEcELZrHUbpOFRCuThJK_UOCb08",
+    description: "Professional marketing presentation slides"
+  }
 ];
 
 export const TrustSection = () => {
@@ -169,6 +205,17 @@ export const TrustSection = () => {
 };
 
 export const SamplesSection = () => {
+  const handleDownload = (url: string, filename: string) => {
+    if (url === "https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE") {
+      // Show message for placeholder links
+      alert("Please update the Google Drive links with your actual sample files. Contact Peter for samples.");
+      return;
+    }
+    
+    // Open download link in new tab
+    window.open(url, '_blank');
+  };
+
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -186,13 +233,18 @@ export const SamplesSection = () => {
             <Card key={index} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-lg">{sample.name}</CardTitle>
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-3">
                   <Badge variant="secondary">{sample.subject}</Badge>
                   <Badge variant="outline">{sample.type}</Badge>
                 </div>
+                <p className="text-sm text-muted-foreground">{sample.description}</p>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleDownload(sample.download, sample.name)}
+                >
                   Download Sample
                 </Button>
               </CardContent>
