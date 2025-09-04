@@ -10,7 +10,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
-import { AlertCircle, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { useIntasendPayment } from '@/shared/hooks/useIntasendPayment';
+import { AlertCircle, ChevronDown, ChevronUp, CheckCircle, CreditCard, MessageCircle } from 'lucide-react';
 
 const services = [
   {
@@ -69,8 +70,8 @@ export const ServicesPage = () => {
   const [formData, setFormData] = useState({
     service: '',
     subject: '',
-    words: 275,
-    slides: 1,
+    words: '275',
+    slides: '1',
     urgency: 'normal',
     instructions: '',
     name: '',
@@ -79,12 +80,14 @@ export const ServicesPage = () => {
   });
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
+  const { createPayment } = useIntasendPayment();
 
   const WORDS_PER_PAGE = 275;
 
   const calculatePages = () => {
-    return Math.ceil(formData.words / WORDS_PER_PAGE);
+    return Math.ceil(parseInt(formData.words) / WORDS_PER_PAGE);
   };
 
   const calculatePrice = () => {
@@ -93,7 +96,7 @@ export const ServicesPage = () => {
     
     let basePrice;
     if (service.id === 'presentations') {
-      basePrice = service.price * formData.slides;
+      basePrice = service.price * parseInt(formData.slides);
     } else {
       const pages = calculatePages();
       basePrice = service.price * pages;
@@ -119,9 +122,9 @@ export const ServicesPage = () => {
         if (!formData.subject.trim()) {
           errors.push('Please enter a subject');
         }
-        if (selectedService === 'presentations' && formData.slides < 1) {
+        if (selectedService === 'presentations' && parseInt(formData.slides) < 1) {
           errors.push('Please enter number of slides');
-        } else if (selectedService !== 'presentations' && formData.words < 275) {
+        } else if (selectedService !== 'presentations' && parseInt(formData.words) < 275) {
           errors.push('Please enter at least 275 words');
         }
         break;
@@ -185,6 +188,33 @@ Instructions: ${formData.instructions}
 Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
 
     sendMessage(message);
+  };
+
+  const handlePayment = async () => {
+    try {
+      setIsProcessingPayment(true);
+      const service = services.find(s => s.id === selectedService);
+      
+      const paymentData = {
+        amount: calculatePrice(),
+        currency: 'USD',
+        email: formData.email,
+        phone: formData.phone,
+        first_name: formData.name.split(' ')[0] || formData.name,
+        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+        reference: `ORDER_${Date.now()}`,
+        description: `${formData.service} - ${formData.subject}`,
+      };
+
+      const paymentResponse = await createPayment(paymentData);
+      
+      // Redirect to Intasend payment page
+      window.location.href = paymentResponse.payment_url;
+    } catch (error) {
+      console.error('Payment failed:', error);
+      setIsProcessingPayment(false);
+      // You can add error handling here
+    }
   };
 
   const renderServiceCards = () => (
@@ -310,10 +340,23 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
                   min={selectedService === 'presentations' ? 1 : 275}
                   value={selectedService === 'presentations' ? formData.slides : formData.words}
                   onChange={(e) => {
+                    const value = e.target.value;
                     if (selectedService === 'presentations') {
-                      setFormData(prev => ({ ...prev, slides: parseInt(e.target.value) || 1 }));
+                      setFormData(prev => ({ ...prev, slides: value === '' ? '' : value }));
                     } else {
-                      setFormData(prev => ({ ...prev, words: parseInt(e.target.value) || 275 }));
+                      setFormData(prev => ({ ...prev, words: value === '' ? '' : value }));
+                    }
+                  }}
+                  onBlur={(e) => {
+                    // Ensure minimum value when input loses focus
+                    if (selectedService === 'presentations') {
+                      if (!e.target.value || parseInt(e.target.value) < 1) {
+                        setFormData(prev => ({ ...prev, slides: '1' }));
+                      }
+                    } else {
+                      if (!e.target.value || parseInt(e.target.value) < 275) {
+                        setFormData(prev => ({ ...prev, words: '275' }));
+                      }
                     }
                   }}
                   className="h-12"
@@ -435,9 +478,34 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
             </Card>
             
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">
-                Click submit to send your order details via WhatsApp
+              <p className="text-sm text-muted-foreground mb-6">
+                Choose how you'd like to proceed with your order
               </p>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <Button
+                  onClick={handleSubmit}
+                  className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full"
+                  disabled={!formData.name || !formData.email || !formData.phone}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Order via WhatsApp
+                </Button>
+                
+                <Button
+                  onClick={handlePayment}
+                  disabled={!formData.name || !formData.email || !formData.phone || isProcessingPayment}
+                  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  {isProcessingPayment ? 'Processing...' : 'Pay Now'}
+                </Button>
+              </div>
+              
+              <div className="mt-4 text-xs text-muted-foreground">
+                <p>• WhatsApp: Send order details and pay later</p>
+                <p>• Pay Now: Secure payment with Intasend</p>
+              </div>
             </div>
           </div>
         );
@@ -513,15 +581,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
                 Back
               </Button>
 
-              {currentStep === steps.length - 1 ? (
-                <Button
-                  onClick={handleSubmit}
-                  className="bg-green-600 hover:bg-green-700 px-6 py-2 text-base"
-                  disabled={!formData.name || !formData.email || !formData.phone}
-                >
-                  Submit Order
-                </Button>
-              ) : (
+              {currentStep < steps.length - 1 && (
                 <Button
                   onClick={handleNext}
                   className="px-6 py-2 text-base"
@@ -543,13 +603,35 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
                 <p className="text-sm font-medium">Estimated Price:</p>
                 <p className="text-xl font-bold text-primary">${calculatePrice()}</p>
               </div>
-              <Button
-                onClick={currentStep === steps.length - 1 ? handleSubmit : handleNext}
-                disabled={currentStep === 0 && !selectedService}
-                className="bg-primary hover:bg-primary/90"
-              >
-                {currentStep === steps.length - 1 ? 'Submit Order' : 'Continue'}
-              </Button>
+              
+              {currentStep === steps.length - 1 ? (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={!formData.name || !formData.email || !formData.phone}
+                    className="bg-green-600 hover:bg-green-700 px-4 py-2 text-sm"
+                  >
+                    <MessageCircle className="w-3 h-3 mr-1" />
+                    WhatsApp
+                  </Button>
+                  <Button
+                    onClick={handlePayment}
+                    disabled={!formData.name || !formData.email || !formData.phone || isProcessingPayment}
+                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm"
+                  >
+                    <CreditCard className="w-3 h-3 mr-1" />
+                    {isProcessingPayment ? 'Processing...' : 'Pay'}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  disabled={currentStep === 0 && !selectedService}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  Continue
+                </Button>
+              )}
             </div>
           </div>
         </div>
