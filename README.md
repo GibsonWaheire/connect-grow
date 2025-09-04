@@ -1,56 +1,10 @@
-# Welcome to your Lovable project
+# Academic Services Pro - Quick Orders & Secure Payments
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/e95ad893-5707-46d9-97e7-0540b5d8fbdd
+A modern React application for academic services, offering quick orders and secure payments for students worldwide.
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/e95ad893-5707-46d9-97e7-0540b5d8fbdd) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## Technologies Used
 
 This project is built with:
 
@@ -59,15 +13,70 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- React Router DOM
+- React Hook Form
+- React Query
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/e95ad893-5707-46d9-97e7-0540b5d8fbdd) and click on Share -> Publish.
+Follow these steps to run the project locally:
 
-## Can I connect a custom domain to my Lovable project?
+```sh
+# Step 1: Clone the repository
+git clone <YOUR_GIT_URL>
 
-Yes, you can!
+# Step 2: Navigate to the project directory
+cd connect-order-grow
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Step 3: Install the necessary dependencies
+npm install
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Step 4: Start the development server
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Features
+
+- Modern, responsive design
+- WhatsApp integration for quick orders
+- Secure payment processing
+- Academic writing services
+- Tutoring services
+- Digital services
+- Web/App development
+- Customer testimonials
+- Contact information
+
+## Project Structure
+
+```
+src/
+├── components/     # React components
+├── pages/          # Page components
+├── hooks/          # Custom React hooks
+├── lib/            # Utility functions
+└── assets/         # Static assets
+```
+
+## Deployment
+
+This project can be deployed to any static hosting service like:
+
+- Vercel
+- Netlify
+- GitHub Pages
+- AWS S3
+- Firebase Hosting
+
+## License
+
+© 2024 Academic Services Pro. All rights reserved.

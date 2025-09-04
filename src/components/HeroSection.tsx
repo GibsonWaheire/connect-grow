@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { MessageCircle, CreditCard } from "lucide-react";
 import heroImage from "@/assets/hero-image.jpg";
 
 export const HeroSection = () => {
@@ -32,7 +31,11 @@ export const HeroSection = () => {
                 onClick={handleWhatsAppOrder}
                 className="group"
               >
-                <MessageCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <img 
+                  src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=20&h=20&fit=crop&crop=center" 
+                  alt="Message" 
+                  className="h-5 w-5 group-hover:scale-110 transition-transform rounded"
+                />
                 Place an Order
               </Button>
               <Button 
@@ -41,7 +44,11 @@ export const HeroSection = () => {
                 onClick={handlePayment}
                 className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
               >
-                <CreditCard className="h-5 w-5" />
+                <img 
+                  src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=20&h=20&fit=crop&crop=center" 
+                  alt="Payment" 
+                  className="h-5 w-5 rounded"
+                />
                 Pay Securely
               </Button>
             </div>

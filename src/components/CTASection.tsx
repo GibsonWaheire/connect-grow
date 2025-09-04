@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { MessageCircle, FileText, ArrowRight } from "lucide-react";
 
 export const CTASection = () => {
   const handleOrderNow = () => {
@@ -30,9 +29,17 @@ export const CTASection = () => {
               onClick={handleOrderNow}
               className="group bg-white text-primary hover:bg-white/90 shadow-hover"
             >
-              <MessageCircle className="h-6 w-6 group-hover:scale-110 transition-transform" />
+              <img 
+                src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=24&h=24&fit=crop&crop=center" 
+                alt="Message"
+                className="h-6 w-6 group-hover:scale-110 transition-transform rounded object-cover"
+              />
               Order Now
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <img 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=20&h=20&fit=crop&crop=center" 
+                alt="Arrow"
+                className="h-5 w-5 group-hover:translate-x-1 transition-transform rounded object-cover"
+              />
             </Button>
             
             <Button 
@@ -41,7 +48,11 @@ export const CTASection = () => {
               onClick={handlePayAndAccess}
               className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
             >
-              <FileText className="h-6 w-6" />
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=24&h=24&fit=crop&crop=center" 
+                alt="Document"
+                className="h-6 w-6 rounded object-cover"
+              />
               Pay & Access Samples
             </Button>
           </div>

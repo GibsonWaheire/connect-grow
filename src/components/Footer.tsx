@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 
 export const Footer = () => {
   const handleWhatsApp = () => {
@@ -27,7 +26,11 @@ export const Footer = () => {
                 onClick={handleWhatsApp}
                 className="bg-primary hover:bg-primary-dark"
               >
-                <MessageCircle className="h-5 w-5" />
+                <img 
+                  src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=20&h=20&fit=crop&crop=center" 
+                  alt="WhatsApp"
+                  className="h-5 w-5 rounded object-cover"
+                />
                 WhatsApp
               </Button>
               <Button 
@@ -36,7 +39,11 @@ export const Footer = () => {
                 onClick={handleEmail}
                 className="border-background/30 text-background hover:bg-background hover:text-foreground"
               >
-                <Mail className="h-5 w-5" />
+                <img 
+                  src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=20&h=20&fit=crop&crop=center" 
+                  alt="Email"
+                  className="h-5 w-5 rounded object-cover"
+                />
                 Email
               </Button>
             </div>
@@ -56,15 +63,27 @@ export const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <div className="space-y-3 text-background/70">
               <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-primary" />
+                <img 
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=16&h=16&fit=crop&crop=center" 
+                  alt="Phone"
+                  className="h-4 w-4 rounded object-cover"
+                />
                 <span>+1 (234) 567-8900</span>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-primary" />
+                <img 
+                  src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=16&h=16&fit=crop&crop=center" 
+                  alt="Email"
+                  className="h-4 w-4 rounded object-cover"
+                />
                 <span>support@yourservice.com</span>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-primary" />
+                <img 
+                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=16&h=16&fit=crop&crop=center" 
+                  alt="Location"
+                  className="h-4 w-4 rounded object-cover"
+                />
                 <span>Available Worldwide</span>
               </div>
             </div>
