@@ -1,20 +1,15 @@
 import { HeroSection } from "@/components/HeroSection";
-import { ServicesSection } from "@/components/ServicesSection";
-import { ReEngagementSection } from "@/components/ReEngagementSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { CTASection } from "@/components/CTASection";
-import { Footer } from "@/components/Footer";
+import { MainLayout } from "@/layouts/MainLayout";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <MainLayout>
       <HeroSection />
-      <ServicesSection />
-      <ReEngagementSection />
       <TestimonialsSection />
       <CTASection />
-      <Footer />
-    </div>
+    </MainLayout>
   );
 };
 
