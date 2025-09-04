@@ -14,7 +14,11 @@ export const HeroSection = () => {
   };
 
   const handleWhatsApp = () => {
-    sendMessage("Hi! I'd like to discuss my school help needs and get a quote.");
+    sendMessage("Hi Peter! I remember you. I'd like to get some school help. Can you tell me about your current services and pricing?");
+  };
+
+  const handleCall = () => {
+    window.open('tel:+15636578107', '_self');
   };
 
   return (
@@ -23,14 +27,24 @@ export const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
+            <div className="mb-6">
+              <h2 className="text-2xl md:text-3xl font-semibold text-white/90 mb-2">
+                Hi there! I'm Peter 👋
+              </h2>
+              <p className="text-lg md:text-xl text-white/80">
+                Remember me? I'm still here to help with your school needs!
+              </p>
+            </div>
+            
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              School Help <br />
-              <span className="text-white/90">Made Simple</span>
+              Still Here to <br />
+              <span className="text-white/90">Help You Succeed</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
-              Professional help for all your school needs. Quality work at unbeatable prices.
+              Professional school help as Always. Quality work you can always trust.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
               <Button 
                 variant="hero" 
                 size="xl" 
@@ -58,6 +72,7 @@ export const HeroSection = () => {
                 Chat on WhatsApp
               </Button>
             </div>
+            
             <div className="mt-8 text-white/70 text-sm">
               ✨ Human research only • No AI • 24/7 Support • 500+ satisfied students
             </div>

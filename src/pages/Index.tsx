@@ -1,5 +1,5 @@
 import { HeroSection } from "@/components/HeroSection";
-import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { TrustSection, SamplesSection } from "@/components/TrustSection";
 import { CTASection } from "@/components/CTASection";
 import { MainLayout } from "@/layouts/MainLayout";
 
@@ -7,7 +7,8 @@ const Index = () => {
   return (
     <MainLayout>
       <HeroSection />
-      <TestimonialsSection />
+      <TrustSection />
+      <SamplesSection />
       <CTASection />
     </MainLayout>
   );
