@@ -84,7 +84,7 @@ export default async function handler(req, res) {
 
     console.log('🔍 Using IntaSend API URL:', apiUrl);
 
-    // Prepare checkout payload - simplified format
+    // Prepare checkout payload - simplified format 
     const checkoutPayload = {
       amount: parseFloat(amount),
       currency: currency || 'USD',
@@ -100,72 +100,85 @@ export default async function handler(req, res) {
     console.log('🔍 IntaSend checkout payload:', checkoutPayload);
     console.log('🔍 Using private key:', intasendPrivateKey.substring(0, 10) + '...');
 
-    // Try the standard IntaSend API call
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${intasendPrivateKey}`,
-        },
-        body: JSON.stringify(checkoutPayload),
-      });
+    // Try different authentication methods for IntaSend
+    const authMethods = [
+      { name: 'Direct API Key', header: intasendPrivateKey },
+      { name: 'Bearer Token', header: `Bearer ${intasendPrivateKey}` },
+      { name: 'X-API-Key Header', header: intasendPrivateKey, headerName: 'X-API-Key' },
+      { name: 'Authorization Basic', header: `Basic ${Buffer.from(intasendPrivateKey + ':').toString('base64')}` }
+    ];
 
-      console.log('🔍 IntaSend response status:', response.status);
-      console.log('🔍 IntaSend response headers:', Object.fromEntries(response.headers.entries()));
+    let response;
+    let lastError;
 
-      const responseText = await response.text();
-      console.log('🔍 IntaSend response body:', responseText);
-
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = JSON.parse(responseText);
-        } catch (e) {
-          errorData = { message: responseText };
-        }
-        
-        console.error('❌ IntaSend API error:', {
-          status: response.status,
-          statusText: response.statusText,
-          errorData,
-          apiUrl,
-          payload: checkoutPayload
-        });
-        
-        return res.status(response.status).json({ 
-          error: 'IntaSend API error',
-          message: `Status: ${response.status} - ${errorData.message || response.statusText}`,
-          details: errorData,
-          apiUrl,
-          payload: checkoutPayload
-        });
-      }
-
-      // Parse successful response
-      let data;
+    for (const authMethod of authMethods) {
       try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error('❌ Failed to parse IntaSend response:', responseText);
-        return res.status(500).json({ 
-          error: 'Invalid response from IntaSend',
-          message: 'Failed to parse response',
-          responseText
-        });
-      }
+        console.log(`🔍 Trying authentication method: ${authMethod.name}`);
+        
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+        
+        if (authMethod.headerName) {
+          headers[authMethod.headerName] = authMethod.header;
+        } else {
+          headers['Authorization'] = authMethod.header;
+        }
 
-      console.log('✅ IntaSend checkout created successfully:', data);
-      res.json(data);
-    } catch (error) {
-      console.error('❌ IntaSend API call failed:', error);
-      return res.status(500).json({ 
-        error: 'IntaSend API call failed',
-        message: error.message,
+        console.log(`🔍 Headers for ${authMethod.name}:`, headers);
+
+        response = await fetch(apiUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(checkoutPayload),
+        });
+
+        console.log(`🔍 ${authMethod.name} response status:`, response.status);
+        
+        if (response.ok) {
+          console.log(`✅ ${authMethod.name} authentication successful!`);
+          break;
+        } else {
+          const responseClone = response.clone();
+          const errorText = await responseClone.text();
+          console.log(`❌ ${authMethod.name} failed:`, response.status, errorText);
+          lastError = { method: authMethod.name, status: response.status, error: errorText };
+        }
+      } catch (error) {
+        console.log(`❌ ${authMethod.name} error:`, error.message);
+        lastError = { method: authMethod.name, error: error.message };
+      }
+    }
+
+    if (!response || !response.ok) {
+      console.error('❌ All authentication methods failed:', lastError);
+      return res.status(401).json({ 
+        error: 'IntaSend authentication failed',
+        message: 'All authentication methods failed',
+        details: lastError,
         apiUrl,
         payload: checkoutPayload
       });
     }
+
+    // Parse successful response
+    const responseText = await response.text();
+    console.log('🔍 IntaSend response body:', responseText);
+    
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('❌ Failed to parse IntaSend response:', responseText);
+      return res.status(500).json({ 
+        error: 'Invalid response from IntaSend',
+        message: 'Failed to parse response',
+        responseText
+      });
+    }
+
+    console.log('✅ IntaSend checkout created successfully:', data);
+    res.json(data);
   } catch (error) {
     console.error('❌ Payment creation error:', {
       message: error.message,
