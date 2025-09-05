@@ -1,90 +1,6 @@
+// src/shared/hooks/useIntaSendPaymentButton.ts
 import { useEffect, useState } from 'react';
 import { config } from '@/config/environment';
-
-// WhatsApp integration function
-const sendOrderToWhatsApp = (options: IntaSendPaymentButtonOptions, paymentResults?: Record<string, unknown>) => {
-  const orderData = localStorage.getItem('pendingOrder');
-  let orderDetails = '';
-  
-  if (orderData) {
-    try {
-      const parsed = JSON.parse(orderData);
-      
-      // Format all order details in a comprehensive, readable format
-      orderDetails = `
-📋 NEW ORDER RECEIVED - ${parsed.orderId}
-
-💰 PAYMENT DETAILS:
-• Amount: $${options.amount} ${options.currency}
-• Status: ${paymentResults ? '✅ PAID' : '🎭 MOCK PAYMENT'}
-${paymentResults ? `• Invoice ID: ${paymentResults.invoice_id}` : '• Mock Payment - No Invoice'}
-
-👤 CUSTOMER DETAILS:
-• Name: ${options.first_name} ${options.last_name}
-• Email: ${options.email}
-• Phone: ${options.phone || 'Not provided'}
-
-📝 SERVICE DETAILS:
-• Service: ${parsed.serviceTitle || parsed.serviceId}
-• Subject: ${parsed.subject || 'Not specified'}
-• Words: ${parsed.words || 'Not specified'}
-• Pages: ${parsed.pages || 'Not specified'}
-• Slides: ${parsed.slides || 'Not specified'}
-• Urgency: ${parsed.urgency || 'normal'}
-• Instructions: ${parsed.instructions || 'None provided'}
-
-📊 ORDER SUMMARY:
-• Total Price: $${parsed.totalPrice}
-• Order ID: ${parsed.orderId}
-• Timestamp: ${new Date(parsed.timestamp).toLocaleString()}
-
-${paymentResults ? '🎉 Payment completed successfully!' : '🎭 Mock payment - please process manually'}
-      `.trim();
-    } catch (error) {
-      console.error('Error parsing order data:', error);
-      orderDetails = `
-📋 NEW ORDER RECEIVED
-
-💰 Payment: $${options.amount} ${options.currency}
-✅ Status: ${paymentResults ? 'PAID' : 'MOCK PAYMENT'}
-
-👤 Customer: ${options.first_name} ${options.last_name}
-📧 Email: ${options.email}
-
-${paymentResults ? `🔗 Invoice ID: ${paymentResults.invoice_id}` : '🎭 Mock Payment - No Invoice'}
-
-⚠️ Note: Full order details could not be parsed. Check localStorage for complete data.
-      `.trim();
-    }
-  } else {
-    orderDetails = `
-📋 NEW ORDER RECEIVED
-
-💰 Payment: $${options.amount} ${options.currency}
-✅ Status: ${paymentResults ? 'PAID' : 'MOCK PAYMENT'}
-
-👤 Customer: ${options.first_name} ${options.last_name}
-📧 Email: ${options.email}
-
-${paymentResults ? `🔗 Invoice ID: ${paymentResults.invoice_id}` : '🎭 Mock Payment - No Invoice'}
-
-⚠️ Note: Order details not found in localStorage. Customer may have cleared browser data.
-    `.trim();
-  }
-
-  const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(orderDetails)}`;
-  window.open(whatsappUrl, '_blank');
-};
-
-// Extend Window interface to include IntaSend
-declare global {
-  interface Window {
-    IntaSend: new (config: { publicAPIKey: string; live: boolean }) => {
-      on: (event: string, callback: (results: Record<string, unknown>) => void) => unknown;
-      scan: () => void;
-    };
-  }
-}
 
 export interface IntaSendPaymentButtonOptions {
   amount: number;
@@ -97,67 +13,28 @@ export interface IntaSendPaymentButtonOptions {
 
 export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [intaSendInstance, setIntaSendInstance] = useState<any>(null);
 
   useEffect(() => {
-    // Initialize IntaSend once globally when SDK is loaded
-    const checkSDK = () => {
-      if (typeof window !== 'undefined' && window.IntaSend) {
-        setIsSDKLoaded(true);
-        console.log('✅ IntaSend SDK is loaded and ready');
-        
-        // Initialize IntaSend instance once globally
-        try {
-          const instance = new window.IntaSend({
-            publicAPIKey: config.intasend.publicKey,
-            live: config.intasend.environment === 'live'
-          });
-          
-          // Set up global event handlers
-          instance
-            .on("COMPLETE", (results: any) => {
-              console.log("✅ IntaSend payment completed successfully:", results);
-              // Send order details to WhatsApp
-              const orderData = localStorage.getItem('pendingOrder');
-              if (orderData) {
-                try {
-                  const parsed = JSON.parse(orderData);
-                  sendOrderToWhatsApp({
-                    amount: results.amount || 0,
-                    currency: results.currency || 'USD',
-                    email: parsed.email || '',
-                    first_name: parsed.name?.split(' ')[0] || '',
-                    last_name: parsed.name?.split(' ').slice(1).join(' ') || '',
-                    phone: parsed.phone || ''
-                  }, results);
-                } catch (error) {
-                  console.error('Error parsing order data for WhatsApp:', error);
-                }
-              }
-              if (results.invoice_id) {
-                window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
-              }
-            })
-            .on("FAILED", (results: any) => {
-              console.log("❌ IntaSend payment failed:", results);
-              alert('Payment failed. Please try again or contact support.');
-            })
-            .on("IN-PROGRESS", (results: any) => {
-              console.log("⏳ IntaSend payment in progress:", results);
-            });
-          
-          setIntaSendInstance(instance);
-          console.log('✅ IntaSend instance created and event handlers set up globally');
-        } catch (error) {
-          console.error('❌ IntaSend instance creation failed:', error);
-        }
-      } else {
-        console.log('⏳ IntaSend SDK not ready yet, retrying...');
-        setTimeout(checkSDK, 500);
+    // Load IntaSend SDK script
+    const script = document.createElement('script');
+    script.src = 'https://websdk-sandbox-v2.intasend.com/intasend-inline.js';
+    script.async = true;
+    script.onload = () => {
+      console.log('✅ IntaSend SDK loaded');
+      setIsSDKLoaded(true);
+    };
+    script.onerror = () => {
+      console.error('❌ Failed to load IntaSend SDK');
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup script on unmount
+      const existingScript = document.querySelector('script[src*="intasend-inline.js"]');
+      if (existingScript) {
+        existingScript.remove();
       }
     };
-    
-    checkSDK();
   }, []);
 
   const createIntaSendButton = (options: IntaSendPaymentButtonOptions) => {
@@ -174,20 +51,24 @@ export const useIntaSendPaymentButton = () => {
 
     // Clear existing content
     element.innerHTML = '';
-    
-    // Create button exactly like the working test button
+
+    // Create button with proper IntaSend attributes
     const button = document.createElement('button');
     button.className = 'intaSendPayButton';
     button.textContent = 'Pay with IntaSend';
-    
-    // Set ONLY the essential data attributes (exactly like the working test button)
+
+    // Set IntaSend required attributes
     button.setAttribute('data-amount', String(options.amount));
     button.setAttribute('data-currency', options.currency);
-    
-    // Only add the same attributes as the working test button
-    if (options.email && options.email.trim()) button.setAttribute('data-email', options.email.trim());
-    if (options.first_name && options.first_name.trim()) button.setAttribute('data-first_name', options.first_name.trim());
-    if (options.last_name && options.last_name.trim()) button.setAttribute('data-last_name', options.last_name.trim());
+    button.setAttribute('data-public_key', config.intasend.publicKey);
+    button.setAttribute('data-email', options.email || '');
+    button.setAttribute('data-first_name', options.first_name || '');
+    button.setAttribute('data-last_name', options.last_name || '');
+    button.setAttribute('data-phone', options.phone || '');
+    button.setAttribute('data-redirect_url', `${window.location.origin}/payment-success`);
+    button.setAttribute('data-callback_url', `${window.location.origin}/payment-success`);
+    button.setAttribute('data-host', window.location.origin);
+    button.setAttribute('data-environment', config.intasend.environment);
 
     // Add styling
     button.style.cssText = `
@@ -202,9 +83,6 @@ export const useIntaSendPaymentButton = () => {
       width: 100%;
       margin-top: 8px;
       transition: all 0.3s ease;
-      pointer-events: auto;
-      z-index: 1000;
-      position: relative;
     `;
 
     // Add hover effect
@@ -219,108 +97,46 @@ export const useIntaSendPaymentButton = () => {
     });
 
     element.appendChild(button);
-    
-    // Add click handler that creates a checkout link and redirects to IntaSend
-    button.addEventListener('click', async (e) => {
-      e.preventDefault();
-      console.log('🔍 Button clicked! Creating IntaSend checkout... (NEW VERSION)');
-      
+
+    // Initialize IntaSend for this button
+    if (window.IntaSend) {
       try {
-        // Create checkout data with form details to avoid duplicate entry
-        const checkoutData = {
-          amount: parseFloat(options.amount),
-          currency: options.currency || 'USD',
-          email: options.email?.trim(),
-          phone: options.phone?.trim(),
-          first_name: options.first_name?.trim(),
-          last_name: options.last_name?.trim(),
-          redirect_url: `${window.location.origin}/payment-success`,
-          description: `Service payment for ${options.first_name} ${options.last_name} - $${parseFloat(options.amount)}`
-        };
-        
-        console.log('💳 Creating checkout with data:', checkoutData);
-        
-        // Call our backend API to create IntaSend checkout
-        const response = await fetch('/api/intasend/create-payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(checkoutData)
+        const intaSendInstance = new window.IntaSend({
+          publicAPIKey: config.intasend.publicKey,
+          live: config.intasend.environment === 'live'
         });
-        
-        if (response.ok) {
-          const result = await response.json();
-          console.log('✅ Checkout created:', result);
-          
-          if (result.url) {
-            // Redirect to IntaSend payment page
-            console.log('🔄 Redirecting to IntaSend payment page:', result.url);
-            window.location.href = result.url;
-          } else {
-            console.error('❌ No checkout URL received in response:', result);
-            alert('Payment initialization failed: No payment URL received. Please try again.');
-          }
-        } else {
-          // Get detailed error information from API response
-          let errorMessage = 'Payment initialization failed. Please try again.';
-          try {
-            const errorData = await response.json();
-            console.error('❌ API Error Response:', errorData);
-            errorMessage = errorData.message || errorData.error || errorMessage;
-          } catch (e) {
-            console.error('❌ Failed to parse error response:', e);
-          }
-          
-          console.error('❌ Failed to create checkout:', {
-            status: response.status,
-            statusText: response.statusText,
-            message: errorMessage
+
+        // Set up event handlers
+        intaSendInstance
+          .on("COMPLETE", (results: Record<string, unknown>) => {
+            console.log("✅ Payment completed:", results);
+            // Redirect to success page
+            if (results.invoice_id) {
+              window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
+            }
+          })
+          .on("FAILED", (results: Record<string, unknown>) => {
+            console.log("❌ Payment failed:", results);
+            alert('Payment failed. Please try again.');
+          })
+          .on("IN-PROGRESS", (results: Record<string, unknown>) => {
+            console.log("⏳ Payment in progress:", results);
           });
-          alert(`Payment initialization failed: ${errorMessage}`);
-        }
+
+        // Initialize the button
+        intaSendInstance.scan();
+        
+        console.log('✅ IntaSend button initialized');
       } catch (error) {
-        console.error('❌ Error creating checkout:', error);
-        alert('Payment initialization failed. Please try again.');
+        console.error('❌ IntaSend initialization failed:', error);
       }
-    });
-    
-    // Add status message
-    const statusDiv = document.createElement('div');
-    statusDiv.id = 'payment-status';
-    statusDiv.style.cssText = `
-      margin-top: 8px;
-      padding: 8px;
-      border-radius: 4px;
-      font-size: 14px;
-      text-align: center;
-      background: #f0f9ff;
-      border: 1px solid #0ea5e9;
-      color: #0c4a6e;
-    `;
-    statusDiv.textContent = '💳 Secure payment powered by IntaSend';
-    element.appendChild(statusDiv);
-    
-    console.log('IntaSend payment button created:', {
-      element: button,
-      className: button.className,
-      dataAttributes: {
-        amount: button.getAttribute('data-amount'),
-        currency: button.getAttribute('data-currency'),
-        email: button.getAttribute('data-email'),
-        first_name: button.getAttribute('data-first_name'),
-        last_name: button.getAttribute('data-last_name')
-      }
-    });
+    }
+
+    console.log('IntaSend payment button created with options:', options);
   };
 
-  // IntaSend is initialized globally in useEffect and automatically detects buttons
-
-  // Removed handlePaymentWithFallback and handleMockPayment functions
-  // IntaSend now handles everything automatically through proper initialization
-
   return {
-    isInitialized: isSDKLoaded,
-    createIntaSendButton
+    createIntaSendButton,
+    isSDKLoaded
   };
 };
