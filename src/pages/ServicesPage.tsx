@@ -222,21 +222,18 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
       
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-      // Initialize IntaSend Payment Button
+      // Initialize IntaSend Payment Button (simplified like the working test button)
       const paymentOptions = {
         amount: calculatePrice(),
         currency: 'USD',
-        email: formData.email,
-        phone: formData.phone,
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         first_name: formData.name.split(' ')[0] || formData.name,
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
-        api_ref: `ORDER_${Date.now()}_${selectedService}`,
-        comment: orderSummary,
-        country: 'US',
-        // Removed method to allow ALL payment methods (CARD-PAYMENT, M-PESA, BANK-PAYMENT)
-        card_tarrif: 'BUSINESS-PAYS' as const,
-        mobile_tarrif: 'BUSINESS-PAYS' as const,
-        redirect_url: `${window.location.origin}/payment-success`
+        // Simplified - only essential fields like the working test button
+        api_ref: `ORDER_${Date.now()}`,
+        comment: `Order for ${selectedService}`,
+        country: 'US'
       };
 
       // Create the IntaSend payment button

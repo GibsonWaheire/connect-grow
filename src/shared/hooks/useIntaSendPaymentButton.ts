@@ -18,9 +18,7 @@ export interface IntaSendPaymentButtonOptions {
   api_ref?: string;
   comment?: string;
   country?: string;
-  card_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
-  mobile_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
-  redirect_url?: string;
+  // Removed optional fields that might cause 500 errors
 }
 
 export const useIntaSendPaymentButton = () => {
@@ -77,20 +75,18 @@ export const useIntaSendPaymentButton = () => {
     button.className = 'intaSendPayButton';
     button.textContent = 'Pay with IntaSend';
     
-    // Set data attributes exactly as per documentation
+    // Set ONLY the essential data attributes (like the working test button)
     button.setAttribute('data-amount', String(options.amount));
     button.setAttribute('data-currency', options.currency);
     
-    if (options.email) button.setAttribute('data-email', options.email);
-    if (options.phone) button.setAttribute('data-phone_number', options.phone);
-    if (options.first_name) button.setAttribute('data-first_name', options.first_name);
-    if (options.last_name) button.setAttribute('data-last_name', options.last_name);
-    if (options.api_ref) button.setAttribute('data-api_ref', options.api_ref);
-    if (options.comment) button.setAttribute('data-comment', options.comment);
-    if (options.country) button.setAttribute('data-country', options.country);
-    if (options.card_tarrif) button.setAttribute('data-card_tarrif', options.card_tarrif);
-    if (options.mobile_tarrif) button.setAttribute('data-mobile_tarrif', options.mobile_tarrif);
-    if (options.redirect_url) button.setAttribute('data-redirect_url', options.redirect_url);
+    // Only add optional attributes if they have valid values (like the working test button)
+    if (options.email && options.email.trim()) button.setAttribute('data-email', options.email.trim());
+    if (options.phone && options.phone.trim()) button.setAttribute('data-phone_number', options.phone.trim());
+    if (options.first_name && options.first_name.trim()) button.setAttribute('data-first_name', options.first_name.trim());
+    if (options.last_name && options.last_name.trim()) button.setAttribute('data-last_name', options.last_name.trim());
+    if (options.api_ref && options.api_ref.trim()) button.setAttribute('data-api_ref', options.api_ref.trim());
+    if (options.comment && options.comment.trim()) button.setAttribute('data-comment', options.comment.trim());
+    if (options.country && options.country.trim()) button.setAttribute('data-country', options.country.trim());
 
     // Add styling
     button.style.cssText = `
