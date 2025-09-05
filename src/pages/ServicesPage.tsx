@@ -82,7 +82,7 @@ export const ServicesPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
-  const { initializePaymentButton } = useIntaSendPaymentButton();
+  const { isInitialized, initializePaymentButton } = useIntaSendPaymentButton();
 
   const WORDS_PER_PAGE = 275;
 
@@ -192,6 +192,11 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
 
   const handlePayment = async () => {
     try {
+      if (!isInitialized) {
+        alert('Payment system is still loading. Please wait a moment and try again.');
+        return;
+      }
+
       setIsProcessingPayment(true);
       const service = services.find(s => s.id === selectedService);
       
@@ -222,7 +227,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         amount: calculatePrice(),
         currency: 'USD',
         email: formData.email,
-        phone_number: formData.phone,
+        phone: formData.phone,
         first_name: formData.name.split(' ')[0] || formData.name,
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
         api_ref: `ORDER_${Date.now()}_${selectedService}`,
@@ -523,11 +528,11 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 <div className="w-full">
                   <Button
                     onClick={handlePayment}
-                    disabled={!formData.name || isProcessingPayment}
+                    disabled={!formData.name || isProcessingPayment || !isInitialized}
                     className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    {isProcessingPayment ? 'Processing...' : 'Pay Now'}
+                    {!isInitialized ? 'Loading Payment...' : isProcessingPayment ? 'Processing...' : 'Pay Now'}
                   </Button>
                   
                   {/* IntaSend Payment Button Container */}
