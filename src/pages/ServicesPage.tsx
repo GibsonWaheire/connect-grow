@@ -11,7 +11,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
 import { useIntaSendPaymentButton } from '@/shared/hooks/useIntaSendPaymentButton';
-import { useMockPayment } from '@/shared/hooks/useMockPayment';
 import { AlertCircle, ChevronDown, ChevronUp, CheckCircle, CreditCard, MessageCircle } from 'lucide-react';
 
 const services = [
@@ -86,7 +85,6 @@ export const ServicesPage = () => {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
   const { isInitialized, createIntaSendButton } = useIntaSendPaymentButton();
-  const { processMockPayment, isProcessing } = useMockPayment();
 
   const WORDS_PER_PAGE = 275;
 
@@ -263,14 +261,8 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         // Only essential fields - no extra attributes that cause 500 errors
       };
 
-      // Try IntaSend first, fallback to mock payment
-      if (isInitialized) {
-        createIntaSendButton(paymentOptions);
-      } else {
-        // Fallback to mock payment if IntaSend fails
-        console.log('IntaSend not initialized, using mock payment');
-        await processMockPayment(paymentOptions);
-      }
+      // Create the IntaSend payment button
+      createIntaSendButton(paymentOptions);
       
       setIsProcessingPayment(false);
     } catch (error) {
@@ -639,25 +631,6 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                       {/* Static IntaSend button will be inserted here */}
                     </div>
                     
-                    {/* Fallback Mock Payment Button */}
-                    <Button 
-                      onClick={async () => {
-                        const paymentOptions = {
-                          amount: calculatePrice(),
-                          currency: 'USD',
-                          email: formData.email.trim(),
-                          first_name: formData.name.split(' ')[0] || formData.name,
-                          last_name: formData.name.split(' ').slice(1).join(' ') || '',
-                          phone: formData.phone.trim()
-                        };
-                        await processMockPayment(paymentOptions);
-                      }}
-                      disabled={isProcessing}
-                      variant="outline" 
-                      className="w-full mt-2"
-                    >
-                      {isProcessing ? 'Processing...' : 'Test Payment (Mock)'}
-                    </Button>
                   </div>
               </div>
               

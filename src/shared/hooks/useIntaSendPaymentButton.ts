@@ -15,16 +15,31 @@ export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
   useEffect(() => {
+    // Check if IntaSend is already loaded
+    if (window.IntaSend) {
+      console.log('✅ IntaSend SDK already loaded');
+      setIsSDKLoaded(true);
+      return;
+    }
+
     // Load IntaSend SDK script
     const script = document.createElement('script');
     script.src = 'https://websdk-sandbox-v2.intasend.com/intasend-inline.js';
     script.async = true;
+    script.crossOrigin = 'anonymous';
     script.onload = () => {
       console.log('✅ IntaSend SDK loaded');
       setIsSDKLoaded(true);
     };
     script.onerror = () => {
       console.error('❌ Failed to load IntaSend SDK');
+      // Try alternative loading method
+      setTimeout(() => {
+        if (window.IntaSend) {
+          console.log('✅ IntaSend SDK loaded via alternative method');
+          setIsSDKLoaded(true);
+        }
+      }, 1000);
     };
     document.head.appendChild(script);
 
@@ -38,11 +53,6 @@ export const useIntaSendPaymentButton = () => {
   }, []);
 
   const createIntaSendButton = (options: IntaSendPaymentButtonOptions) => {
-    if (!isSDKLoaded) {
-      console.error('IntaSend SDK not loaded yet');
-      return;
-    }
-
     const element = document.getElementById('payment-button-container');
     if (!element) {
       console.error('Payment button container not found');
@@ -51,6 +61,24 @@ export const useIntaSendPaymentButton = () => {
 
     // Clear existing content
     element.innerHTML = '';
+
+    if (!isSDKLoaded) {
+      console.error('IntaSend SDK not loaded yet');
+      // Show a message to the user
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'p-4 bg-yellow-50 border border-yellow-200 rounded-lg';
+      errorDiv.innerHTML = `
+        <div class="flex items-center">
+          <div class="text-yellow-600 mr-2">⚠️</div>
+          <div>
+            <p class="text-sm text-yellow-800 font-medium">Payment system loading...</p>
+            <p class="text-xs text-yellow-600">Please wait a moment and try again.</p>
+          </div>
+        </div>
+      `;
+      element.appendChild(errorDiv);
+      return;
+    }
 
     // Create button with proper IntaSend attributes
     const button = document.createElement('button');
@@ -137,6 +165,7 @@ export const useIntaSendPaymentButton = () => {
 
   return {
     createIntaSendButton,
-    isSDKLoaded
+    isSDKLoaded,
+    isInitialized: isSDKLoaded // Add alias for compatibility
   };
 };
