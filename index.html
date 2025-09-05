@@ -77,5 +77,58 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Test IntaSend Button -->
+    <script>
+      // Test IntaSend initialization
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, checking IntaSend...');
+        
+        if (window.IntaSend) {
+          console.log('IntaSend SDK found!');
+          
+          // Create a test button
+          const testContainer = document.createElement('div');
+          testContainer.id = 'test-intasend-container';
+          testContainer.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; padding: 10px; border: 1px solid #ccc;';
+          
+          const testButton = document.createElement('button');
+          testButton.className = 'intaSendPayButton';
+          testButton.textContent = 'Test IntaSend';
+          testButton.setAttribute('data-amount', '5');
+          testButton.setAttribute('data-currency', 'USD');
+          testButton.setAttribute('data-email', 'test@example.com');
+          testButton.style.cssText = 'background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;';
+          
+          testContainer.appendChild(testButton);
+          document.body.appendChild(testContainer);
+          
+          // Initialize IntaSend
+          try {
+            const intaSendInstance = new window.IntaSend({
+              publicAPIKey: 'ISPubKey_test_f2bf8172-799d-4a60-a607-bb72b4a1144a',
+              live: false
+            });
+            
+            intaSendInstance
+              .on("COMPLETE", (results) => {
+                console.log("Test payment completed:", results);
+              })
+              .on("FAILED", (results) => {
+                console.log("Test payment failed:", results);
+              })
+              .on("IN-PROGRESS", (results) => {
+                console.log("Test payment in progress:", results);
+              });
+            
+            console.log('Test IntaSend initialized successfully');
+          } catch (error) {
+            console.error('Test IntaSend initialization failed:', error);
+          }
+        } else {
+          console.log('IntaSend SDK not found');
+        }
+      });
+    </script>
   </body>
 </html>
