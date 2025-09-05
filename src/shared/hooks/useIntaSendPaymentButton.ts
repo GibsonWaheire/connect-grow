@@ -220,42 +220,53 @@ export const useIntaSendPaymentButton = () => {
 
     element.appendChild(button);
     
-    // Add click handler that manually triggers IntaSend payment
-    button.addEventListener('click', (e) => {
+    // Add click handler that creates a checkout link and redirects to IntaSend
+    button.addEventListener('click', async (e) => {
       e.preventDefault();
-      console.log('🔍 Button clicked! Triggering IntaSend payment...');
+      console.log('🔍 Button clicked! Creating IntaSend checkout...');
       
-      if (intaSendInstance) {
-        try {
-          // Try to manually trigger payment using IntaSend instance
-          console.log('🔄 Attempting to trigger IntaSend payment...');
+      try {
+        // Create checkout link using IntaSend API
+        const checkoutData = {
+          amount: options.amount,
+          currency: options.currency,
+          email: options.email,
+          first_name: options.first_name,
+          last_name: options.last_name,
+          phone_number: options.phone,
+          redirect_url: `${window.location.origin}/payment-success`,
+          comment: `Service payment for ${options.first_name} ${options.last_name}`
+        };
+        
+        console.log('💳 Creating checkout with data:', checkoutData);
+        
+        // Call our backend API to create IntaSend checkout
+        const response = await fetch('/api/create-intasend-checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(checkoutData)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log('✅ Checkout created:', result);
           
-          // Create payment data object
-          const paymentData = {
-            amount: options.amount,
-            currency: options.currency,
-            email: options.email,
-            first_name: options.first_name,
-            last_name: options.last_name,
-            phone: options.phone
-          };
-          
-          console.log('💳 Payment data:', paymentData);
-          
-          // Try to trigger payment - this might work differently depending on IntaSend version
-          if (typeof intaSendInstance.pay === 'function') {
-            intaSendInstance.pay(paymentData);
-          } else if (typeof intaSendInstance.checkout === 'function') {
-            intaSendInstance.checkout(paymentData);
+          if (result.url) {
+            // Redirect to IntaSend payment page
+            window.location.href = result.url;
           } else {
-            console.log('⚠️ No direct payment method found, relying on automatic detection');
-            // Let IntaSend handle it automatically
+            console.error('❌ No checkout URL received');
+            alert('Payment initialization failed. Please try again.');
           }
-        } catch (error) {
-          console.error('❌ Error triggering IntaSend payment:', error);
+        } else {
+          console.error('❌ Failed to create checkout:', response.status);
+          alert('Payment initialization failed. Please try again.');
         }
-      } else {
-        console.error('❌ IntaSend instance not available');
+      } catch (error) {
+        console.error('❌ Error creating checkout:', error);
+        alert('Payment initialization failed. Please try again.');
       }
     });
     

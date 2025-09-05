@@ -114,6 +114,78 @@ app.post('/api/intasend/create-payment', async (req, res) => {
   }
 });
 
+// Create IntaSend checkout link endpoint
+app.post('/api/create-intasend-checkout', async (req, res) => {
+  try {
+    const {
+      amount,
+      currency,
+      email,
+      first_name,
+      last_name,
+      phone_number,
+      redirect_url,
+      comment
+    } = req.body;
+
+    // Validate required fields
+    if (!amount || !currency || !email || !first_name) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        message: 'Amount, currency, email, and first_name are required'
+      });
+    }
+
+    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    if (!intasendSecretKey) {
+      return res.status(500).json({ 
+        error: 'Server configuration error',
+        message: 'Intasend secret key not configured'
+      });
+    }
+
+    // Use sandbox API for testing
+    const apiUrl = process.env.VITE_INTASEND_ENVIRONMENT === 'live' 
+      ? 'https://api.intasend.com/v1/checkout/'
+      : 'https://sandbox.intasend.com/api/v1/checkout/';
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${intasendSecretKey}`,
+      },
+      body: JSON.stringify({
+        amount,
+        currency,
+        email,
+        phone: phone_number,
+        first_name,
+        last_name,
+        comment,
+        redirect_url,
+        environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox'
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('IntaSend API error:', errorData);
+      throw new Error(`Intasend API error: ${response.statusText} - ${errorData.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    console.log('✅ IntaSend checkout created:', data);
+    res.json(data);
+  } catch (error) {
+    console.error('Checkout creation error:', error);
+    res.status(500).json({ 
+      error: 'Checkout creation failed',
+      message: error.message 
+    });
+  }
+});
+
 app.get('/api/intasend/verify-payment/:invoiceId', async (req, res) => {
   try {
     const { invoiceId } = req.params;
