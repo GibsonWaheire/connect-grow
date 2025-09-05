@@ -209,6 +209,12 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
         reference: `ORDER_${Date.now()}_${selectedService}`,
         description: orderSummary,
+        // Enhanced parameters for better user experience
+        country: 'US', // Default to US since you're targeting US market
+        method: 'CARD-PAYMENT' as const, // Force card payments for better conversion
+        card_tarrif: 'BUSINESS-PAYS' as const, // Business pays card fees for better UX
+        mobile_tarrif: 'BUSINESS-PAYS' as const, // Business pays mobile fees for better UX
+        redirect_url: `${window.location.origin}/payment-success?invoice_id=${Date.now()}` // Pre-configured success URL
       };
 
       const paymentResponse = await createPayment(paymentData);

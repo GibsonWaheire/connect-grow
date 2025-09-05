@@ -9,6 +9,16 @@ export interface IntasendPaymentRequest {
   last_name: string;
   reference: string;
   description: string;
+  // Optional enhanced parameters
+  country?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  method?: 'M-PESA' | 'CARD-PAYMENT';
+  card_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
+  mobile_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
+  redirect_url?: string;
 }
 
 export interface IntasendPaymentResponse {
@@ -50,7 +60,17 @@ export const useIntasendPayment = () => {
             service_type: paymentData.reference.split('_')[2] || 'unknown',
             order_timestamp: new Date().toISOString(),
             source: 'web_order_form'
-          }
+          },
+          // Optional enhanced parameters
+          ...(paymentData.country && { country: paymentData.country }),
+          ...(paymentData.address && { address: paymentData.address }),
+          ...(paymentData.city && { city: paymentData.city }),
+          ...(paymentData.state && { state: paymentData.state }),
+          ...(paymentData.zipcode && { zipcode: paymentData.zipcode }),
+          ...(paymentData.method && { method: paymentData.method }),
+          ...(paymentData.card_tarrif && { card_tarrif: paymentData.card_tarrif }),
+          ...(paymentData.mobile_tarrif && { mobile_tarrif: paymentData.mobile_tarrif }),
+          ...(paymentData.redirect_url && { redirect_url: paymentData.redirect_url })
         }),
       });
 

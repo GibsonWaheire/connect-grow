@@ -3,10 +3,11 @@
 ## 🚀 **Current Status**
 - ✅ Landing page with email integration
 - ✅ Services page with order forms
-- ✅ Intasend payment integration (backend proxy)
+- ✅ Intasend payment integration (backend proxy) - **ENHANCED**
 - ✅ Payment success page
 - ✅ SEO optimization and favicon
 - ✅ React Router future flags fixed
+- ✅ **NEW**: IntaSend sandbox integration with enhanced parameters
 
 ## 🎯 **Immediate Tasks**
 
@@ -29,9 +30,10 @@
   - [ ] Deploy to Vercel/Railway/Netlify
   - [ ] Configure environment variables
   - [ ] Test live payments
-- [ ] **Option C**: Switch to sandbox mode
-  - [ ] Use Intasend sandbox environment
-  - [ ] Test with sandbox API keys
+- [x] **Option C**: Switch to sandbox mode ✅ **COMPLETED**
+  - [x] Use Intasend sandbox environment
+  - [x] Test with sandbox API keys
+  - [x] Enhanced with additional IntaSend parameters
 
 ## 🔧 **Technical Debt**
 

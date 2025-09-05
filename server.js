@@ -33,7 +33,16 @@ app.post('/api/intasend/create-payment', async (req, res) => {
       last_name,
       reference,
       description,
-      metadata
+      metadata,
+      country,
+      address,
+      city,
+      state,
+      zipcode,
+      method,
+      card_tarrif,
+      mobile_tarrif,
+      redirect_url
     } = req.body;
 
     // Validate required fields
@@ -75,7 +84,17 @@ app.post('/api/intasend/create-payment', async (req, res) => {
         reference,
         description,
         environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
-        metadata
+        metadata,
+        // Optional enhanced parameters
+        ...(country && { country }),
+        ...(address && { address }),
+        ...(city && { city }),
+        ...(state && { state }),
+        ...(zipcode && { zipcode }),
+        ...(method && { method }),
+        ...(card_tarrif && { card_tarrif }),
+        ...(mobile_tarrif && { mobile_tarrif }),
+        ...(redirect_url && { redirect_url })
       }),
     });
 
