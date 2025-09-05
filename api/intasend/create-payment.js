@@ -77,12 +77,18 @@ export default async function handler(req, res) {
       });
     }
 
-    // Use correct IntaSend API endpoint
-    const apiUrl = environment === 'live' 
-      ? 'https://api.intasend.com/api/v1/checkout/'
-      : 'https://sandbox.intasend.com/api/v1/checkout/';
-
-    console.log('🔍 Using API URL:', apiUrl);
+    // Try different IntaSend API endpoints
+    const apiUrls = environment === 'live' 
+      ? [
+          'https://api.intasend.com/api/v1/checkout/',
+          'https://api.intasend.com/v1/checkout/',
+          'https://api.intasend.com/checkout/'
+        ]
+      : [
+          'https://sandbox.intasend.com/api/v1/checkout/',
+          'https://sandbox.intasend.com/v1/checkout/',
+          'https://sandbox.intasend.com/checkout/'
+        ];
 
     // Prepare checkout payload with all required fields
     const checkoutPayload = {
@@ -110,7 +116,7 @@ export default async function handler(req, res) {
 
     console.log('🔍 IntaSend checkout payload:', checkoutPayload);
 
-    // Try different authentication methods
+    // Try different authentication methods and API endpoints
     const authMethods = [
       { name: 'Bearer Token', header: `Bearer ${intasendPrivateKey}` },
       { name: 'API Key', header: intasendPrivateKey },
@@ -119,71 +125,73 @@ export default async function handler(req, res) {
 
     let response;
     let lastError;
+    let successfulConfig = null;
 
-    for (const authMethod of authMethods) {
-      try {
-        console.log(`🔍 Trying authentication method: ${authMethod.name}`);
-        
-        const headers = {
-          'Content-Type': 'application/json',
-        };
-        
-        if (authMethod.headerName) {
-          headers[authMethod.headerName] = authMethod.header;
-        } else {
-          headers['Authorization'] = authMethod.header;
+    // Try each API endpoint
+    for (const apiUrl of apiUrls) {
+      console.log(`🔍 Trying API endpoint: ${apiUrl}`);
+      
+      // Try each authentication method for this endpoint
+      for (const authMethod of authMethods) {
+        try {
+          console.log(`🔍 Trying ${authMethod.name} with ${apiUrl}`);
+          
+          const headers = {
+            'Content-Type': 'application/json',
+          };
+          
+          if (authMethod.headerName) {
+            headers[authMethod.headerName] = authMethod.header;
+          } else {
+            headers['Authorization'] = authMethod.header;
+          }
+
+          response = await fetch(apiUrl, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(checkoutPayload),
+          });
+
+          console.log(`🔍 ${authMethod.name} + ${apiUrl} response status:`, response.status);
+          
+          if (response.ok) {
+            console.log(`✅ ${authMethod.name} + ${apiUrl} successful!`);
+            successfulConfig = { authMethod: authMethod.name, apiUrl };
+            break;
+          } else {
+            // Clone the response to read the body without consuming it
+            const responseClone = response.clone();
+            const errorText = await responseClone.text();
+            console.log(`❌ ${authMethod.name} + ${apiUrl} failed:`, response.status, errorText);
+            lastError = { method: authMethod.name, apiUrl, status: response.status, error: errorText };
+          }
+        } catch (error) {
+          console.log(`❌ ${authMethod.name} + ${apiUrl} error:`, error.message);
+          lastError = { method: authMethod.name, apiUrl, error: error.message };
         }
-
-        response = await fetch(apiUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(checkoutPayload),
-        });
-
-        console.log(`🔍 ${authMethod.name} response status:`, response.status);
-        
-        if (response.ok) {
-          console.log(`✅ ${authMethod.name} authentication successful!`);
-          break;
-        } else {
-          // Clone the response to read the body without consuming it
-          const responseClone = response.clone();
-          const errorText = await responseClone.text();
-          console.log(`❌ ${authMethod.name} failed:`, response.status, errorText);
-          lastError = { method: authMethod.name, status: response.status, error: errorText };
-        }
-      } catch (error) {
-        console.log(`❌ ${authMethod.name} error:`, error.message);
-        lastError = { method: authMethod.name, error: error.message };
       }
+      
+      if (successfulConfig) {
+        break;
+      }
+    }
+
+    // Check if we found a successful configuration
+    if (!successfulConfig) {
+      console.error('❌ All API endpoints and authentication methods failed:', lastError);
+      return res.status(500).json({ 
+        error: 'IntaSend API error',
+        message: 'All API endpoints and authentication methods failed',
+        details: lastError,
+        triedEndpoints: apiUrls,
+        triedAuthMethods: authMethods.map(m => m.name)
+      });
     }
 
     // Log the response body before processing
     const responseText = await response.text();
     console.log('🔍 IntaSend response body:', responseText);
-
-    if (!response.ok) {
-      let errorData;
-      try {
-        errorData = JSON.parse(responseText);
-      } catch (e) {
-        errorData = { message: responseText };
-      }
-      
-      console.error('❌ IntaSend API error:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData,
-        lastError
-      });
-      
-      return res.status(response.status).json({ 
-        error: 'IntaSend API error',
-        message: `Status: ${response.status} - ${errorData.message || response.statusText}`,
-        details: errorData,
-        authMethods: lastError ? `Last tried: ${lastError.method}` : 'All methods failed'
-      });
-    }
+    console.log('✅ Successful configuration:', successfulConfig);
 
     // Parse successful response
     let data;
