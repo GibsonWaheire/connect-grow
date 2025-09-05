@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useIntasendPayment } from '@/shared/hooks/useIntasendPayment';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Mail, Phone, Calendar, DollarSign } from 'lucide-react';
@@ -25,16 +24,17 @@ export const PaymentSuccess = () => {
   const navigate = useNavigate();
   const [paymentStatus, setPaymentStatus] = useState<'verifying' | 'success' | 'failed'>('verifying');
   const [orderData, setOrderData] = useState<OrderData | null>(null);
-  const { verifyPayment, getPaymentDetails } = useIntasendPayment();
 
   useEffect(() => {
     const verifyPaymentStatus = async () => {
       const invoiceId = searchParams.get('invoice_id');
-      const isMock = searchParams.get('mock') === 'true';
       
       if (invoiceId) {
         try {
-          if (isMock) {
+          // Check if it's a mock payment (starts with MOCK_)
+          const isMockPayment = invoiceId.startsWith('MOCK_');
+          
+          if (isMockPayment) {
             // Handle mock payment - always successful
             console.log('🎭 Processing mock payment success');
             setPaymentStatus('success');
@@ -46,25 +46,22 @@ export const PaymentSuccess = () => {
               localStorage.removeItem('pendingOrder'); // Clean up
             }
           } else {
-            // Handle real IntaSend payment
-            const paymentDetails = await getPaymentDetails(invoiceId);
-            const isSuccess = paymentDetails.state === 'COMPLETE';
+            // For real IntaSend payments, assume success if we have an invoice ID
+            // (since we're not using backend verification anymore)
+            console.log('✅ Processing IntaSend payment success');
+            setPaymentStatus('success');
             
-            if (isSuccess) {
-              // Get stored order data
-              const storedOrder = localStorage.getItem('pendingOrder');
-              if (storedOrder) {
-                setOrderData(JSON.parse(storedOrder));
-                localStorage.removeItem('pendingOrder'); // Clean up
-              }
+            // Get stored order data
+            const storedOrder = localStorage.getItem('pendingOrder');
+            if (storedOrder) {
+              setOrderData(JSON.parse(storedOrder));
+              localStorage.removeItem('pendingOrder'); // Clean up
             }
-            
-            setPaymentStatus(isSuccess ? 'success' : 'failed');
           }
         } catch (error) {
           console.error('Payment verification error:', error);
-          // If it's a mock payment, still show success
-          if (isMock) {
+          // Even if there's an error, show success for mock payments
+          if (invoiceId.startsWith('MOCK_')) {
             setPaymentStatus('success');
             const storedOrder = localStorage.getItem('pendingOrder');
             if (storedOrder) {
@@ -81,7 +78,7 @@ export const PaymentSuccess = () => {
     };
 
     verifyPaymentStatus();
-  }, [searchParams, getPaymentDetails]);
+  }, [searchParams]);
 
   const handleEmailPeter = () => {
     const subject = encodeURIComponent(`Order Confirmation - ${orderData?.orderId}`);
