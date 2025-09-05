@@ -1,10 +1,47 @@
 import { useEffect, useState } from 'react';
 import { config } from '@/config/environment';
 
+// WhatsApp integration function
+const sendOrderToWhatsApp = (options: IntaSendPaymentButtonOptions, paymentResults?: Record<string, unknown>) => {
+  const orderData = localStorage.getItem('orderData');
+  let orderDetails = '';
+  
+  if (orderData) {
+    try {
+      const parsed = JSON.parse(orderData);
+      orderDetails = `
+📋 NEW ORDER RECEIVED
+
+💰 Payment: $${options.amount} ${options.currency}
+✅ Status: ${paymentResults ? 'PAID' : 'MOCK PAYMENT'}
+
+📝 Order Details:
+${parsed}
+
+👤 Customer: ${options.first_name} ${options.last_name}
+📧 Email: ${options.email}
+
+${paymentResults ? `🔗 Invoice ID: ${paymentResults.invoice_id}` : '🎭 Mock Payment - No Invoice'}
+      `.trim();
+    } catch (error) {
+      console.error('Error parsing order data:', error);
+      orderDetails = `New order from ${options.first_name} ${options.last_name} - $${options.amount}`;
+    }
+  } else {
+    orderDetails = `New order from ${options.first_name} ${options.last_name} - $${options.amount}`;
+  }
+
+  const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(orderDetails)}`;
+  window.open(whatsappUrl, '_blank');
+};
+
 // Extend Window interface to include IntaSend
 declare global {
   interface Window {
-    IntaSend: any;
+    IntaSend: new (config: { publicAPIKey: string; live: boolean }) => {
+      on: (event: string, callback: (results: Record<string, unknown>) => void) => unknown;
+      scan: () => void;
+    };
   }
 }
 
@@ -164,21 +201,27 @@ export const useIntaSendPaymentButton = () => {
       });
 
       // Set up event handlers
-      intaSendInstance
-        .on("COMPLETE", (results: any) => {
+      (intaSendInstance as any)
+        .on("COMPLETE", (results: Record<string, unknown>) => {
           console.log("✅ IntaSend payment completed successfully:", results);
+          // Send order details to WhatsApp
+          sendOrderToWhatsApp(options, results);
           if (results.invoice_id) {
             window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
           }
         })
-        .on("FAILED", (results: any) => {
+        .on("FAILED", (results: Record<string, unknown>) => {
           console.log("❌ IntaSend payment failed:", results);
           console.log("🔄 Falling back to mock payment...");
           handleMockPayment(options, button);
         })
-        .on("IN-PROGRESS", (results: any) => {
+        .on("IN-PROGRESS", (results: Record<string, unknown>) => {
           console.log("⏳ IntaSend payment in progress:", results);
         });
+
+      // Trigger IntaSend to scan for buttons and show payment modal
+      console.log('🔍 Triggering IntaSend scan...');
+      intaSendInstance.scan();
 
       // Set a timeout to detect if IntaSend is not responding
       setTimeout(() => {
@@ -217,6 +260,9 @@ export const useIntaSendPaymentButton = () => {
       };
 
       console.log('Mock payment results:', mockResults);
+      
+      // Send order details to WhatsApp
+      sendOrderToWhatsApp(options, mockResults);
       
       // Redirect to success page
       window.location.href = `/payment-success?invoice_id=${mockResults.invoice_id}&mock=true`;

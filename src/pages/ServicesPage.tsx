@@ -76,7 +76,7 @@ export const ServicesPage = () => {
     instructions: '',
     name: '',
     email: '',
-    phone: ''
+    phone: '+971'
   });
   const [emailSuggestions, setEmailSuggestions] = useState<string[]>([]);
   const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
@@ -548,7 +548,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="+1 (234) 567-8900"
+                  placeholder="+971 (50) 123-4567"
                   className="h-12"
                   required
                 />
