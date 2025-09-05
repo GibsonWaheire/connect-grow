@@ -15,6 +15,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('🔍 Request received:', {
+      method: req.method,
+      body: req.body,
+      headers: req.headers
+    });
+
     const {
       amount,
       currency,
@@ -38,6 +44,7 @@ export default async function handler(req, res) {
 
     // Validate required fields
     if (!amount || !email || !phone || !first_name) {
+      console.log('❌ Missing required fields:', { amount, email, phone, first_name });
       return res.status(400).json({ 
         error: 'Missing required fields',
         message: 'Amount, email, phone, and first_name are required'
@@ -45,62 +52,125 @@ export default async function handler(req, res) {
     }
 
     if (amount <= 0) {
+      console.log('❌ Invalid amount:', amount);
       return res.status(400).json({ 
         error: 'Invalid amount',
         message: 'Amount must be greater than 0'
       });
     }
 
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
-    if (!intasendSecretKey || intasendSecretKey === 'your_secret_key_here') {
+    // Use INTASEND_PRIVATE_KEY instead of VITE_INTASEND_SECRET_KEY
+    const intasendPrivateKey = process.env.INTASEND_PRIVATE_KEY;
+    const environment = process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox';
+    
+    console.log('🔍 Environment check:', {
+      hasPrivateKey: !!intasendPrivateKey,
+      environment: environment,
+      keyLength: intasendPrivateKey ? intasendPrivateKey.length : 0
+    });
+
+    if (!intasendPrivateKey || intasendPrivateKey === 'your_secret_key_here') {
+      console.log('❌ Intasend private key not configured');
       return res.status(500).json({ 
         error: 'Server configuration error',
-        message: 'Intasend secret key not configured'
+        message: 'Intasend private key not configured'
       });
     }
 
-    const response = await fetch('https://api.intasend.com/v1/checkout/', {
+    // Use correct IntaSend API endpoint
+    const apiUrl = environment === 'live' 
+      ? 'https://api.intasend.com/api/v1/checkout/'
+      : 'https://sandbox.intasend.com/api/v1/checkout/';
+
+    console.log('🔍 Using API URL:', apiUrl);
+
+    // Prepare checkout payload with all required fields
+    const checkoutPayload = {
+      amount: parseFloat(amount),
+      currency: currency || 'USD',
+      email,
+      phone,
+      first_name,
+      last_name,
+      redirect_url: redirect_url || `${req.headers.origin || 'https://connect-order-grow.vercel.app'}/payment-success`,
+      description: description || `Payment for ${first_name} ${last_name}`,
+      environment,
+      // Optional fields
+      ...(reference && { reference }),
+      ...(metadata && { metadata }),
+      ...(country && { country }),
+      ...(address && { address }),
+      ...(city && { city }),
+      ...(state && { state }),
+      ...(zipcode && { zipcode }),
+      ...(method && { method }),
+      ...(card_tarrif && { card_tarrif }),
+      ...(mobile_tarrif && { mobile_tarrif })
+    };
+
+    console.log('🔍 IntaSend checkout payload:', checkoutPayload);
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${intasendSecretKey}`,
+        'Authorization': `Bearer ${intasendPrivateKey}`,
       },
-      body: JSON.stringify({
-        amount,
-        currency,
-        email,
-        phone,
-        first_name,
-        last_name,
-        reference,
-        description,
-        environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
-        metadata,
-        // Optional enhanced parameters
-        ...(country && { country }),
-        ...(address && { address }),
-        ...(city && { city }),
-        ...(state && { state }),
-        ...(zipcode && { zipcode }),
-        ...(method && { method }),
-        ...(card_tarrif && { card_tarrif }),
-        ...(mobile_tarrif && { mobile_tarrif }),
-        ...(redirect_url && { redirect_url })
-      }),
+      body: JSON.stringify(checkoutPayload),
     });
 
+    console.log('🔍 IntaSend response status:', response.status);
+    console.log('🔍 IntaSend response headers:', Object.fromEntries(response.headers.entries()));
+
+    // Log the response body before processing
+    const responseText = await response.text();
+    console.log('🔍 IntaSend response body:', responseText);
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Intasend API error: ${response.statusText} - ${errorData.message || 'Unknown error'}`);
+      let errorData;
+      try {
+        errorData = JSON.parse(responseText);
+      } catch (e) {
+        errorData = { message: responseText };
+      }
+      
+      console.error('❌ IntaSend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorData
+      });
+      
+      return res.status(response.status).json({ 
+        error: 'IntaSend API error',
+        message: `Status: ${response.status} - ${errorData.message || response.statusText}`,
+        details: errorData
+      });
     }
 
-    const data = await response.json();
+    // Parse successful response
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('❌ Failed to parse IntaSend response:', responseText);
+      return res.status(500).json({ 
+        error: 'Invalid response from IntaSend',
+        message: 'Failed to parse response'
+      });
+    }
+
+    console.log('✅ IntaSend checkout created successfully:', data);
     res.json(data);
   } catch (error) {
-    console.error('Payment creation error:', error);
+    console.error('❌ Payment creation error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({ 
       error: 'Payment creation failed',
-      message: error.message 
+      message: error.message,
+      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
     });
   }
 }
