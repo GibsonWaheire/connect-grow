@@ -84,16 +84,16 @@ export default async function handler(req, res) {
 
     console.log('🔍 Using IntaSend API URL:', apiUrl);
 
-    // Prepare checkout payload - simplified format 
+    // Prepare checkout payload with form details to avoid duplicate entry
     const checkoutPayload = {
       amount: parseFloat(amount),
       currency: currency || 'USD',
-      email,
-      phone,
-      first_name,
-      last_name,
+      email: email?.trim(),
+      phone: phone?.trim(),
+      first_name: first_name?.trim(),
+      last_name: last_name?.trim(),
       redirect_url: redirect_url || `${req.headers.origin || 'https://connect-order-grow.vercel.app'}/payment-success`,
-      description: description || `Payment for ${first_name} ${last_name}`,
+      description: description || `Service payment for ${first_name} ${last_name} - $${parseFloat(amount)}`,
       environment: environment
     };
 

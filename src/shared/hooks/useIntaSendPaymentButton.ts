@@ -226,7 +226,7 @@ export const useIntaSendPaymentButton = () => {
       console.log('🔍 Button clicked! Creating IntaSend checkout... (NEW VERSION)');
       
       try {
-        // Create checkout link using IntaSend API
+        // Create checkout data with form details to avoid duplicate entry
         const checkoutData = {
           amount: parseFloat(options.amount),
           currency: options.currency || 'USD',
@@ -235,9 +235,7 @@ export const useIntaSendPaymentButton = () => {
           first_name: options.first_name?.trim(),
           last_name: options.last_name?.trim(),
           redirect_url: `${window.location.origin}/payment-success`,
-          description: `Service payment for ${options.first_name} ${options.last_name}`,
-          // Add reference for tracking
-          reference: `ORDER_${Date.now()}_${options.first_name?.toLowerCase() || 'customer'}`
+          description: `Service payment for ${options.first_name} ${options.last_name} - $${parseFloat(options.amount)}`
         };
         
         console.log('💳 Creating checkout with data:', checkoutData);
