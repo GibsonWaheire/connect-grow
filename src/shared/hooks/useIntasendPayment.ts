@@ -34,7 +34,11 @@ export const useIntasendPayment = () => {
     try {
       // Validate required fields
       if (!paymentData.email || !paymentData.phone || !paymentData.first_name) {
-        throw new Error('Missing required payment information');
+        const missingFields = [];
+        if (!paymentData.email) missingFields.push('email');
+        if (!paymentData.phone) missingFields.push('phone');
+        if (!paymentData.first_name) missingFields.push('first_name');
+        throw new Error(`Missing required payment information: ${missingFields.join(', ')}`);
       }
 
       if (paymentData.amount <= 0) {
@@ -42,7 +46,7 @@ export const useIntasendPayment = () => {
       }
 
       // Use our backend proxy instead of calling Intasend directly
-      const response = await fetch('/api/intasend/create-payment', {
+      const response = await fetch(`${config.api.baseUrl}/api/intasend/create-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +93,7 @@ export const useIntasendPayment = () => {
 
   const verifyPayment = async (invoiceId: string): Promise<boolean> => {
     try {
-      const response = await fetch(`/api/intasend/verify-payment/${invoiceId}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/intasend/verify-payment/${invoiceId}`, {
         method: 'GET',
       });
 
@@ -107,7 +111,7 @@ export const useIntasendPayment = () => {
 
   const getPaymentDetails = async (invoiceId: string) => {
     try {
-      const response = await fetch(`/api/intasend/payment-details/${invoiceId}`, {
+      const response = await fetch(`${config.api.baseUrl}/api/intasend/payment-details/${invoiceId}`, {
         method: 'GET',
       });
 

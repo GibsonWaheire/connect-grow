@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
-import { useIntasendPayment } from '@/shared/hooks/useIntasendPayment';
+import { useIntaSendPaymentButton } from '@/shared/hooks/useIntaSendPaymentButton';
 import { AlertCircle, ChevronDown, ChevronUp, CheckCircle, CreditCard, MessageCircle } from 'lucide-react';
 
 const services = [
@@ -82,7 +82,7 @@ export const ServicesPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
-  const { createPayment } = useIntasendPayment();
+  const { initializePaymentButton } = useIntaSendPaymentButton();
 
   const WORDS_PER_PAGE = 275;
 
@@ -132,8 +132,13 @@ export const ServicesPage = () => {
         if (!formData.name.trim()) {
           errors.push('Please enter your full name');
         }
-        if (formData.email.trim() && !/\S+@\S+\.\S+/.test(formData.email)) {
+        if (!formData.email.trim()) {
+          errors.push('Please enter your email address');
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
           errors.push('Please enter a valid email address');
+        }
+        if (!formData.phone.trim()) {
+          errors.push('Please enter your phone number');
         }
         break;
     }
@@ -200,46 +205,43 @@ Instructions: ${formData.instructions || 'None provided'}
 Contact: ${formData.name} (${formData.email}, ${formData.phone})
       `.trim();
 
-      const paymentData = {
-        amount: calculatePrice(),
-        currency: 'USD',
-        email: formData.email,
-        phone: formData.phone,
-        first_name: formData.name.split(' ')[0] || formData.name,
-        last_name: formData.name.split(' ').slice(1).join(' ') || '',
-        reference: `ORDER_${Date.now()}_${selectedService}`,
-        description: orderSummary,
-        // Enhanced parameters for better user experience
-        country: 'US', // Default to US since you're targeting US market
-        method: 'CARD-PAYMENT' as const, // Force card payments for better conversion
-        card_tarrif: 'BUSINESS-PAYS' as const, // Business pays card fees for better UX
-        mobile_tarrif: 'BUSINESS-PAYS' as const, // Business pays mobile fees for better UX
-        redirect_url: `${window.location.origin}/payment-success?invoice_id=${Date.now()}` // Pre-configured success URL
-      };
-
-      const paymentResponse = await createPayment(paymentData);
-      
       // Store order data in localStorage for potential use after payment
       const orderData = {
         ...formData,
         serviceId: selectedService,
         serviceTitle: service?.title,
         totalPrice: calculatePrice(),
-        orderId: paymentResponse.invoice_id,
+        orderId: `ORDER_${Date.now()}_${selectedService}`,
         timestamp: new Date().toISOString(),
       };
       
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+
+      // Initialize IntaSend Payment Button
+      const paymentOptions = {
+        amount: calculatePrice(),
+        currency: 'USD',
+        email: formData.email,
+        phone_number: formData.phone,
+        first_name: formData.name.split(' ')[0] || formData.name,
+        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+        api_ref: `ORDER_${Date.now()}_${selectedService}`,
+        comment: orderSummary,
+        country: 'US',
+        method: 'CARD-PAYMENT' as const,
+        card_tarrif: 'BUSINESS-PAYS' as const,
+        mobile_tarrif: 'BUSINESS-PAYS' as const,
+        redirect_url: `${window.location.origin}/payment-success`
+      };
+
+      // Initialize the payment button
+      initializePaymentButton('payment-button-container', paymentOptions);
       
-      // Redirect to Intasend payment page with success URL
-      const successUrl = `${window.location.origin}/payment-success?invoice_id=${paymentResponse.invoice_id}`;
-      const paymentUrl = `${paymentResponse.payment_url}?success_url=${encodeURIComponent(successUrl)}`;
-      
-      window.location.href = paymentUrl;
-    } catch (error) {
-      console.error('Payment failed:', error);
       setIsProcessingPayment(false);
-      // You can add error handling here
+    } catch (error) {
+      console.error('Payment initialization failed:', error);
+      setIsProcessingPayment(false);
+      alert('Failed to initialize payment. Please try again.');
     }
   };
 
@@ -436,26 +438,28 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Email (Optional)</label>
+                <label className="text-sm font-medium mb-2 block">Email *</label>
                 <Input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="your.email@example.com"
                   className="h-12"
+                  required
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-2 block">Phone Number (Optional)</label>
+                <label className="text-sm font-medium mb-2 block">Phone Number *</label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="+1 (234) 567-8900"
                   className="h-12"
+                  required
                 />
               </div>
               <div className="text-sm text-muted-foreground">
-                * Only name is required. Email and phone are optional for contact purposes.
+                * All fields are required for payment processing.
               </div>
             </div>
           </div>
@@ -516,14 +520,19 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   Order via WhatsApp
                 </Button>
                 
-                <Button
-                  onClick={handlePayment}
-                  disabled={!formData.name || isProcessingPayment}
-                  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
-                >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  {isProcessingPayment ? 'Processing...' : 'Pay Now'}
-                </Button>
+                <div className="w-full">
+                  <Button
+                    onClick={handlePayment}
+                    disabled={!formData.name || isProcessingPayment}
+                    className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
+                  >
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    {isProcessingPayment ? 'Processing...' : 'Pay Now'}
+                  </Button>
+                  
+                  {/* IntaSend Payment Button Container */}
+                  <div id="payment-button-container" className="mt-2"></div>
+                </div>
               </div>
               
               <div className="mt-4 text-xs text-muted-foreground">
