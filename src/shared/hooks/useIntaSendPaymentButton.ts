@@ -27,18 +27,30 @@ export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
   useEffect(() => {
-    // Check if IntaSend SDK is loaded
+    // Check if IntaSend SDK is loaded with better error handling
     const checkSDK = () => {
       if (typeof window !== 'undefined' && window.IntaSend) {
         setIsSDKLoaded(true);
-        console.log('IntaSend SDK is loaded and ready');
+        console.log('✅ IntaSend SDK is loaded and ready');
         console.log('IntaSend config:', {
           publicKey: config.intasend.publicKey,
           environment: config.intasend.environment,
           live: config.intasend.environment === 'live'
         });
+        
+        // Test if we can create an instance
+        try {
+          const testInstance = new window.IntaSend({
+            publicAPIKey: config.intasend.publicKey,
+            live: config.intasend.environment === 'live'
+          });
+          console.log('✅ IntaSend instance creation test successful');
+        } catch (error) {
+          console.error('❌ IntaSend instance creation test failed:', error);
+        }
       } else {
-        setTimeout(checkSDK, 100);
+        console.log('⏳ IntaSend SDK not ready yet, retrying...');
+        setTimeout(checkSDK, 500);
       }
     };
     
@@ -135,34 +147,36 @@ export const useIntaSendPaymentButton = () => {
     // Initialize IntaSend AFTER the button is created
     setTimeout(() => {
       try {
-        console.log('Initializing IntaSend with button...');
+        console.log('🔄 Initializing IntaSend with button...');
         
         const intaSendInstance = new window.IntaSend({
           publicAPIKey: config.intasend.publicKey,
           live: config.intasend.environment === 'live'
         });
 
+        console.log('✅ IntaSend instance created:', intaSendInstance);
+
         // Set up event handlers
         intaSendInstance
           .on("COMPLETE", (results: any) => {
-            console.log("Payment completed successfully:", results);
+            console.log("✅ Payment completed successfully:", results);
             if (results.invoice_id) {
               window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
             }
           })
           .on("FAILED", (results: any) => {
-            console.log("Payment failed:", results);
+            console.log("❌ Payment failed:", results);
             alert("Payment failed. Please try again.");
           })
           .on("IN-PROGRESS", (results: any) => {
-            console.log("Payment in progress:", results);
+            console.log("⏳ Payment in progress:", results);
           });
 
-        console.log('IntaSend initialized successfully with event handlers');
+        console.log('✅ IntaSend initialized successfully with event handlers');
         
         // Force button detection
         setTimeout(() => {
-          console.log('Checking if button is detected by IntaSend...');
+          console.log('🔍 Checking if button is detected by IntaSend...');
           const buttons = document.querySelectorAll('.intaSendPayButton');
           console.log('Found buttons with intaSendPayButton class:', buttons.length);
           
@@ -173,7 +187,12 @@ export const useIntaSendPaymentButton = () => {
         }, 500);
 
       } catch (error) {
-        console.error('Failed to initialize IntaSend:', error);
+        console.error('❌ Failed to initialize IntaSend:', error);
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
       }
     }, 100);
   };

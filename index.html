@@ -70,8 +70,8 @@
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     
-    <!-- IntaSend Payment SDK -->
-    <script src="https://unpkg.com/intasend-inlinejs-sdk@4.0.7/build/intasend-inline.js"></script>
+    <!-- IntaSend Payment SDK - Try latest version -->
+    <script src="https://unpkg.com/intasend-inlinejs-sdk@latest/build/intasend-inline.js"></script>
   </head>
 
   <body>
@@ -80,55 +80,90 @@
     
     <!-- Test IntaSend Button -->
     <script>
-      // Test IntaSend initialization
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, checking IntaSend...');
+      // Test IntaSend initialization with better error handling
+      function initializeIntaSendTest() {
+        console.log('Attempting to initialize IntaSend test...');
         
-        if (window.IntaSend) {
-          console.log('IntaSend SDK found!');
-          
+        if (typeof window.IntaSend === 'undefined') {
+          console.log('IntaSend SDK not loaded yet, retrying...');
+          setTimeout(initializeIntaSendTest, 500);
+          return;
+        }
+        
+        console.log('IntaSend SDK found!', window.IntaSend);
+        
+        try {
           // Create a test button
           const testContainer = document.createElement('div');
           testContainer.id = 'test-intasend-container';
-          testContainer.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; padding: 10px; border: 1px solid #ccc;';
+          testContainer.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; padding: 10px; border: 1px solid #ccc; border-radius: 8px;';
           
           const testButton = document.createElement('button');
           testButton.className = 'intaSendPayButton';
-          testButton.textContent = 'Test IntaSend';
+          testButton.textContent = 'Test IntaSend ($5)';
           testButton.setAttribute('data-amount', '5');
           testButton.setAttribute('data-currency', 'USD');
           testButton.setAttribute('data-email', 'test@example.com');
-          testButton.style.cssText = 'background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;';
+          testButton.setAttribute('data-first_name', 'Test');
+          testButton.setAttribute('data-last_name', 'User');
+          testButton.style.cssText = 'background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 5px;';
           
           testContainer.appendChild(testButton);
           document.body.appendChild(testContainer);
           
-          // Initialize IntaSend
-          try {
-            const intaSendInstance = new window.IntaSend({
-              publicAPIKey: 'ISPubKey_test_f2bf8172-799d-4a60-a607-bb72b4a1144a',
-              live: false
+          // Initialize IntaSend with error handling
+          console.log('Creating IntaSend instance...');
+          const intaSendInstance = new window.IntaSend({
+            publicAPIKey: 'ISPubKey_test_f2bf8172-799d-4a60-a607-bb72b4a1144a',
+            live: false
+          });
+          
+          console.log('IntaSend instance created:', intaSendInstance);
+          
+          // Set up event handlers
+          intaSendInstance
+            .on("COMPLETE", (results) => {
+              console.log("✅ Test payment completed:", results);
+              alert('Payment completed! Check console for details.');
+            })
+            .on("FAILED", (results) => {
+              console.log("❌ Test payment failed:", results);
+              alert('Payment failed. Check console for details.');
+            })
+            .on("IN-PROGRESS", (results) => {
+              console.log("⏳ Test payment in progress:", results);
             });
-            
-            intaSendInstance
-              .on("COMPLETE", (results) => {
-                console.log("Test payment completed:", results);
-              })
-              .on("FAILED", (results) => {
-                console.log("Test payment failed:", results);
-              })
-              .on("IN-PROGRESS", (results) => {
-                console.log("Test payment in progress:", results);
-              });
-            
-            console.log('Test IntaSend initialized successfully');
-          } catch (error) {
-            console.error('Test IntaSend initialization failed:', error);
-          }
-        } else {
-          console.log('IntaSend SDK not found');
+          
+          console.log('✅ Test IntaSend initialized successfully');
+          
+          // Add click handler for debugging
+          testButton.addEventListener('click', (e) => {
+            console.log('🔘 Test button clicked!', e);
+            console.log('Button element:', testButton);
+            console.log('Button class:', testButton.className);
+            console.log('Data attributes:', {
+              amount: testButton.getAttribute('data-amount'),
+              currency: testButton.getAttribute('data-currency'),
+              email: testButton.getAttribute('data-email')
+            });
+          });
+          
+        } catch (error) {
+          console.error('❌ Test IntaSend initialization failed:', error);
+          console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          });
         }
-      });
+      }
+      
+      // Start initialization when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeIntaSendTest);
+      } else {
+        initializeIntaSendTest();
+      }
     </script>
   </body>
 </html>
