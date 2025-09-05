@@ -82,7 +82,7 @@ export const ServicesPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
-  const { isInitialized, initializePaymentButton } = useIntaSendPaymentButton();
+  const { isInitialized, createIntaSendButton } = useIntaSendPaymentButton();
 
   const WORDS_PER_PAGE = 275;
 
@@ -239,8 +239,8 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         redirect_url: `${window.location.origin}/payment-success`
       };
 
-      // Initialize the payment button
-      initializePaymentButton('payment-button-container', paymentOptions);
+      // Create the IntaSend payment button
+      createIntaSendButton(paymentOptions);
       
       setIsProcessingPayment(false);
     } catch (error) {
@@ -525,19 +525,21 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   Order via WhatsApp
                 </Button>
                 
-                <div className="w-full">
-                  <Button
-                    onClick={handlePayment}
-                    disabled={!formData.name || isProcessingPayment || !isInitialized}
-                    className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
-                  >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    {!isInitialized ? 'Loading Payment...' : isProcessingPayment ? 'Processing...' : 'Pay Now'}
-                  </Button>
-                  
-                  {/* IntaSend Payment Button Container */}
-                  <div id="payment-button-container" className="mt-2"></div>
-                </div>
+                  <div className="w-full">
+                    <Button
+                      onClick={handlePayment}
+                      disabled={!formData.name || isProcessingPayment || !isInitialized}
+                      className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
+                    >
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      {!isInitialized ? 'Loading Payment...' : isProcessingPayment ? 'Processing...' : 'Pay Now'}
+                    </Button>
+                    
+                    {/* IntaSend Payment Button Container */}
+                    <div id="payment-button-container" className="mt-2">
+                      {/* Static IntaSend button will be inserted here */}
+                    </div>
+                  </div>
               </div>
               
               <div className="mt-4 text-xs text-muted-foreground">
