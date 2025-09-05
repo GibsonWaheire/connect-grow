@@ -97,13 +97,60 @@ export interface IntaSendPaymentButtonOptions {
 
 export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [intaSendInstance, setIntaSendInstance] = useState<any>(null);
 
   useEffect(() => {
-    // Check if IntaSend SDK is loaded
+    // Initialize IntaSend once globally when SDK is loaded
     const checkSDK = () => {
       if (typeof window !== 'undefined' && window.IntaSend) {
         setIsSDKLoaded(true);
         console.log('✅ IntaSend SDK is loaded and ready');
+        
+        // Initialize IntaSend instance once globally
+        try {
+          const instance = new window.IntaSend({
+            publicAPIKey: config.intasend.publicKey,
+            live: config.intasend.environment === 'live'
+          });
+          
+          // Set up global event handlers
+          instance
+            .on("COMPLETE", (results: any) => {
+              console.log("✅ IntaSend payment completed successfully:", results);
+              // Send order details to WhatsApp
+              const orderData = localStorage.getItem('pendingOrder');
+              if (orderData) {
+                try {
+                  const parsed = JSON.parse(orderData);
+                  sendOrderToWhatsApp({
+                    amount: results.amount || 0,
+                    currency: results.currency || 'USD',
+                    email: parsed.email || '',
+                    first_name: parsed.name?.split(' ')[0] || '',
+                    last_name: parsed.name?.split(' ').slice(1).join(' ') || '',
+                    phone: parsed.phone || ''
+                  }, results);
+                } catch (error) {
+                  console.error('Error parsing order data for WhatsApp:', error);
+                }
+              }
+              if (results.invoice_id) {
+                window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
+              }
+            })
+            .on("FAILED", (results: any) => {
+              console.log("❌ IntaSend payment failed:", results);
+              alert('Payment failed. Please try again or contact support.');
+            })
+            .on("IN-PROGRESS", (results: any) => {
+              console.log("⏳ IntaSend payment in progress:", results);
+            });
+          
+          setIntaSendInstance(instance);
+          console.log('✅ IntaSend instance created and event handlers set up globally');
+        } catch (error) {
+          console.error('❌ IntaSend instance creation failed:', error);
+        }
       } else {
         console.log('⏳ IntaSend SDK not ready yet, retrying...');
         setTimeout(checkSDK, 500);
@@ -155,6 +202,9 @@ export const useIntaSendPaymentButton = () => {
       width: 100%;
       margin-top: 8px;
       transition: all 0.3s ease;
+      pointer-events: auto;
+      z-index: 1000;
+      position: relative;
     `;
 
     // Add hover effect
@@ -168,13 +218,18 @@ export const useIntaSendPaymentButton = () => {
       button.style.boxShadow = 'none';
     });
 
-    // Remove custom click handler - let IntaSend handle automatically
-    // DO NOT add custom click handlers as they interfere with IntaSend's automatic detection
+    // Add a simple click handler for debugging
+    button.addEventListener('click', (e) => {
+      console.log('🔍 Button clicked!', e);
+      console.log('🔍 Button element:', button);
+      console.log('🔍 IntaSend instance available:', !!intaSendInstance);
+      console.log('🔍 Window.IntaSend available:', !!window.IntaSend);
+    });
 
     element.appendChild(button);
     
-    // Initialize IntaSend after button is added to DOM (following official documentation)
-    initializeIntaSendAfterButtonCreation(options);
+    // IntaSend is already initialized globally and will automatically detect this button
+    console.log('✅ Button added to DOM - IntaSend will detect it automatically');
     
     // Add status message
     const statusDiv = document.createElement('div');
@@ -205,57 +260,7 @@ export const useIntaSendPaymentButton = () => {
     });
   };
 
-  const initializeIntaSendAfterButtonCreation = (options: IntaSendPaymentButtonOptions) => {
-    try {
-      console.log('🔄 Initializing IntaSend after button creation...');
-      
-      // Initialize IntaSend instance following official documentation pattern
-      const intaSendInstance = new window.IntaSend({
-        publicAPIKey: config.intasend.publicKey,
-        live: config.intasend.environment === 'live'
-      });
-
-      // Set up event handlers following IntaSend documentation
-      intaSendInstance
-        .on("COMPLETE", (results: any) => {
-          console.log("✅ IntaSend payment completed successfully:", results);
-          // Send order details to WhatsApp
-          const orderData = localStorage.getItem('pendingOrder');
-          if (orderData) {
-            try {
-              const parsed = JSON.parse(orderData);
-              sendOrderToWhatsApp({
-                amount: results.amount || options.amount,
-                currency: results.currency || options.currency,
-                email: parsed.email || options.email || '',
-                first_name: parsed.name?.split(' ')[0] || options.first_name || '',
-                last_name: parsed.name?.split(' ').slice(1).join(' ') || options.last_name || '',
-                phone: parsed.phone || options.phone || ''
-              }, results);
-            } catch (error) {
-              console.error('Error parsing order data for WhatsApp:', error);
-            }
-          }
-          if (results.invoice_id) {
-            window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
-          }
-        })
-        .on("FAILED", (results: any) => {
-          console.log("❌ IntaSend payment failed:", results);
-          alert('Payment failed. Please try again or contact support.');
-        })
-        .on("IN-PROGRESS", (results: any) => {
-          console.log("⏳ IntaSend payment in progress:", results);
-        });
-
-      console.log('✅ IntaSend initialized successfully with event handlers');
-      console.log('🔍 IntaSend will automatically detect buttons with class "intaSendPayButton"');
-    } catch (error) {
-      console.error('❌ IntaSend initialization failed:', error);
-    }
-  };
-
-  // Removed initializeIntaSend function - IntaSend is now initialized globally in useEffect
+  // IntaSend is initialized globally in useEffect and automatically detects buttons
 
   // Removed handlePaymentWithFallback and handleMockPayment functions
   // IntaSend now handles everything automatically through proper initialization
