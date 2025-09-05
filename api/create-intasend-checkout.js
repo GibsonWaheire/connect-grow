@@ -15,6 +15,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('🔍 Request body:', req.body);
+    
     const {
       amount,
       currency,
@@ -28,6 +30,7 @@ export default async function handler(req, res) {
 
     // Validate required fields
     if (!amount || !currency || !email || !first_name) {
+      console.log('❌ Missing required fields:', { amount, currency, email, first_name });
       return res.status(400).json({ 
         error: 'Missing required fields',
         message: 'Amount, currency, email, and first_name are required'
@@ -35,17 +38,42 @@ export default async function handler(req, res) {
     }
 
     const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const environment = process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox';
+    
+    console.log('🔍 Environment variables:', {
+      hasSecretKey: !!intasendSecretKey,
+      environment: environment,
+      secretKeyLength: intasendSecretKey ? intasendSecretKey.length : 0
+    });
+
     if (!intasendSecretKey || intasendSecretKey === 'your_secret_key_here') {
+      console.log('❌ Intasend secret key not configured');
       return res.status(500).json({ 
         error: 'Server configuration error',
         message: 'Intasend secret key not configured'
       });
     }
 
-    // Use sandbox API for testing
-    const apiUrl = process.env.VITE_INTASEND_ENVIRONMENT === 'live' 
+    // Use sandbox API for testing - try both URLs
+    const apiUrl = environment === 'live' 
       ? 'https://api.intasend.com/v1/checkout/'
       : 'https://sandbox.intasend.com/api/v1/checkout/';
+
+    console.log('🔍 Using API URL:', apiUrl);
+
+    const requestBody = {
+      amount: parseFloat(amount),
+      currency,
+      email,
+      phone: phone_number,
+      first_name,
+      last_name,
+      comment,
+      redirect_url,
+      environment
+    };
+
+    console.log('🔍 Request body to IntaSend:', requestBody);
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -53,33 +81,35 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${intasendSecretKey}`,
       },
-      body: JSON.stringify({
-        amount,
-        currency,
-        email,
-        phone: phone_number,
-        first_name,
-        last_name,
-        comment,
-        redirect_url,
-        environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox'
-      }),
+      body: JSON.stringify(requestBody),
     });
+
+    console.log('🔍 IntaSend response status:', response.status);
+    console.log('🔍 IntaSend response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('IntaSend API error:', errorData);
-      throw new Error(`Intasend API error: ${response.statusText} - ${errorData.message || 'Unknown error'}`);
+      console.error('❌ IntaSend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorData
+      });
+      return res.status(500).json({ 
+        error: 'IntaSend API error',
+        message: `Status: ${response.status} - ${errorData.message || response.statusText}`,
+        details: errorData
+      });
     }
 
     const data = await response.json();
     console.log('✅ IntaSend checkout created:', data);
     res.json(data);
   } catch (error) {
-    console.error('Checkout creation error:', error);
+    console.error('❌ Checkout creation error:', error);
     res.status(500).json({ 
       error: 'Checkout creation failed',
-      message: error.message 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }

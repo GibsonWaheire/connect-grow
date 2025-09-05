@@ -231,17 +231,17 @@ export const useIntaSendPaymentButton = () => {
           amount: options.amount,
           currency: options.currency,
           email: options.email,
+          phone: options.phone,
           first_name: options.first_name,
           last_name: options.last_name,
-          phone_number: options.phone,
           redirect_url: `${window.location.origin}/payment-success`,
-          comment: `Service payment for ${options.first_name} ${options.last_name}`
+          description: `Service payment for ${options.first_name} ${options.last_name}`
         };
         
         console.log('💳 Creating checkout with data:', checkoutData);
         
         // Call our backend API to create IntaSend checkout
-        const response = await fetch('/api/create-intasend-checkout', {
+        const response = await fetch('/api/intasend/create-payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
