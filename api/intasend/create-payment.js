@@ -110,17 +110,51 @@ export default async function handler(req, res) {
 
     console.log('🔍 IntaSend checkout payload:', checkoutPayload);
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${intasendPrivateKey}`,
-      },
-      body: JSON.stringify(checkoutPayload),
-    });
+    // Try different authentication methods
+    const authMethods = [
+      { name: 'Bearer Token', header: `Bearer ${intasendPrivateKey}` },
+      { name: 'API Key', header: intasendPrivateKey },
+      { name: 'X-API-Key', header: intasendPrivateKey, headerName: 'X-API-Key' }
+    ];
 
-    console.log('🔍 IntaSend response status:', response.status);
-    console.log('🔍 IntaSend response headers:', Object.fromEntries(response.headers.entries()));
+    let response;
+    let lastError;
+
+    for (const authMethod of authMethods) {
+      try {
+        console.log(`🔍 Trying authentication method: ${authMethod.name}`);
+        
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+        
+        if (authMethod.headerName) {
+          headers[authMethod.headerName] = authMethod.header;
+        } else {
+          headers['Authorization'] = authMethod.header;
+        }
+
+        response = await fetch(apiUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(checkoutPayload),
+        });
+
+        console.log(`🔍 ${authMethod.name} response status:`, response.status);
+        
+        if (response.ok) {
+          console.log(`✅ ${authMethod.name} authentication successful!`);
+          break;
+        } else {
+          const errorText = await response.text();
+          console.log(`❌ ${authMethod.name} failed:`, response.status, errorText);
+          lastError = { method: authMethod.name, status: response.status, error: errorText };
+        }
+      } catch (error) {
+        console.log(`❌ ${authMethod.name} error:`, error.message);
+        lastError = { method: authMethod.name, error: error.message };
+      }
+    }
 
     // Log the response body before processing
     const responseText = await response.text();
@@ -137,13 +171,15 @@ export default async function handler(req, res) {
       console.error('❌ IntaSend API error:', {
         status: response.status,
         statusText: response.statusText,
-        errorData
+        errorData,
+        lastError
       });
       
       return res.status(response.status).json({ 
         error: 'IntaSend API error',
         message: `Status: ${response.status} - ${errorData.message || response.statusText}`,
-        details: errorData
+        details: errorData,
+        authMethods: lastError ? `Last tried: ${lastError.method}` : 'All methods failed'
       });
     }
 
