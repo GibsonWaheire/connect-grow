@@ -30,26 +30,50 @@ export const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPaymentStatus = async () => {
       const invoiceId = searchParams.get('invoice_id');
+      const isMock = searchParams.get('mock') === 'true';
       
       if (invoiceId) {
         try {
-          // Get payment details from Intasend
-          const paymentDetails = await getPaymentDetails(invoiceId);
-          const isSuccess = paymentDetails.state === 'COMPLETE';
-          
-          if (isSuccess) {
+          if (isMock) {
+            // Handle mock payment - always successful
+            console.log('🎭 Processing mock payment success');
+            setPaymentStatus('success');
+            
             // Get stored order data
             const storedOrder = localStorage.getItem('pendingOrder');
             if (storedOrder) {
               setOrderData(JSON.parse(storedOrder));
               localStorage.removeItem('pendingOrder'); // Clean up
             }
+          } else {
+            // Handle real IntaSend payment
+            const paymentDetails = await getPaymentDetails(invoiceId);
+            const isSuccess = paymentDetails.state === 'COMPLETE';
+            
+            if (isSuccess) {
+              // Get stored order data
+              const storedOrder = localStorage.getItem('pendingOrder');
+              if (storedOrder) {
+                setOrderData(JSON.parse(storedOrder));
+                localStorage.removeItem('pendingOrder'); // Clean up
+              }
+            }
+            
+            setPaymentStatus(isSuccess ? 'success' : 'failed');
           }
-          
-          setPaymentStatus(isSuccess ? 'success' : 'failed');
         } catch (error) {
           console.error('Payment verification error:', error);
-          setPaymentStatus('failed');
+          // If it's a mock payment, still show success
+          if (isMock) {
+            setPaymentStatus('success');
+            const storedOrder = localStorage.getItem('pendingOrder');
+            if (storedOrder) {
+              setOrderData(JSON.parse(storedOrder));
+              localStorage.removeItem('pendingOrder');
+            }
+          } else {
+            setPaymentStatus('failed');
+          }
         }
       } else {
         setPaymentStatus('failed');

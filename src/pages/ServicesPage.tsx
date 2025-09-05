@@ -78,6 +78,8 @@ export const ServicesPage = () => {
     email: '',
     phone: ''
   });
+  const [emailSuggestions, setEmailSuggestions] = useState<string[]>([]);
+  const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -107,6 +109,32 @@ export const ServicesPage = () => {
     if (formData.urgency === 'express') basePrice *= 2;
     
     return basePrice;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, email: value }));
+    
+    // Generate email suggestions
+    if (value.includes('@')) {
+      const [localPart, domain] = value.split('@');
+      if (localPart && domain) {
+        const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
+        const suggestions = commonDomains
+          .filter(d => d.startsWith(domain.toLowerCase()))
+          .map(d => `${localPart}@${d}`);
+        setEmailSuggestions(suggestions);
+        setShowEmailSuggestions(suggestions.length > 0);
+      }
+    } else {
+      setEmailSuggestions([]);
+      setShowEmailSuggestions(false);
+    }
+  };
+
+  const selectEmailSuggestion = (email: string) => {
+    setFormData(prev => ({ ...prev, email }));
+    setShowEmailSuggestions(false);
   };
 
   const validateCurrentStep = () => {
@@ -350,12 +378,68 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Subject *</label>
-                <Input
+                <Select
                   value={formData.subject}
-                  onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
-                  placeholder="e.g., Python Programming"
-                  className="h-12"
-                />
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, subject: value }))}
+                >
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="English">English</SelectItem>
+                    <SelectItem value="History">History</SelectItem>
+                    <SelectItem value="Philosophy">Philosophy</SelectItem>
+                    <SelectItem value="Psychology">Psychology</SelectItem>
+                    <SelectItem value="Sociology">Sociology</SelectItem>
+                    <SelectItem value="Business">Business</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Python">Python</SelectItem>
+                    <SelectItem value="Java">Java</SelectItem>
+                    <SelectItem value="C++">C++</SelectItem>
+                    <SelectItem value="Data Analysis">Data Analysis</SelectItem>
+                    <SelectItem value="Statistics">Statistics</SelectItem>
+                    <SelectItem value="Mathematics">Mathematics</SelectItem>
+                    <SelectItem value="Engineering">Engineering</SelectItem>
+                    <SelectItem value="Computer Science">Computer Science</SelectItem>
+                    <SelectItem value="Web Development">Web Development</SelectItem>
+                    <SelectItem value="Machine Learning">Machine Learning</SelectItem>
+                    <SelectItem value="Artificial Intelligence">Artificial Intelligence</SelectItem>
+                    <SelectItem value="Database Management">Database Management</SelectItem>
+                    <SelectItem value="Cybersecurity">Cybersecurity</SelectItem>
+                    <SelectItem value="Economics">Economics</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Accounting">Accounting</SelectItem>
+                    <SelectItem value="Management">Management</SelectItem>
+                    <SelectItem value="Human Resources">Human Resources</SelectItem>
+                    <SelectItem value="Political Science">Political Science</SelectItem>
+                    <SelectItem value="International Relations">International Relations</SelectItem>
+                    <SelectItem value="Law">Law</SelectItem>
+                    <SelectItem value="Medicine">Medicine</SelectItem>
+                    <SelectItem value="Nursing">Nursing</SelectItem>
+                    <SelectItem value="Biology">Biology</SelectItem>
+                    <SelectItem value="Chemistry">Chemistry</SelectItem>
+                    <SelectItem value="Physics">Physics</SelectItem>
+                    <SelectItem value="Environmental Science">Environmental Science</SelectItem>
+                    <SelectItem value="Geography">Geography</SelectItem>
+                    <SelectItem value="Anthropology">Anthropology</SelectItem>
+                    <SelectItem value="Linguistics">Linguistics</SelectItem>
+                    <SelectItem value="Literature">Literature</SelectItem>
+                    <SelectItem value="Art History">Art History</SelectItem>
+                    <SelectItem value="Music">Music</SelectItem>
+                    <SelectItem value="Theater">Theater</SelectItem>
+                    <SelectItem value="Film Studies">Film Studies</SelectItem>
+                    <SelectItem value="Journalism">Journalism</SelectItem>
+                    <SelectItem value="Communication">Communication</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
+                    <SelectItem value="Social Work">Social Work</SelectItem>
+                    <SelectItem value="Public Health">Public Health</SelectItem>
+                    <SelectItem value="Architecture">Architecture</SelectItem>
+                    <SelectItem value="Urban Planning">Urban Planning</SelectItem>
+                    <SelectItem value="Agriculture">Agriculture</SelectItem>
+                    <SelectItem value="Veterinary Science">Veterinary Science</SelectItem>
+                    <SelectItem value="Other">Other (specify in instructions)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">
@@ -435,16 +519,29 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   required
                 />
               </div>
-              <div>
+              <div className="relative">
                 <label className="text-sm font-medium mb-2 block">Email *</label>
                 <Input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={handleEmailChange}
                   placeholder="your.email@example.com"
                   className="h-12"
                   required
                 />
+                {showEmailSuggestions && emailSuggestions.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+                    {emailSuggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+                        onClick={() => selectEmailSuggestion(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">Phone Number *</label>
