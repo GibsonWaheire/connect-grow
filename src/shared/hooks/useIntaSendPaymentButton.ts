@@ -218,18 +218,46 @@ export const useIntaSendPaymentButton = () => {
       button.style.boxShadow = 'none';
     });
 
-    // Add a simple click handler for debugging
-    button.addEventListener('click', (e) => {
-      console.log('🔍 Button clicked!', e);
-      console.log('🔍 Button element:', button);
-      console.log('🔍 IntaSend instance available:', !!intaSendInstance);
-      console.log('🔍 Window.IntaSend available:', !!window.IntaSend);
-    });
-
     element.appendChild(button);
     
-    // IntaSend is already initialized globally and will automatically detect this button
-    console.log('✅ Button added to DOM - IntaSend will detect it automatically');
+    // Add click handler that manually triggers IntaSend payment
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('🔍 Button clicked! Triggering IntaSend payment...');
+      
+      if (intaSendInstance) {
+        try {
+          // Try to manually trigger payment using IntaSend instance
+          console.log('🔄 Attempting to trigger IntaSend payment...');
+          
+          // Create payment data object
+          const paymentData = {
+            amount: options.amount,
+            currency: options.currency,
+            email: options.email,
+            first_name: options.first_name,
+            last_name: options.last_name,
+            phone: options.phone
+          };
+          
+          console.log('💳 Payment data:', paymentData);
+          
+          // Try to trigger payment - this might work differently depending on IntaSend version
+          if (typeof intaSendInstance.pay === 'function') {
+            intaSendInstance.pay(paymentData);
+          } else if (typeof intaSendInstance.checkout === 'function') {
+            intaSendInstance.checkout(paymentData);
+          } else {
+            console.log('⚠️ No direct payment method found, relying on automatic detection');
+            // Let IntaSend handle it automatically
+          }
+        } catch (error) {
+          console.error('❌ Error triggering IntaSend payment:', error);
+        }
+      } else {
+        console.error('❌ IntaSend instance not available');
+      }
+    });
     
     // Add status message
     const statusDiv = document.createElement('div');
