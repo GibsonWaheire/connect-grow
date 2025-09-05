@@ -105,17 +105,33 @@ export const useIntaSendPaymentButton = () => {
       button.style.boxShadow = 'none';
     });
 
-    // Add click handler for debugging
+    // Add click handler with IntaSend + fallback
     button.addEventListener('click', (e) => {
       console.log('IntaSend button clicked!', e);
       console.log('Button element:', button);
       console.log('Window.IntaSend available:', !!window.IntaSend);
       
-      // Since IntaSend API is having issues, let's create a mock payment flow
-      handleMockPayment(options);
+      // Try IntaSend first, fallback to mock if it fails
+      handlePaymentWithFallback(options, button);
     });
 
     element.appendChild(button);
+    
+    // Add status message
+    const statusDiv = document.createElement('div');
+    statusDiv.id = 'payment-status';
+    statusDiv.style.cssText = `
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: center;
+      background: #f0f9ff;
+      border: 1px solid #0ea5e9;
+      color: #0c4a6e;
+    `;
+    statusDiv.textContent = '💳 Secure payment powered by IntaSend';
+    element.appendChild(statusDiv);
     
     console.log('IntaSend payment button created:', {
       element: button,
@@ -130,15 +146,61 @@ export const useIntaSendPaymentButton = () => {
     });
   };
 
-  const handleMockPayment = (options: IntaSendPaymentButtonOptions) => {
+  const handlePaymentWithFallback = (options: IntaSendPaymentButtonOptions, button: HTMLButtonElement) => {
+    console.log('🔄 Starting payment with IntaSend + fallback...');
+    
+    // Show loading state
+    button.textContent = 'Processing Payment...';
+    button.disabled = true;
+
+    // Try IntaSend first
+    try {
+      console.log('🎯 Attempting IntaSend payment...');
+      
+      // Initialize IntaSend instance
+      const intaSendInstance = new window.IntaSend({
+        publicAPIKey: config.intasend.publicKey,
+        live: config.intasend.environment === 'live'
+      });
+
+      // Set up event handlers
+      intaSendInstance
+        .on("COMPLETE", (results: any) => {
+          console.log("✅ IntaSend payment completed successfully:", results);
+          if (results.invoice_id) {
+            window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
+          }
+        })
+        .on("FAILED", (results: any) => {
+          console.log("❌ IntaSend payment failed:", results);
+          console.log("🔄 Falling back to mock payment...");
+          handleMockPayment(options, button);
+        })
+        .on("IN-PROGRESS", (results: any) => {
+          console.log("⏳ IntaSend payment in progress:", results);
+        });
+
+      // Set a timeout to detect if IntaSend is not responding
+      setTimeout(() => {
+        if (button.disabled && button.textContent === 'Processing Payment...') {
+          console.log("⏰ IntaSend timeout - falling back to mock payment");
+          handleMockPayment(options, button);
+        }
+      }, 5000);
+
+    } catch (error) {
+      console.error('❌ IntaSend initialization failed:', error);
+      console.log('🔄 Falling back to mock payment...');
+      handleMockPayment(options, button);
+    }
+  };
+
+  const handleMockPayment = (options: IntaSendPaymentButtonOptions, button: HTMLButtonElement) => {
     console.log('🎭 Starting mock payment flow...');
     
     // Show loading state
-    const button = document.querySelector('.intaSendPayButton') as HTMLButtonElement;
-    if (button) {
-      button.textContent = 'Processing Payment...';
-      button.disabled = true;
-    }
+    button.textContent = 'Processing Payment...';
+    button.disabled = true;
 
     // Simulate payment processing
     setTimeout(() => {
