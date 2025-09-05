@@ -97,28 +97,59 @@ export interface IntaSendPaymentButtonOptions {
 
 export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [intaSendInstance, setIntaSendInstance] = useState<any>(null);
 
   useEffect(() => {
-    // Check if IntaSend SDK is loaded with better error handling
+    // Initialize IntaSend once when SDK is loaded
     const checkSDK = () => {
       if (typeof window !== 'undefined' && window.IntaSend) {
         setIsSDKLoaded(true);
         console.log('✅ IntaSend SDK is loaded and ready');
-        console.log('IntaSend config:', {
-          publicKey: config.intasend.publicKey,
-          environment: config.intasend.environment,
-          live: config.intasend.environment === 'live'
-        });
         
-        // Test if we can create an instance
+        // Initialize IntaSend instance once globally
         try {
-          const testInstance = new window.IntaSend({
+          const instance = new window.IntaSend({
             publicAPIKey: config.intasend.publicKey,
             live: config.intasend.environment === 'live'
           });
-          console.log('✅ IntaSend instance creation test successful');
+          
+          // Set up global event handlers
+          (instance as any)
+            .on("COMPLETE", (results: Record<string, unknown>) => {
+              console.log("✅ IntaSend payment completed successfully:", results);
+              // Send order details to WhatsApp
+              const orderData = localStorage.getItem('pendingOrder');
+              if (orderData) {
+                try {
+                  const parsed = JSON.parse(orderData);
+                  sendOrderToWhatsApp({
+                    amount: results.amount as number || 0,
+                    currency: results.currency as string || 'USD',
+                    email: parsed.email || '',
+                    first_name: parsed.name?.split(' ')[0] || '',
+                    last_name: parsed.name?.split(' ').slice(1).join(' ') || '',
+                    phone: parsed.phone || ''
+                  }, results);
+                } catch (error) {
+                  console.error('Error parsing order data for WhatsApp:', error);
+                }
+              }
+              if (results.invoice_id) {
+                window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
+              }
+            })
+            .on("FAILED", (results: Record<string, unknown>) => {
+              console.log("❌ IntaSend payment failed:", results);
+              alert('Payment failed. Please try again or contact support.');
+            })
+            .on("IN-PROGRESS", (results: Record<string, unknown>) => {
+              console.log("⏳ IntaSend payment in progress:", results);
+            });
+          
+          setIntaSendInstance(instance);
+          console.log('✅ IntaSend instance created and event handlers set up');
         } catch (error) {
-          console.error('❌ IntaSend instance creation test failed:', error);
+          console.error('❌ IntaSend instance creation failed:', error);
         }
       } else {
         console.log('⏳ IntaSend SDK not ready yet, retrying...');
@@ -189,8 +220,8 @@ export const useIntaSendPaymentButton = () => {
 
     element.appendChild(button);
     
-    // Initialize IntaSend after button is added to DOM
-    initializeIntaSend(options);
+    // IntaSend is already initialized globally and will automatically detect this button
+    console.log('✅ Button added to DOM - IntaSend will detect it automatically');
     
     // Add status message
     const statusDiv = document.createElement('div');
@@ -221,44 +252,7 @@ export const useIntaSendPaymentButton = () => {
     });
   };
 
-  const initializeIntaSend = (options: IntaSendPaymentButtonOptions) => {
-    try {
-      console.log('🔄 Initializing IntaSend with event handlers...');
-      
-      // Initialize IntaSend instance with event handlers
-      const intaSendInstance = new window.IntaSend({
-        publicAPIKey: config.intasend.publicKey,
-        live: config.intasend.environment === 'live'
-      });
-
-      // Set up event handlers for payment completion
-      (intaSendInstance as any)
-        .on("COMPLETE", (results: Record<string, unknown>) => {
-          console.log("✅ IntaSend payment completed successfully:", results);
-          // Send order details to WhatsApp
-          sendOrderToWhatsApp(options, results);
-          if (results.invoice_id) {
-            window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
-          }
-        })
-        .on("FAILED", (results: Record<string, unknown>) => {
-          console.log("❌ IntaSend payment failed:", results);
-          // You can add fallback logic here if needed
-          alert('Payment failed. Please try again or contact support.');
-        })
-        .on("IN-PROGRESS", (results: Record<string, unknown>) => {
-          console.log("⏳ IntaSend payment in progress:", results);
-        });
-
-      // Scan for buttons and enable payment functionality
-      console.log('🔍 Scanning for IntaSend buttons...');
-      intaSendInstance.scan();
-      
-      console.log('✅ IntaSend initialized successfully with event handlers');
-    } catch (error) {
-      console.error('❌ IntaSend initialization failed:', error);
-    }
-  };
+  // Removed initializeIntaSend function - IntaSend is now initialized globally in useEffect
 
   // Removed handlePaymentWithFallback and handleMockPayment functions
   // IntaSend now handles everything automatically through proper initialization
