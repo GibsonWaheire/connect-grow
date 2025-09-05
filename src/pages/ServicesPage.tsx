@@ -256,7 +256,8 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         currency: 'USD',
         email: formData.email.trim(),
         first_name: formData.name.split(' ')[0] || formData.name,
-        last_name: formData.name.split(' ').slice(1).join(' ') || ''
+        last_name: formData.name.split(' ').slice(1).join(' ') || '',
+        phone: formData.phone.trim()
         // Only essential fields - no extra attributes that cause 500 errors
       };
 

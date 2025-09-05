@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { config } from '@/config/environment';
 
 const updates = [
   {
@@ -21,7 +22,7 @@ const updates = [
 
 export const ReEngagementSection = () => {
   const handleClaimOffer = () => {
-    window.open("https://wa.me/1234567890?text=Hi! I'd like to claim my 10% welcome back offer", "_blank");
+    window.open(`https://wa.me/${config.whatsapp.number}?text=Hi! I'd like to claim my 10% welcome back offer`, "_blank");
   };
 
   return (

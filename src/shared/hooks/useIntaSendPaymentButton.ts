@@ -3,32 +3,73 @@ import { config } from '@/config/environment';
 
 // WhatsApp integration function
 const sendOrderToWhatsApp = (options: IntaSendPaymentButtonOptions, paymentResults?: Record<string, unknown>) => {
-  const orderData = localStorage.getItem('orderData');
+  const orderData = localStorage.getItem('pendingOrder');
   let orderDetails = '';
   
   if (orderData) {
     try {
       const parsed = JSON.parse(orderData);
+      
+      // Format all order details in a comprehensive, readable format
+      orderDetails = `
+📋 NEW ORDER RECEIVED - ${parsed.orderId}
+
+💰 PAYMENT DETAILS:
+• Amount: $${options.amount} ${options.currency}
+• Status: ${paymentResults ? '✅ PAID' : '🎭 MOCK PAYMENT'}
+${paymentResults ? `• Invoice ID: ${paymentResults.invoice_id}` : '• Mock Payment - No Invoice'}
+
+👤 CUSTOMER DETAILS:
+• Name: ${options.first_name} ${options.last_name}
+• Email: ${options.email}
+• Phone: ${options.phone || 'Not provided'}
+
+📝 SERVICE DETAILS:
+• Service: ${parsed.serviceTitle || parsed.serviceId}
+• Subject: ${parsed.subject || 'Not specified'}
+• Words: ${parsed.words || 'Not specified'}
+• Pages: ${parsed.pages || 'Not specified'}
+• Slides: ${parsed.slides || 'Not specified'}
+• Urgency: ${parsed.urgency || 'normal'}
+• Instructions: ${parsed.instructions || 'None provided'}
+
+📊 ORDER SUMMARY:
+• Total Price: $${parsed.totalPrice}
+• Order ID: ${parsed.orderId}
+• Timestamp: ${new Date(parsed.timestamp).toLocaleString()}
+
+${paymentResults ? '🎉 Payment completed successfully!' : '🎭 Mock payment - please process manually'}
+      `.trim();
+    } catch (error) {
+      console.error('Error parsing order data:', error);
       orderDetails = `
 📋 NEW ORDER RECEIVED
 
 💰 Payment: $${options.amount} ${options.currency}
 ✅ Status: ${paymentResults ? 'PAID' : 'MOCK PAYMENT'}
 
-📝 Order Details:
-${parsed}
+👤 Customer: ${options.first_name} ${options.last_name}
+📧 Email: ${options.email}
+
+${paymentResults ? `🔗 Invoice ID: ${paymentResults.invoice_id}` : '🎭 Mock Payment - No Invoice'}
+
+⚠️ Note: Full order details could not be parsed. Check localStorage for complete data.
+      `.trim();
+    }
+  } else {
+    orderDetails = `
+📋 NEW ORDER RECEIVED
+
+💰 Payment: $${options.amount} ${options.currency}
+✅ Status: ${paymentResults ? 'PAID' : 'MOCK PAYMENT'}
 
 👤 Customer: ${options.first_name} ${options.last_name}
 📧 Email: ${options.email}
 
 ${paymentResults ? `🔗 Invoice ID: ${paymentResults.invoice_id}` : '🎭 Mock Payment - No Invoice'}
-      `.trim();
-    } catch (error) {
-      console.error('Error parsing order data:', error);
-      orderDetails = `New order from ${options.first_name} ${options.last_name} - $${options.amount}`;
-    }
-  } else {
-    orderDetails = `New order from ${options.first_name} ${options.last_name} - $${options.amount}`;
+
+⚠️ Note: Order details not found in localStorage. Customer may have cleared browser data.
+    `.trim();
   }
 
   const whatsappUrl = `https://wa.me/${config.whatsapp.number}?text=${encodeURIComponent(orderDetails)}`;
@@ -51,6 +92,7 @@ export interface IntaSendPaymentButtonOptions {
   email?: string;
   first_name?: string;
   last_name?: string;
+  phone?: string;
 }
 
 export const useIntaSendPaymentButton = () => {
