@@ -228,14 +228,16 @@ export const useIntaSendPaymentButton = () => {
       try {
         // Create checkout link using IntaSend API
         const checkoutData = {
-          amount: options.amount,
-          currency: options.currency,
-          email: options.email,
-          phone: options.phone,
-          first_name: options.first_name,
-          last_name: options.last_name,
+          amount: parseFloat(options.amount),
+          currency: options.currency || 'USD',
+          email: options.email?.trim(),
+          phone: options.phone?.trim(),
+          first_name: options.first_name?.trim(),
+          last_name: options.last_name?.trim(),
           redirect_url: `${window.location.origin}/payment-success`,
-          description: `Service payment for ${options.first_name} ${options.last_name}`
+          description: `Service payment for ${options.first_name} ${options.last_name}`,
+          // Add reference for tracking
+          reference: `ORDER_${Date.now()}_${options.first_name?.toLowerCase() || 'customer'}`
         };
         
         console.log('💳 Creating checkout with data:', checkoutData);
@@ -255,14 +257,29 @@ export const useIntaSendPaymentButton = () => {
           
           if (result.url) {
             // Redirect to IntaSend payment page
+            console.log('🔄 Redirecting to IntaSend payment page:', result.url);
             window.location.href = result.url;
           } else {
-            console.error('❌ No checkout URL received');
-            alert('Payment initialization failed. Please try again.');
+            console.error('❌ No checkout URL received in response:', result);
+            alert('Payment initialization failed: No payment URL received. Please try again.');
           }
         } else {
-          console.error('❌ Failed to create checkout:', response.status);
-          alert('Payment initialization failed. Please try again.');
+          // Get detailed error information from API response
+          let errorMessage = 'Payment initialization failed. Please try again.';
+          try {
+            const errorData = await response.json();
+            console.error('❌ API Error Response:', errorData);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+          } catch (e) {
+            console.error('❌ Failed to parse error response:', e);
+          }
+          
+          console.error('❌ Failed to create checkout:', {
+            status: response.status,
+            statusText: response.statusText,
+            message: errorMessage
+          });
+          alert(`Payment initialization failed: ${errorMessage}`);
         }
       } catch (error) {
         console.error('❌ Error creating checkout:', error);
