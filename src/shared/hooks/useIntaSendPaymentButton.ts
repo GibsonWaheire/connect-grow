@@ -18,7 +18,7 @@ export interface IntaSendPaymentButtonOptions {
   api_ref?: string;
   comment?: string;
   country?: string;
-  method?: 'M-PESA' | 'CARD-PAYMENT';
+  // Removed method to allow ALL payment methods (CARD-PAYMENT, M-PESA, BANK-PAYMENT)
   card_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
   mobile_tarrif?: 'BUSINESS-PAYS' | 'CUSTOMER-PAYS';
   redirect_url?: string;
@@ -26,6 +26,7 @@ export interface IntaSendPaymentButtonOptions {
 
 export const useIntaSendPaymentButton = () => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [intaSendInstance, setIntaSendInstance] = useState<any>(null);
 
   useEffect(() => {
     // Wait for IntaSend SDK to load and initialize
@@ -33,13 +34,13 @@ export const useIntaSendPaymentButton = () => {
       if (typeof window !== 'undefined' && window.IntaSend) {
         try {
           // Initialize IntaSend exactly as per documentation
-          const intaSendInstance = new window.IntaSend({
+          const instance = new window.IntaSend({
             publicAPIKey: config.intasend.publicKey,
             live: config.intasend.environment === 'live'
           });
 
           // Set up event handlers
-          intaSendInstance
+          instance
             .on("COMPLETE", (results: any) => {
               console.log("Payment completed successfully:", results);
               if (results.invoice_id) {
@@ -54,6 +55,7 @@ export const useIntaSendPaymentButton = () => {
               console.log("Payment in progress:", results);
             });
 
+          setIntaSendInstance(instance);
           setIsInitialized(true);
           console.log('IntaSend initialized successfully');
         } catch (error) {
@@ -69,7 +71,7 @@ export const useIntaSendPaymentButton = () => {
   }, []);
 
   const createIntaSendButton = (options: IntaSendPaymentButtonOptions) => {
-    if (!isInitialized) {
+    if (!isInitialized || !intaSendInstance) {
       console.error('IntaSend not initialized yet');
       return;
     }
@@ -95,7 +97,7 @@ export const useIntaSendPaymentButton = () => {
       if (options.api_ref) button.setAttribute('data-api_ref', options.api_ref);
       if (options.comment) button.setAttribute('data-comment', options.comment);
       if (options.country) button.setAttribute('data-country', options.country);
-      if (options.method) button.setAttribute('data-method', options.method);
+      // NOTE: Removed data-method to allow ALL payment methods (CARD-PAYMENT, M-PESA, BANK-PAYMENT)
       if (options.card_tarrif) button.setAttribute('data-card_tarrif', options.card_tarrif);
       if (options.mobile_tarrif) button.setAttribute('data-mobile_tarrif', options.mobile_tarrif);
       if (options.redirect_url) button.setAttribute('data-redirect_url', options.redirect_url);
@@ -129,9 +131,29 @@ export const useIntaSendPaymentButton = () => {
       element.appendChild(button);
       
       console.log('IntaSend payment button created with options:', options);
+      console.log('Button element:', button);
+      console.log('Button class:', button.className);
+      console.log('Button data attributes:', {
+        amount: button.getAttribute('data-amount'),
+        currency: button.getAttribute('data-currency'),
+        email: button.getAttribute('data-email'),
+        phone_number: button.getAttribute('data-phone_number'),
+        first_name: button.getAttribute('data-first_name'),
+        last_name: button.getAttribute('data-last_name'),
+        country: button.getAttribute('data-country'),
+        card_tarrif: button.getAttribute('data-card_tarrif'),
+        mobile_tarrif: button.getAttribute('data-mobile_tarrif'),
+        redirect_url: button.getAttribute('data-redirect_url')
+      });
       
-      // IntaSend should automatically detect this button
-      // No additional initialization needed
+      // Force IntaSend to scan for new buttons
+      setTimeout(() => {
+        console.log('Triggering IntaSend button detection...');
+        // Try to manually trigger button detection
+        if (intaSendInstance && typeof intaSendInstance.scan === 'function') {
+          intaSendInstance.scan();
+        }
+      }, 100);
     }
   };
 

@@ -233,7 +233,7 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         api_ref: `ORDER_${Date.now()}_${selectedService}`,
         comment: orderSummary,
         country: 'US',
-        method: 'CARD-PAYMENT' as const,
+        // Removed method to allow ALL payment methods (CARD-PAYMENT, M-PESA, BANK-PAYMENT)
         card_tarrif: 'BUSINESS-PAYS' as const,
         mobile_tarrif: 'BUSINESS-PAYS' as const,
         redirect_url: `${window.location.origin}/payment-success`
