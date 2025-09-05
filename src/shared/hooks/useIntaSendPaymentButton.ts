@@ -12,13 +12,9 @@ export interface IntaSendPaymentButtonOptions {
   amount: number;
   currency: string;
   email?: string;
-  phone?: string;
   first_name?: string;
   last_name?: string;
-  api_ref?: string;
-  comment?: string;
-  country?: string;
-  // Removed optional fields that might cause 500 errors
+  // Only essential fields like the working test button
 }
 
 export const useIntaSendPaymentButton = () => {
@@ -70,23 +66,34 @@ export const useIntaSendPaymentButton = () => {
     // Clear existing content
     element.innerHTML = '';
     
-    // Create button exactly as per IntaSend documentation
+    // Create button exactly like the working test button
     const button = document.createElement('button');
     button.className = 'intaSendPayButton';
     button.textContent = 'Pay with IntaSend';
     
-    // Set ONLY the essential data attributes (like the working test button)
+    // Set ONLY the essential data attributes (exactly like the working test button)
     button.setAttribute('data-amount', String(options.amount));
     button.setAttribute('data-currency', options.currency);
     
-    // Only add optional attributes if they have valid values (like the working test button)
+    // Only add the same attributes as the working test button
     if (options.email && options.email.trim()) button.setAttribute('data-email', options.email.trim());
-    if (options.phone && options.phone.trim()) button.setAttribute('data-phone_number', options.phone.trim());
     if (options.first_name && options.first_name.trim()) button.setAttribute('data-first_name', options.first_name.trim());
     if (options.last_name && options.last_name.trim()) button.setAttribute('data-last_name', options.last_name.trim());
-    if (options.api_ref && options.api_ref.trim()) button.setAttribute('data-api_ref', options.api_ref.trim());
-    if (options.comment && options.comment.trim()) button.setAttribute('data-comment', options.comment.trim());
-    if (options.country && options.country.trim()) button.setAttribute('data-country', options.country.trim());
+    
+    // Remove any extra attributes that IntaSend might add
+    const removeExtraAttributes = () => {
+      const extraAttrs = [
+        'data-card_tarrif', 'data-mobile_tarrif', 'data-redirect_url', 
+        'data-callback_url', 'data-public_key', 'data-host', 
+        'data-is_mobile', 'data-is_ios', 'data-version', 'data-mode',
+        'data-phone_number', 'data-api_ref', 'data-comment', 'data-country'
+      ];
+      extraAttrs.forEach(attr => {
+        if (button.hasAttribute(attr)) {
+          button.removeAttribute(attr);
+        }
+      });
+    };
 
     // Add styling
     button.style.cssText = `
@@ -123,6 +130,9 @@ export const useIntaSendPaymentButton = () => {
 
     element.appendChild(button);
     
+    // Clean up any extra attributes that might have been added
+    removeExtraAttributes();
+    
     console.log('IntaSend payment button created:', {
       element: button,
       className: button.className,
@@ -130,15 +140,21 @@ export const useIntaSendPaymentButton = () => {
         amount: button.getAttribute('data-amount'),
         currency: button.getAttribute('data-currency'),
         email: button.getAttribute('data-email'),
-        phone_number: button.getAttribute('data-phone_number'),
         first_name: button.getAttribute('data-first_name'),
-        last_name: button.getAttribute('data-last_name'),
-        country: button.getAttribute('data-country'),
-        card_tarrif: button.getAttribute('data-card_tarrif'),
-        mobile_tarrif: button.getAttribute('data-mobile_tarrif'),
-        redirect_url: button.getAttribute('data-redirect_url')
+        last_name: button.getAttribute('data-last_name')
       }
     });
+    
+    // Set up mutation observer to remove extra attributes that IntaSend might add
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes') {
+          removeExtraAttributes();
+        }
+      });
+    });
+    
+    observer.observe(button, { attributes: true });
 
     // Initialize IntaSend AFTER the button is created
     setTimeout(() => {

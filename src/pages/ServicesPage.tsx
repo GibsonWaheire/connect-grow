@@ -222,18 +222,14 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
       
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-      // Initialize IntaSend Payment Button (simplified like the working test button)
+      // Initialize IntaSend Payment Button (exactly like the working test button)
       const paymentOptions = {
         amount: calculatePrice(),
         currency: 'USD',
         email: formData.email.trim(),
-        phone: formData.phone.trim(),
         first_name: formData.name.split(' ')[0] || formData.name,
-        last_name: formData.name.split(' ').slice(1).join(' ') || '',
-        // Simplified - only essential fields like the working test button
-        api_ref: `ORDER_${Date.now()}`,
-        comment: `Order for ${selectedService}`,
-        country: 'US'
+        last_name: formData.name.split(' ').slice(1).join(' ') || ''
+        // Only essential fields - no extra attributes that cause 500 errors
       };
 
       // Create the IntaSend payment button
