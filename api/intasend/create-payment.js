@@ -146,7 +146,9 @@ export default async function handler(req, res) {
           console.log(`✅ ${authMethod.name} authentication successful!`);
           break;
         } else {
-          const errorText = await response.text();
+          // Clone the response to read the body without consuming it
+          const responseClone = response.clone();
+          const errorText = await responseClone.text();
           console.log(`❌ ${authMethod.name} failed:`, response.status, errorText);
           lastError = { method: authMethod.name, status: response.status, error: errorText };
         }
