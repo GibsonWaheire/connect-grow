@@ -223,7 +223,7 @@ export const useIntaSendPaymentButton = () => {
     // Add click handler that creates a checkout link and redirects to IntaSend
     button.addEventListener('click', async (e) => {
       e.preventDefault();
-      console.log('🔍 Button clicked! Creating IntaSend checkout...');
+      console.log('🔍 Button clicked! Creating IntaSend checkout... (NEW VERSION)');
       
       try {
         // Create checkout link using IntaSend API
