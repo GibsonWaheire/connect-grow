@@ -162,6 +162,11 @@ export const useIntaSendPaymentButton = () => {
     console.log('🔍 SDK loaded:', isSDKLoaded);
     console.log('🔍 SDK error:', sdkLoadError);
     console.log('🔍 Window.IntaSend exists:', !!window.IntaSend);
+    console.log('🔍 IntaSend config:', {
+      publicKey: config.intasend.publicKey,
+      environment: config.intasend.environment,
+      hasPublicKey: !!config.intasend.publicKey
+    });
     
     const element = document.getElementById('payment-button-container');
     if (!element) {
@@ -187,6 +192,23 @@ export const useIntaSendPaymentButton = () => {
             <button onclick="window.location.reload()" class="mt-2 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
               Refresh Page
             </button>
+          </div>
+        </div>
+      `;
+      element.appendChild(errorDiv);
+      return;
+    }
+
+    if (!config.intasend.publicKey) {
+      console.error('❌ IntaSend public key not configured');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'p-4 bg-yellow-50 border border-yellow-200 rounded-lg';
+      errorDiv.innerHTML = `
+        <div class="flex items-center">
+          <div class="text-yellow-600 mr-2">⚠️</div>
+          <div>
+            <p class="text-sm text-yellow-800 font-medium">IntaSend not configured</p>
+            <p class="text-xs text-yellow-600">Public key is missing. Please check environment variables.</p>
           </div>
         </div>
       `;

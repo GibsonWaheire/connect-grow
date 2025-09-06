@@ -34,6 +34,18 @@ const IntaSendTest = () => {
         )}
       </div>
       
+      <div className="mb-4 p-3 bg-blue-50 rounded">
+        <h3 className="font-semibold text-blue-800 mb-2">Setup Required:</h3>
+        <p className="text-sm text-blue-700">
+          Create a <code>.env</code> file in your project root with:
+        </p>
+        <pre className="text-xs mt-2 bg-blue-100 p-2 rounded overflow-x-auto">
+{`VITE_INTASEND_PUBLIC_KEY=your_key_here
+VITE_INTASEND_SECRET_KEY=your_secret_here
+VITE_INTASEND_ENVIRONMENT=sandbox`}
+        </pre>
+      </div>
+      
       <div id="payment-button-container" className="min-h-[60px] border-2 border-dashed border-gray-300 rounded p-4">
         <p className="text-gray-500 text-sm text-center">
           Payment button will appear here...
