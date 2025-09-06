@@ -158,17 +158,23 @@ export const useIntaSendPaymentButton = () => {
   }, []);
 
   const createIntaSendButton = (options: IntaSendPaymentButtonOptions) => {
+    console.log('🔍 createIntaSendButton called with options:', options);
+    console.log('🔍 SDK loaded:', isSDKLoaded);
+    console.log('🔍 SDK error:', sdkLoadError);
+    console.log('🔍 Window.IntaSend exists:', !!window.IntaSend);
+    
     const element = document.getElementById('payment-button-container');
     if (!element) {
-      console.error('Payment button container not found');
+      console.error('❌ Payment button container not found');
       return;
     }
+    console.log('✅ Payment button container found');
 
     // Clear existing content
     element.innerHTML = '';
 
     if (!isSDKLoaded) {
-      console.error('IntaSend SDK not loaded yet');
+      console.error('❌ IntaSend SDK not loaded yet');
       // Show a message to the user
       const errorDiv = document.createElement('div');
       errorDiv.className = 'p-4 bg-red-50 border border-red-200 rounded-lg';
@@ -193,6 +199,8 @@ export const useIntaSendPaymentButton = () => {
     button.className = 'intaSendPayButton';
     button.textContent = 'Pay with IntaSend';
 
+    console.log('🔍 Creating button with class:', button.className);
+
     // Set IntaSend required attributes
     button.setAttribute('data-amount', String(options.amount));
     button.setAttribute('data-currency', options.currency);
@@ -205,6 +213,14 @@ export const useIntaSendPaymentButton = () => {
     button.setAttribute('data-callback_url', `${window.location.origin}/payment-success`);
     button.setAttribute('data-host', window.location.origin);
     button.setAttribute('data-environment', config.intasend.environment);
+
+    console.log('🔍 Button attributes set:', {
+      amount: button.getAttribute('data-amount'),
+      currency: button.getAttribute('data-currency'),
+      public_key: button.getAttribute('data-public_key'),
+      email: button.getAttribute('data-email'),
+      environment: button.getAttribute('data-environment')
+    });
 
     // Add styling
     button.style.cssText = `
