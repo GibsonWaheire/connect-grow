@@ -237,7 +237,7 @@ Urgency: ${formData.urgency}
 Instructions: ${formData.instructions || 'None provided'}
 Contact: ${formData.name} (${formData.email}, ${formData.phone})
       `.trim();
-
+      
       // Store order data in localStorage for potential use after payment
       const orderData = {
         ...formData,
@@ -249,8 +249,8 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
       };
       
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
-
-      // Initialize IntaSend Payment Button (exactly like the working test button)
+      
+      // Initialize IntaSend Payment Button
       const paymentOptions = {
         amount: calculatePrice(),
         currency: 'USD',
@@ -258,7 +258,6 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
         first_name: formData.name.split(' ')[0] || formData.name,
         last_name: formData.name.split(' ').slice(1).join(' ') || '',
         phone: formData.phone.trim()
-        // Only essential fields - no extra attributes that cause 500 errors
       };
 
       // Create the IntaSend payment button
@@ -617,14 +616,14 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                 </Button>
                 
                   <div className="w-full">
-                    <Button
-                      onClick={handlePayment}
+                <Button
+                  onClick={handlePayment}
                       disabled={!formData.name || isProcessingPayment || !isInitialized}
-                      className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
-                    >
-                      <CreditCard className="w-4 h-4 mr-2" />
+                  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
                       {!isInitialized ? 'Loading Payment...' : isProcessingPayment ? 'Processing...' : 'Pay Now'}
-                    </Button>
+                </Button>
                     
                     {/* IntaSend Payment Button Container */}
                     <div id="payment-button-container" className="mt-2">

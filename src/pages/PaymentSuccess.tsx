@@ -31,46 +31,19 @@ export const PaymentSuccess = () => {
       
       if (invoiceId) {
         try {
-          // Check if it's a mock payment (starts with MOCK_)
-          const isMockPayment = invoiceId.startsWith('MOCK_');
+          // For real IntaSend payments, assume success if we have an invoice ID
+          console.log('✅ Processing IntaSend payment success');
+          setPaymentStatus('success');
           
-          if (isMockPayment) {
-            // Handle mock payment - always successful
-            console.log('🎭 Processing mock payment success');
-            setPaymentStatus('success');
-            
-            // Get stored order data
-            const storedOrder = localStorage.getItem('pendingOrder');
-            if (storedOrder) {
-              setOrderData(JSON.parse(storedOrder));
-              localStorage.removeItem('pendingOrder'); // Clean up
-            }
-          } else {
-            // For real IntaSend payments, assume success if we have an invoice ID
-            // (since we're not using backend verification anymore)
-            console.log('✅ Processing IntaSend payment success');
-            setPaymentStatus('success');
-            
-            // Get stored order data
-            const storedOrder = localStorage.getItem('pendingOrder');
-            if (storedOrder) {
-              setOrderData(JSON.parse(storedOrder));
-              localStorage.removeItem('pendingOrder'); // Clean up
-            }
+          // Get stored order data
+          const storedOrder = localStorage.getItem('pendingOrder');
+          if (storedOrder) {
+            setOrderData(JSON.parse(storedOrder));
+            localStorage.removeItem('pendingOrder'); // Clean up
           }
         } catch (error) {
           console.error('Payment verification error:', error);
-          // Even if there's an error, show success for mock payments
-          if (invoiceId.startsWith('MOCK_')) {
-            setPaymentStatus('success');
-            const storedOrder = localStorage.getItem('pendingOrder');
-            if (storedOrder) {
-              setOrderData(JSON.parse(storedOrder));
-              localStorage.removeItem('pendingOrder');
-            }
-          } else {
-            setPaymentStatus('failed');
-          }
+          setPaymentStatus('failed');
         }
       } else {
         setPaymentStatus('failed');
