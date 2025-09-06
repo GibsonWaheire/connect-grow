@@ -2,6 +2,14 @@
 import { useEffect, useState } from 'react';
 import { config } from '@/config/environment';
 
+// TypeScript declarations for IntaSend SDK
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    IntaSend: any;
+  }
+}
+
 export interface IntaSendPaymentButtonOptions {
   amount: number;
   currency: string;
@@ -14,6 +22,7 @@ export interface IntaSendPaymentButtonOptions {
 export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [sdkLoadError, setSdkLoadError] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [intaSendInstance, setIntaSendInstance] = useState<any>(null);
 
   useEffect(() => {
