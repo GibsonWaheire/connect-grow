@@ -13,6 +13,7 @@ export interface IntaSendPaymentButtonOptions {
 
 export const useIntaSendPaymentButton = () => {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [sdkLoadError, setSdkLoadError] = useState(false);
 
   useEffect(() => {
     // Check if IntaSend is already loaded
@@ -22,26 +23,42 @@ export const useIntaSendPaymentButton = () => {
       return;
     }
 
-    // Load IntaSend SDK script
-    const script = document.createElement('script');
-    script.src = 'https://websdk-sandbox-v2.intasend.com/intasend-inline.js';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.onload = () => {
-      console.log('✅ IntaSend SDK loaded');
-      setIsSDKLoaded(true);
+    // Try multiple SDK URLs for better reliability
+    const sdkUrls = [
+      'https://unpkg.com/intasend-inlinejs-sdk@latest/build/intasend-inline.js',
+      'https://websdk-sandbox-v2.intasend.com/intasend-inline.js',
+      'https://cdn.jsdelivr.net/npm/intasend-inlinejs-sdk@latest/build/intasend-inline.js'
+    ];
+
+    let currentUrlIndex = 0;
+
+    const tryLoadSDK = () => {
+      if (currentUrlIndex >= sdkUrls.length) {
+        console.error('❌ All IntaSend SDK URLs failed to load');
+        setSdkLoadError(true);
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = sdkUrls[currentUrlIndex];
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      
+      script.onload = () => {
+        console.log(`✅ IntaSend SDK loaded from: ${sdkUrls[currentUrlIndex]}`);
+        setIsSDKLoaded(true);
+      };
+      
+      script.onerror = () => {
+        console.warn(`⚠️ Failed to load IntaSend SDK from: ${sdkUrls[currentUrlIndex]}`);
+        currentUrlIndex++;
+        setTimeout(tryLoadSDK, 1000); // Try next URL after 1 second
+      };
+      
+      document.head.appendChild(script);
     };
-    script.onerror = () => {
-      console.error('❌ Failed to load IntaSend SDK');
-      // Try alternative loading method
-      setTimeout(() => {
-        if (window.IntaSend) {
-          console.log('✅ IntaSend SDK loaded via alternative method');
-          setIsSDKLoaded(true);
-        }
-      }, 1000);
-    };
-    document.head.appendChild(script);
+
+    tryLoadSDK();
 
     return () => {
       // Cleanup script on unmount
@@ -66,13 +83,16 @@ export const useIntaSendPaymentButton = () => {
       console.error('IntaSend SDK not loaded yet');
       // Show a message to the user
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'p-4 bg-yellow-50 border border-yellow-200 rounded-lg';
+      errorDiv.className = 'p-4 bg-red-50 border border-red-200 rounded-lg';
       errorDiv.innerHTML = `
         <div class="flex items-center">
-          <div class="text-yellow-600 mr-2">⚠️</div>
+          <div class="text-red-600 mr-2">❌</div>
           <div>
-            <p class="text-sm text-yellow-800 font-medium">Payment system loading...</p>
-            <p class="text-xs text-yellow-600">Please wait a moment and try again.</p>
+            <p class="text-sm text-red-800 font-medium">Payment system unavailable</p>
+            <p class="text-xs text-red-600">Please refresh the page or try again later.</p>
+            <button onclick="window.location.reload()" class="mt-2 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
+              Refresh Page
+            </button>
           </div>
         </div>
       `;
@@ -166,6 +186,7 @@ export const useIntaSendPaymentButton = () => {
   return {
     createIntaSendButton,
     isSDKLoaded,
-    isInitialized: isSDKLoaded // Add alias for compatibility
+    isInitialized: isSDKLoaded, // Add alias for compatibility
+    sdkLoadError
   };
 };

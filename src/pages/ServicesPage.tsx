@@ -84,7 +84,7 @@ export const ServicesPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { sendMessage } = useWhatsApp();
-  const { isInitialized, createIntaSendButton } = useIntaSendPaymentButton();
+  const { isInitialized, createIntaSendButton, sdkLoadError } = useIntaSendPaymentButton();
 
   const WORDS_PER_PAGE = 275;
 
@@ -618,11 +618,22 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   <div className="w-full">
                 <Button
                   onClick={handlePayment}
-                      disabled={!formData.name || isProcessingPayment || !isInitialized}
-                  className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base w-full"
+                      disabled={!formData.name || isProcessingPayment || !isInitialized || sdkLoadError}
+                  className={`px-6 py-3 text-base w-full ${
+                    sdkLoadError 
+                      ? 'bg-red-600 hover:bg-red-700' 
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
                 >
                   <CreditCard className="w-4 h-4 mr-2" />
-                      {!isInitialized ? 'Loading Payment...' : isProcessingPayment ? 'Processing...' : 'Pay Now'}
+                      {sdkLoadError 
+                        ? 'Payment Unavailable' 
+                        : !isInitialized 
+                          ? 'Loading Payment...' 
+                          : isProcessingPayment 
+                            ? 'Processing...' 
+                            : 'Pay Now'
+                      }
                 </Button>
                     
                     {/* IntaSend Payment Button Container */}
@@ -636,6 +647,11 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
               <div className="mt-4 text-xs text-muted-foreground">
                 <p>• WhatsApp: Send order details and pay later</p>
                 <p>• Pay Now: Secure payment with Intasend</p>
+                {sdkLoadError && (
+                  <p className="text-red-600 mt-2">
+                    ⚠️ Payment system temporarily unavailable. Please use WhatsApp to place your order.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -747,11 +763,20 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
                   </Button>
                   <Button
                     onClick={handlePayment}
-                    disabled={!formData.name || isProcessingPayment}
-                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm"
+                    disabled={!formData.name || isProcessingPayment || sdkLoadError}
+                    className={`px-4 py-2 text-sm ${
+                      sdkLoadError 
+                        ? 'bg-red-600 hover:bg-red-700' 
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
                   >
                     <CreditCard className="w-3 h-3 mr-1" />
-                    {isProcessingPayment ? 'Processing...' : 'Pay'}
+                    {sdkLoadError 
+                      ? 'Unavailable' 
+                      : isProcessingPayment 
+                        ? 'Processing...' 
+                        : 'Pay'
+                    }
                   </Button>
                 </div>
               ) : (
