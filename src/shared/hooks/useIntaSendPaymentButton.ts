@@ -23,11 +23,29 @@ export const useIntaSendPaymentButton = () => {
       return;
     }
 
+    // Check if script is already in HTML head
+    const existingScript = document.querySelector('script[src*="intasend-inline.js"]');
+    if (existingScript) {
+      console.log('✅ IntaSend SDK script found in HTML head, waiting for load...');
+      // Wait for the script to load
+      const checkInterval = setInterval(() => {
+        if (window.IntaSend) {
+          console.log('✅ IntaSend SDK loaded from HTML head');
+          setIsSDKLoaded(true);
+          clearInterval(checkInterval);
+        }
+      }, 100);
+      
+      // Clear interval after 10 seconds
+      setTimeout(() => clearInterval(checkInterval), 10000);
+      return;
+    }
+
     // Try multiple SDK URLs for better reliability
     const sdkUrls = [
+      'https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js',
       'https://unpkg.com/intasend-inlinejs-sdk@latest/build/intasend-inline.js',
-      'https://websdk-sandbox-v2.intasend.com/intasend-inline.js',
-      'https://cdn.jsdelivr.net/npm/intasend-inlinejs-sdk@latest/build/intasend-inline.js'
+      'https://cdn.jsdelivr.net/npm/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js'
     ];
 
     let currentUrlIndex = 0;
