@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
 import { useIntaSendPaymentButton } from '@/shared/hooks/useIntaSendPaymentButton';
 import { AlertCircle, ChevronDown, ChevronUp, CheckCircle, CreditCard, MessageCircle } from 'lucide-react';
+import { parsePhoneNumber, isValidPhoneNumber, getCountries, getCountryCallingCode, CountryCode } from 'libphonenumber-js';
+import validator from 'validator';
 
 const services = [
   {
@@ -63,6 +65,14 @@ const steps = [
   { id: 'review', title: 'Review & Submit', progress: 100 }
 ];
 
+// Generate countries list dynamically using libphonenumber-js
+const countries = getCountries().map(countryCode => ({
+  code: countryCode,
+  name: new Intl.DisplayNames(['en'], { type: 'region' }).of(countryCode) || countryCode,
+  dialCode: `+${getCountryCallingCode(countryCode)}`,
+  format: `+${getCountryCallingCode(countryCode)} XXX XXX XXX` // Generic format, will be improved
+}));
+
 export const ServicesPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedService, setSelectedService] = useState('');
@@ -76,7 +86,8 @@ export const ServicesPage = () => {
     instructions: '',
     name: '',
     email: '',
-    phone: '+971'
+    phone: '',
+    country: 'AE'
   });
   const [emailSuggestions, setEmailSuggestions] = useState<string[]>([]);
   const [showEmailSuggestions, setShowEmailSuggestions] = useState(false);
@@ -88,11 +99,36 @@ export const ServicesPage = () => {
 
   const WORDS_PER_PAGE = 275;
 
-  const calculatePages = () => {
+  const calculatePages = useCallback(() => {
     return Math.ceil(parseInt(formData.words) / WORDS_PER_PAGE);
-  };
+  }, [formData.words]);
 
-  const calculatePrice = () => {
+  const getSelectedCountry = useCallback(() => {
+    return countries.find(c => c.code === formData.country) || countries[0];
+  }, [formData.country]);
+
+  const formatPhoneNumber = useCallback((phone: string, countryCode: string) => {
+    try {
+      const phoneNumber = parsePhoneNumber(phone, countryCode as CountryCode);
+      return phoneNumber ? phoneNumber.formatInternational() : phone;
+    } catch (error) {
+      // Fallback to simple formatting if parsing fails
+      const country = countries.find(c => c.code === countryCode) || countries[0];
+      return `${country.dialCode} ${phone.replace(/[^\d]/g, '')}`;
+    }
+  }, []);
+
+  const validatePhoneNumber = useCallback((phone: string, countryCode: string) => {
+    try {
+      return isValidPhoneNumber(phone, countryCode as CountryCode);
+    } catch (error) {
+      // Fallback to basic length validation if parsing fails
+      const cleanPhone = phone.replace(/[^\d]/g, '');
+      return cleanPhone.length >= 7 && cleanPhone.length <= 15;
+    }
+  }, []);
+
+  const calculatePrice = useCallback(() => {
     const service = services.find(s => s.id === selectedService);
     if (!service) return 0;
     
@@ -109,9 +145,9 @@ export const ServicesPage = () => {
     if (formData.urgency === 'express') basePrice *= 2;
     
     return basePrice;
-  };
+  }, [selectedService, formData.slides, formData.urgency, calculatePages]);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData(prev => ({ ...prev, email: value }));
     
@@ -119,7 +155,14 @@ export const ServicesPage = () => {
     if (value.includes('@')) {
       const [localPart, domain] = value.split('@');
       if (localPart && domain) {
-        const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com'];
+        // Comprehensive list of popular email domains
+        const commonDomains = [
+          'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com',
+          'protonmail.com', 'zoho.com', 'yandex.com', 'mail.com', 'gmx.com', 'web.de',
+          'live.com', 'msn.com', 'comcast.net', 'verizon.net', 'att.net', 'sbcglobal.net',
+          'bellsouth.net', 'cox.net', 'charter.net', 'earthlink.net', 'juno.com',
+          'netzero.net', 'rocketmail.com', 'ymail.com', 'inbox.com', 'fastmail.com'
+        ];
         const suggestions = commonDomains
           .filter(d => d.startsWith(domain.toLowerCase()))
           .map(d => `${localPart}@${d}`);
@@ -130,14 +173,15 @@ export const ServicesPage = () => {
       setEmailSuggestions([]);
       setShowEmailSuggestions(false);
     }
-  };
+  }, []);
 
-  const selectEmailSuggestion = (email: string) => {
+  const selectEmailSuggestion = useCallback((email: string) => {
     setFormData(prev => ({ ...prev, email }));
     setShowEmailSuggestions(false);
-  };
+  }, []);
 
-  const validateCurrentStep = () => {
+  // Pure validation function that doesn't set state
+  const getStepValidationErrors = useCallback(() => {
     const errors: string[] = [];
     
     switch (currentStep) {
@@ -164,28 +208,31 @@ export const ServicesPage = () => {
         }
         if (!formData.email.trim()) {
           errors.push('Please enter your email address');
-        } else {
-          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          if (!emailRegex.test(formData.email.trim())) {
-            errors.push('Please enter a valid email address');
-          }
+        } else if (!validator.isEmail(formData.email.trim())) {
+          errors.push('Please enter a valid email address (e.g., user@example.com)');
         }
         if (!formData.phone.trim()) {
           errors.push('Please enter your phone number');
         } else {
-          const cleanPhone = formData.phone.replace(/[^\d+]/g, '');
-          if (cleanPhone.length < 10) {
-            errors.push('Please enter a valid phone number with at least 10 digits');
+          if (!validatePhoneNumber(formData.phone, formData.country)) {
+            const country = getSelectedCountry();
+            errors.push(`Please enter a valid ${country.name} phone number`);
           }
         }
         break;
     }
     
+    return errors;
+  }, [currentStep, selectedService, formData, validatePhoneNumber, getSelectedCountry]);
+
+  // State-setting validation function
+  const validateCurrentStep = useCallback(() => {
+    const errors = getStepValidationErrors();
     setValidationErrors(errors);
     return errors.length === 0;
-  };
+  }, [getStepValidationErrors]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (validateCurrentStep()) {
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
@@ -194,23 +241,23 @@ export const ServicesPage = () => {
     } else {
       setShowAlert(true);
     }
-  };
+  }, [currentStep, validateCurrentStep]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
       setShowAlert(false);
     }
-  };
+  }, [currentStep]);
 
-  const handleServiceSelect = (serviceId: string) => {
+  const handleServiceSelect = useCallback((serviceId: string) => {
     setSelectedService(serviceId);
     const service = services.find(s => s.id === serviceId);
     setFormData(prev => ({ ...prev, service: service?.title || '' }));
     setExpandedService(null);
-  };
+  }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const service = services.find(s => s.id === selectedService);
     
     const message = `Hi Peter! I'd like to place an order:
@@ -226,9 +273,9 @@ Instructions: ${formData.instructions}
 Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
 
     sendMessage(message);
-  };
+  }, [selectedService, formData, calculatePages, calculatePrice, sendMessage]);
 
-  const handlePayment = async () => {
+  const handlePayment = useCallback(async () => {
     try {
       if (!isInitialized) {
         alert('Payment system is still loading. Please wait a moment and try again.');
@@ -242,24 +289,23 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
       const email = formData.email.trim().toLowerCase();
       const phone = formData.phone.trim();
       
-      // Enhanced email validation
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address');
+      // Strict email validation using validator library
+      if (!validator.isEmail(email)) {
+        alert('Please enter a valid email address (e.g., user@example.com)');
         setIsProcessingPayment(false);
         return;
       }
       
-      // Enhanced phone validation and formatting
-      const cleanPhone = phone.replace(/[^\d+]/g, ''); // Remove all non-digit characters except +
-      if (!cleanPhone || cleanPhone.length < 10) {
-        alert('Please enter a valid phone number with at least 10 digits');
+      // Country-specific phone validation
+      if (!validatePhoneNumber(phone, formData.country)) {
+        const country = getSelectedCountry();
+        alert(`Please enter a valid ${country.name} phone number. Format: ${country.format}`);
         setIsProcessingPayment(false);
         return;
       }
       
-      // Format phone number for IntaSend (ensure it starts with +)
-      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+${cleanPhone}`;
+      // Format phone number for IntaSend
+      const formattedPhone = formatPhoneNumber(phone, formData.country);
       
       // Enhanced name splitting
       const nameParts = formData.name.trim().split(/\s+/);
@@ -309,7 +355,7 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
       setIsProcessingPayment(false);
       alert('Failed to initialize payment. Please try again.');
     }
-  };
+  }, [isInitialized, formData, selectedService, calculatePrice, calculatePages, formatPhoneNumber, validatePhoneNumber, getSelectedCountry, createIntaSendButton]);
 
   const renderServiceCards = () => (
     <div className="space-y-4">
@@ -584,14 +630,40 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                 )}
               </div>
               <div>
+                <label className="text-sm font-medium mb-2 block">Country *</label>
+                <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value, phone: '' }))}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select your country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        {country.name} ({country.dialCode})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <label className="text-sm font-medium mb-2 block">Phone Number *</label>
-                <Input
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="+971 (50) 123-4567"
-                  className="h-12"
-                  required
-                />
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center px-3 py-3 border border-input bg-background rounded-md text-sm font-medium text-muted-foreground min-w-[80px]">
+                    {getSelectedCountry().dialCode}
+                  </div>
+                  <Input
+                    value={formData.phone}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^\d]/g, '');
+                      setFormData(prev => ({ ...prev, phone: value }));
+                    }}
+                    placeholder={getSelectedCountry().format.replace(/X/g, '0')}
+                    className="h-12 flex-1"
+                    required
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Format: {getSelectedCountry().format}
+                </p>
               </div>
               <div className="text-sm text-muted-foreground">
                 * All fields are required for payment processing.
@@ -642,51 +714,17 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
             
             <div className="text-center">
               <p className="text-sm text-muted-foreground mb-6">
-                Choose how you'd like to proceed with your order
+                Review your order details above. Use the buttons below to proceed.
               </p>
               
-              <div className="grid md:grid-cols-2 gap-4">
-                <Button
-                  onClick={handleSubmit}
-                  className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full"
-                  disabled={!formData.name}
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Order via WhatsApp
-                </Button>
-                
-                  <div className="w-full">
-                <Button
-                  onClick={handlePayment}
-                      disabled={!formData.name || isProcessingPayment || !isInitialized || sdkLoadError}
-                  className={`px-6 py-3 text-base w-full ${
-                    sdkLoadError 
-                      ? 'bg-red-600 hover:bg-red-700' 
-                      : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                      {sdkLoadError 
-                        ? 'Payment Unavailable' 
-                        : !isInitialized 
-                          ? 'Loading Payment...' 
-                          : isProcessingPayment 
-                            ? 'Processing...' 
-                            : 'Pay Now'
-                      }
-                </Button>
-                    
-                    {/* IntaSend Payment Button Container */}
-                    <div id="payment-button-container" className="mt-2">
-                      {/* Static IntaSend button will be inserted here */}
-                    </div>
-                    
-                  </div>
+              {/* IntaSend Payment Button Container */}
+              <div id="payment-button-container" className="mt-6">
+                {/* IntaSend button will be inserted here when payment is initiated */}
               </div>
               
               <div className="mt-4 text-xs text-muted-foreground">
                 <p>• WhatsApp: Send order details and pay later</p>
-                <p>• Pay Now: Secure payment with Intasend</p>
+                <p>• Pay with IntaSend: Secure payment processing</p>
                 {sdkLoadError && (
                   <p className="text-red-600 mt-2">
                     ⚠️ Payment system temporarily unavailable. Please use WhatsApp to place your order.
@@ -799,11 +837,11 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                     className="bg-green-600 hover:bg-green-700 px-4 py-2 text-sm"
                   >
                     <MessageCircle className="w-3 h-3 mr-1" />
-                    WhatsApp
+                    Order via WhatsApp
                   </Button>
                   <Button
                     onClick={handlePayment}
-                    disabled={!formData.name || isProcessingPayment || sdkLoadError}
+                    disabled={!formData.name || isProcessingPayment || !isInitialized || sdkLoadError}
                     className={`px-4 py-2 text-sm ${
                       sdkLoadError 
                         ? 'bg-red-600 hover:bg-red-700' 
@@ -812,20 +850,22 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                   >
                     <CreditCard className="w-3 h-3 mr-1" />
                     {sdkLoadError 
-                      ? 'Unavailable' 
-                      : isProcessingPayment 
-                        ? 'Processing...' 
-                        : 'Pay'
+                      ? 'Payment Unavailable' 
+                      : !isInitialized 
+                        ? 'Loading Payment...' 
+                        : isProcessingPayment 
+                          ? 'Processing...' 
+                          : 'Pay with IntaSend'
                     }
                   </Button>
                 </div>
               ) : (
                 <Button
                   onClick={handleNext}
-                  disabled={currentStep === 0 && !selectedService}
+                  disabled={getStepValidationErrors().length > 0}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  Continue
+                  Continue to Next Step
                 </Button>
               )}
             </div>
