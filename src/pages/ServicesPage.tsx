@@ -94,6 +94,8 @@ export const ServicesPage = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showAlert, setShowAlert] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
+  const [isValidating, setIsValidating] = useState(false);
   const { sendMessage } = useWhatsApp();
   const { isInitialized, createIntaSendButton, sdkLoadError } = useIntaSendPaymentButton();
 
@@ -180,6 +182,75 @@ export const ServicesPage = () => {
     setShowEmailSuggestions(false);
   }, []);
 
+  // Real-time field validation
+  const validateField = useCallback((fieldName: string, value: string) => {
+    const errors = { ...fieldErrors };
+    
+    switch (fieldName) {
+      case 'name':
+        if (!value.trim()) {
+          errors.name = 'Name is required';
+        } else if (value.trim().split(/\s+/).length < 2) {
+          errors.name = 'Please enter your first and last name';
+        } else {
+          delete errors.name;
+        }
+        break;
+      case 'email':
+        if (!value.trim()) {
+          errors.email = 'Email is required';
+        } else if (!validator.isEmail(value.trim())) {
+          errors.email = 'Please enter a valid email address';
+        } else {
+          delete errors.email;
+        }
+        break;
+      case 'phone':
+        if (!value.trim()) {
+          errors.phone = 'Phone number is required';
+        } else if (!validatePhoneNumber(value, formData.country)) {
+          const country = getSelectedCountry();
+          errors.phone = `Please enter a valid ${country.name} phone number`;
+        } else {
+          delete errors.phone;
+        }
+        break;
+      case 'subject':
+        if (!value.trim()) {
+          errors.subject = 'Subject is required';
+        } else {
+          delete errors.subject;
+        }
+        break;
+      case 'words':
+        if (selectedService !== 'presentations' && parseInt(value) < 275) {
+          errors.words = 'Minimum 275 words required';
+        } else {
+          delete errors.words;
+        }
+        break;
+      case 'slides':
+        if (selectedService === 'presentations' && parseInt(value) < 1) {
+          errors.slides = 'At least 1 slide required';
+        } else {
+          delete errors.slides;
+        }
+        break;
+    }
+    
+    setFieldErrors(errors);
+  }, [fieldErrors, formData.country, validatePhoneNumber, getSelectedCountry, selectedService]);
+
+  // Handle field changes with real-time validation
+  const handleFieldChange = useCallback((fieldName: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    
+    // Debounced validation for better UX
+    setTimeout(() => {
+      validateField(fieldName, value);
+    }, 300);
+  }, [validateField]);
+
   // Pure validation function that doesn't set state
   const getStepValidationErrors = useCallback(() => {
     const errors: string[] = [];
@@ -233,14 +304,18 @@ export const ServicesPage = () => {
   }, [getStepValidationErrors]);
 
   const handleNext = useCallback(() => {
-    if (validateCurrentStep()) {
-      if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
-        setShowAlert(false);
+    setIsValidating(true);
+    setTimeout(() => {
+      if (validateCurrentStep()) {
+        if (currentStep < steps.length - 1) {
+          setCurrentStep(currentStep + 1);
+          setShowAlert(false);
+        }
+      } else {
+        setShowAlert(true);
       }
-    } else {
-      setShowAlert(true);
-    }
+      setIsValidating(false);
+    }, 500);
   }, [currentStep, validateCurrentStep]);
 
   const handleBack = useCallback(() => {
@@ -466,9 +541,9 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                 <label className="text-sm font-medium mb-2 block">Subject *</label>
                 <Select
                   value={formData.subject}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, subject: value }))}
+                  onValueChange={(value) => handleFieldChange('subject', value)}
                 >
-                  <SelectTrigger className="h-12">
+                  <SelectTrigger className={`h-12 ${fieldErrors.subject ? 'border-red-500' : ''}`}>
                     <SelectValue placeholder="Select a subject" />
                   </SelectTrigger>
                   <SelectContent>
@@ -526,6 +601,9 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                     <SelectItem value="Other">Other (specify in instructions)</SelectItem>
                   </SelectContent>
                 </Select>
+                {fieldErrors.subject && (
+                  <p className="text-xs text-red-500 mt-1">{fieldErrors.subject}</p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">
@@ -538,9 +616,9 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                   onChange={(e) => {
                     const value = e.target.value;
                     if (selectedService === 'presentations') {
-                      setFormData(prev => ({ ...prev, slides: value === '' ? '' : value }));
+                      handleFieldChange('slides', value === '' ? '' : value);
                     } else {
-                      setFormData(prev => ({ ...prev, words: value === '' ? '' : value }));
+                      handleFieldChange('words', value === '' ? '' : value);
                     }
                   }}
                   onBlur={(e) => {
@@ -555,8 +633,11 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                       }
                     }
                   }}
-                  className="h-12"
+                  className={`h-12 ${fieldErrors.words || fieldErrors.slides ? 'border-red-500' : ''}`}
                 />
+                {(fieldErrors.words || fieldErrors.slides) && (
+                  <p className="text-xs text-red-500 mt-1">{fieldErrors.words || fieldErrors.slides}</p>
+                )}
                 {selectedService !== 'presentations' && (
                   <p className="text-xs text-muted-foreground mt-1">
                     {calculatePages()} page(s) at 275 words per page
@@ -602,11 +683,14 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                 <label className="text-sm font-medium mb-2 block">Full Name *</label>
                 <Input
                   value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
                   placeholder="Enter your full name (e.g., John Smith)"
-                  className="h-12"
+                  className={`h-12 ${fieldErrors.name ? 'border-red-500' : ''}`}
                   required
                 />
+                {fieldErrors.name && (
+                  <p className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>
+                )}
                 <p className="text-xs text-muted-foreground mt-1">As it appears on your ID or payment card</p>
               </div>
               <div className="relative">
@@ -616,9 +700,12 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                   value={formData.email}
                   onChange={handleEmailChange}
                   placeholder="your.email@example.com"
-                  className="h-12"
+                  className={`h-12 ${fieldErrors.email ? 'border-red-500' : ''}`}
                   required
                 />
+                {fieldErrors.email && (
+                  <p className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+                )}
                 <p className="text-xs text-muted-foreground mt-1">We'll send order updates and payment receipts here</p>
                 {showEmailSuggestions && emailSuggestions.length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
@@ -660,13 +747,16 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                     value={formData.phone}
                     onChange={(e) => {
                       const value = e.target.value.replace(/[^\d]/g, '');
-                      setFormData(prev => ({ ...prev, phone: value }));
+                      handleFieldChange('phone', value);
                     }}
                     placeholder="Enter your phone number"
-                    className="h-12 flex-1"
+                    className={`h-12 flex-1 ${fieldErrors.phone ? 'border-red-500' : ''}`}
                     required
                   />
                 </div>
+                {fieldErrors.phone && (
+                  <p className="text-xs text-red-500 mt-1">{fieldErrors.phone}</p>
+                )}
                 <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-xs text-blue-800 font-medium mb-1">📱 Phone Number Format:</p>
                   <p className="text-xs text-blue-700">
@@ -837,9 +927,17 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
               {currentStep < steps.length - 1 && (
                 <Button
                   onClick={handleNext}
+                  disabled={isValidating}
                   className="px-6 py-2 text-base"
                 >
-                  Next
+                  {isValidating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Validating...
+                    </>
+                  ) : (
+                    'Next'
+                  )}
                 </Button>
               )}
             </div>
@@ -890,10 +988,17 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
               ) : (
                 <Button
                   onClick={handleNext}
-                  disabled={getStepValidationErrors().length > 0}
+                  disabled={getStepValidationErrors().length > 0 || isValidating}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  Continue to Next Step
+                  {isValidating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Validating...
+                    </>
+                  ) : (
+                    'Continue to Next Step'
+                  )}
                 </Button>
               )}
             </div>

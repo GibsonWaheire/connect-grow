@@ -43,7 +43,7 @@ Best regards,
               variant="hero" 
               size="xl" 
               onClick={handleGetStarted}
-              className="group bg-white text-primary hover:bg-white/90 shadow-hover"
+              className="group bg-white text-primary hover:bg-white/90 shadow-hover w-full sm:w-auto"
             >
               <OptimizedImage 
                 src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=24&h=24&fit=crop&crop=center" 
@@ -56,7 +56,7 @@ Best regards,
               variant="outline" 
               size="xl" 
               onClick={handleEmail}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary w-full sm:w-auto"
             >
               <OptimizedImage 
                 src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=24&h=24&fit=crop&crop=center" 
@@ -67,7 +67,7 @@ Best regards,
             </Button>
           </div>
           
-          <div className="mt-8 flex items-center justify-center gap-8 text-white/70">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/70">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full"></div>
               <span className="text-sm">24/7 Support</span>
