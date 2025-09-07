@@ -60,7 +60,7 @@ app.post('/api/intasend/create-payment', async (req, res) => {
       });
     }
 
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const intasendSecretKey = process.env.INTASEND_SECRET_KEY;
     if (!intasendSecretKey) {
       return res.status(500).json({ 
         error: 'Server configuration error',
@@ -136,7 +136,7 @@ app.post('/api/create-intasend-checkout', async (req, res) => {
       });
     }
 
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const intasendSecretKey = process.env.INTASEND_SECRET_KEY;
     if (!intasendSecretKey) {
       return res.status(500).json({ 
         error: 'Server configuration error',
@@ -189,7 +189,7 @@ app.post('/api/create-intasend-checkout', async (req, res) => {
 app.get('/api/intasend/verify-payment/:invoiceId', async (req, res) => {
   try {
     const { invoiceId } = req.params;
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const intasendSecretKey = process.env.INTASEND_SECRET_KEY;
 
     if (!intasendSecretKey) {
       return res.status(500).json({ 
@@ -223,7 +223,7 @@ app.get('/api/intasend/verify-payment/:invoiceId', async (req, res) => {
 app.get('/api/intasend/payment-details/:invoiceId', async (req, res) => {
   try {
     const { invoiceId } = req.params;
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const intasendSecretKey = process.env.INTASEND_SECRET_KEY;
 
     if (!intasendSecretKey) {
       return res.status(500).json({ 

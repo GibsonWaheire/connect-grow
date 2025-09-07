@@ -9,7 +9,7 @@ export const config = {
   },
   intasend: {
     publicKey: import.meta.env.VITE_INTASEND_PUBLIC_KEY || '',
-    secretKey: import.meta.env.VITE_INTASEND_SECRET_KEY || '',
+    secretKey: import.meta.env.INTASEND_SECRET_KEY || '',
     environment: import.meta.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
     currency: 'USD',
     country: 'US',

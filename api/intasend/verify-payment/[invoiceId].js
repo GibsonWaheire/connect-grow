@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   try {
     const { invoiceId } = req.query;
-    const intasendSecretKey = process.env.VITE_INTASEND_SECRET_KEY;
+    const intasendSecretKey = process.env.INTASEND_SECRET_KEY;
 
     if (!intasendSecretKey || intasendSecretKey === 'your_secret_key_here') {
       return res.status(500).json({ 
