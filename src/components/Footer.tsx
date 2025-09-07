@@ -1,4 +1,5 @@
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -42,8 +43,28 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Peter's School Help. All rights reserved.</p>
+        <div className="border-t border-gray-800 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-gray-400 text-center md:text-left">
+              &copy; 2024 Peter's School Help. All rights reserved.
+            </p>
+            <div className="flex space-x-6 text-sm">
+              <Link 
+                to="/privacy-policy" 
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                Privacy Policy
+              </Link>
+              <a 
+                href="https://connect-order-grow.vercel.app" 
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Website
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

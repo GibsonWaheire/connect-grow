@@ -7,6 +7,7 @@ import { AppProvider } from "@/shared/contexts/AppContext";
 import Index from "./pages/Index";
 import { ServicesPage } from "./pages/ServicesPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import IntaSendTest from "./components/IntaSendTest";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/test-intasend" element={<IntaSendTest />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

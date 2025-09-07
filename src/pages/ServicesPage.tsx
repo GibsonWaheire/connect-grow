@@ -593,20 +593,24 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
       case 2:
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
-            <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-semibold mb-2">Contact Information</h3>
+              <p className="text-sm text-muted-foreground">We need this information to process your order and send updates</p>
+            </div>
+            <div className="space-y-6">
               <div>
                 <label className="text-sm font-medium mb-2 block">Full Name *</label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Your full name"
+                  placeholder="Enter your full name (e.g., John Smith)"
                   className="h-12"
                   required
                 />
+                <p className="text-xs text-muted-foreground mt-1">As it appears on your ID or payment card</p>
               </div>
               <div className="relative">
-                <label className="text-sm font-medium mb-2 block">Email *</label>
+                <label className="text-sm font-medium mb-2 block">Email Address *</label>
                 <Input
                   type="email"
                   value={formData.email}
@@ -615,6 +619,7 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                   className="h-12"
                   required
                 />
+                <p className="text-xs text-muted-foreground mt-1">We'll send order updates and payment receipts here</p>
                 {showEmailSuggestions && emailSuggestions.length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
                     {emailSuggestions.map((suggestion, index) => (
@@ -633,7 +638,7 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                 <label className="text-sm font-medium mb-2 block">Country *</label>
                 <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value, phone: '' }))}>
                   <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Select your country" />
+                    <SelectValue placeholder="Choose your country" />
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((country) => (
@@ -643,6 +648,7 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground mt-1">Select your country to set the correct phone format</p>
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">Phone Number *</label>
@@ -656,17 +662,39 @@ Contact: ${formData.name} (${email}, ${formattedPhone})
                       const value = e.target.value.replace(/[^\d]/g, '');
                       setFormData(prev => ({ ...prev, phone: value }));
                     }}
-                    placeholder={getSelectedCountry().format.replace(/X/g, '0')}
+                    placeholder="Enter your phone number"
                     className="h-12 flex-1"
                     required
                   />
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Format: {getSelectedCountry().format}
-                </p>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-xs text-blue-800 font-medium mb-1">📱 Phone Number Format:</p>
+                  <p className="text-xs text-blue-700">
+                    <strong>Example:</strong> {getSelectedCountry().format.replace(/X/g, '0')}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    Just enter the numbers without spaces or special characters
+                  </p>
+                  <p className="text-xs text-blue-500 mt-1">
+                    💡 The country code (+{getSelectedCountry().dialCode.replace('+', '')}) is already added for you
+                  </p>
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                * All fields are required for payment processing.
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <div className="text-green-600 mt-0.5">✅</div>
+                  <div>
+                    <p className="text-sm text-green-800 font-medium">Almost Done!</p>
+                    <p className="text-xs text-green-700 mt-1">
+                      All fields are required for secure payment processing. We'll use this information to:
+                    </p>
+                    <ul className="text-xs text-green-600 mt-1 ml-4 list-disc">
+                      <li>Process your payment securely</li>
+                      <li>Send order updates and receipts</li>
+                      <li>Contact you if we have questions</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
