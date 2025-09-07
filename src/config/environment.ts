@@ -4,7 +4,7 @@ export const config = {
     timeout: 10000,
   },
   whatsapp: {
-    number: import.meta.env.VITE_WHATSAPP_NUMBER || '15636578107',
+    number: import.meta.env.VITE_WHATSAPP_NUMBER || '14438697500',
     defaultMessage: "Hi Peter! I'd like to place an order",
   },
   intasend: {
@@ -24,7 +24,7 @@ export const config = {
   },
   contact: {
     email: 'peter@schoolhelp.com',
-    phone: '+1 (563) 657-8107',
+    phone: '+1 (443) 869-7500',
   },
 } as const;
 

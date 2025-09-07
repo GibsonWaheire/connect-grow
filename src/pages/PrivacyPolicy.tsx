@@ -172,7 +172,7 @@ export const PrivacyPolicy = () => {
                   </p>
                   <ul className="space-y-1 text-gray-700">
                     <li><strong>Email:</strong> pwriter455@gmail.com</li>
-                    <li><strong>Phone:</strong> +1 (563) 657-8107</li>
+                    <li><strong>Phone:</strong> +1 (443) 869-7500</li>
                     <li><strong>WhatsApp:</strong> Available 24/7</li>
                     <li><strong>Website:</strong> https://connect-order-grow.vercel.app</li>
                   </ul>

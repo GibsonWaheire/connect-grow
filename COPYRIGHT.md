@@ -21,7 +21,7 @@ to the maximum extent possible under law.
 
 For licensing inquiries or permission requests:
 - Email: pwriter455@gmail.com
-- Phone: +1 (563) 657-8107
+- Phone: +1 (443) 869-7500
 
 ## LICENSE
 

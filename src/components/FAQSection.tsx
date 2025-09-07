@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     question: "How do I place an order?",
-    answer: "Simply contact us via WhatsApp (+1 563-657-8107), email (pwriter455@gmail.com), or use our contact form. Provide your assignment details, deadline, and any specific requirements. We'll give you a quote and start working immediately upon confirmation."
+    answer: "Simply contact us via WhatsApp (+1 443-869-7500), email (pwriter455@gmail.com), or use our contact form. Provide your assignment details, deadline, and any specific requirements. We'll give you a quote and start working immediately upon confirmation."
   },
   {
     question: "Is my information kept confidential?",
@@ -68,7 +68,7 @@ export const FAQSection = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
-                href="https://wa.me/15636578107" 
+                href="https://wa.me/14438697500" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
