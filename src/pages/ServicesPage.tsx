@@ -159,14 +159,24 @@ export const ServicesPage = () => {
       case 2:
         if (!formData.name.trim()) {
           errors.push('Please enter your full name');
+        } else if (formData.name.trim().split(/\s+/).length < 2) {
+          errors.push('Please enter your first and last name');
         }
         if (!formData.email.trim()) {
           errors.push('Please enter your email address');
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-          errors.push('Please enter a valid email address');
+        } else {
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+          if (!emailRegex.test(formData.email.trim())) {
+            errors.push('Please enter a valid email address');
+          }
         }
         if (!formData.phone.trim()) {
           errors.push('Please enter your phone number');
+        } else {
+          const cleanPhone = formData.phone.replace(/[^\d+]/g, '');
+          if (cleanPhone.length < 10) {
+            errors.push('Please enter a valid phone number with at least 10 digits');
+          }
         }
         break;
     }
@@ -228,6 +238,34 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})`;
       setIsProcessingPayment(true);
       const service = services.find(s => s.id === selectedService);
       
+      // Validate and format data for IntaSend
+      const email = formData.email.trim().toLowerCase();
+      const phone = formData.phone.trim();
+      
+      // Enhanced email validation
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address');
+        setIsProcessingPayment(false);
+        return;
+      }
+      
+      // Enhanced phone validation and formatting
+      const cleanPhone = phone.replace(/[^\d+]/g, ''); // Remove all non-digit characters except +
+      if (!cleanPhone || cleanPhone.length < 10) {
+        alert('Please enter a valid phone number with at least 10 digits');
+        setIsProcessingPayment(false);
+        return;
+      }
+      
+      // Format phone number for IntaSend (ensure it starts with +)
+      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+${cleanPhone}`;
+      
+      // Enhanced name splitting
+      const nameParts = formData.name.trim().split(/\s+/);
+      const firstName = nameParts[0] || 'Customer';
+      const lastName = nameParts.slice(1).join(' ') || 'User';
+      
       // Create detailed order summary
       const orderSummary = `
 Service: ${service?.title}
@@ -235,7 +273,7 @@ Subject: ${formData.subject}
 ${service?.id === 'presentations' ? `Slides: ${formData.slides}` : `Words: ${formData.words} (${calculatePages()} pages)`}
 Urgency: ${formData.urgency}
 Instructions: ${formData.instructions || 'None provided'}
-Contact: ${formData.name} (${formData.email}, ${formData.phone})
+Contact: ${formData.name} (${email}, ${formattedPhone})
       `.trim();
       
       // Store order data in localStorage for potential use after payment
@@ -250,15 +288,17 @@ Contact: ${formData.name} (${formData.email}, ${formData.phone})
       
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
       
-      // Initialize IntaSend Payment Button
+      // Initialize IntaSend Payment Button with validated data
       const paymentOptions = {
         amount: calculatePrice(),
         currency: 'USD',
-        email: formData.email.trim(),
-        first_name: formData.name.split(' ')[0] || formData.name,
-        last_name: formData.name.split(' ').slice(1).join(' ') || '',
-        phone: formData.phone.trim()
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        phone: formattedPhone
       };
+
+      console.log('🔍 IntaSend Payment Options:', paymentOptions);
 
       // Create the IntaSend payment button
       createIntaSendButton(paymentOptions);
