@@ -85,6 +85,16 @@ Best regards,
             <div className="mt-8 text-white/70 text-sm">
               ✨ Human research only • Turnitin reports • 24/7 Support • 500+ satisfied students
             </div>
+            
+            {/* Privacy Notice */}
+            <div className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+              <p className="text-white/80 text-sm text-center">
+                🔒 Your privacy is protected. We use your information only to provide services and never share it with third parties. 
+                <a href="/privacy-policy" className="text-white underline hover:text-white/80 ml-1">
+                  Read our Privacy Policy
+                </a>
+              </p>
+            </div>
           </div>
           <div className="relative animate-slide-up">
             <div className="relative rounded-2xl overflow-hidden shadow-hover">
