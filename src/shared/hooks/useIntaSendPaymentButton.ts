@@ -36,7 +36,11 @@ export const useIntaSendPaymentButton = () => {
         const instance = new window.IntaSend({
           publicAPIKey: config.intasend.publicKey,
           live: config.intasend.environment === 'live',
-          apiBaseUrl: config.intasend.apiBaseUrl
+          apiBaseUrl: config.intasend.apiBaseUrl,
+          // Enable Apple Pay and other payment methods
+          paymentMethods: ['card', 'apple_pay', 'google_pay', 'mpesa'],
+          allowRememberMe: true,
+          showPaymentMethods: true
         });
         
         // Set up global event handlers
@@ -49,7 +53,32 @@ export const useIntaSendPaymentButton = () => {
           })
           .on("FAILED", (results: Record<string, unknown>) => {
             console.log("❌ Payment failed:", results);
-            alert('Payment failed. Please try again.');
+            // Show a more professional error message instead of alert
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'payment-error-message';
+            errorMessage.style.cssText = `
+              background: #fee2e2;
+              border: 1px solid #fecaca;
+              color: #dc2626;
+              padding: 12px 16px;
+              border-radius: 8px;
+              margin-top: 8px;
+              font-size: 14px;
+              text-align: center;
+            `;
+            errorMessage.textContent = 'Payment was not completed. Please try again or contact support.';
+            
+            // Insert error message after the button
+            const buttonContainer = document.querySelector('[data-payment-button]');
+            if (buttonContainer) {
+              buttonContainer.appendChild(errorMessage);
+              // Remove error message after 5 seconds
+              setTimeout(() => {
+                if (errorMessage.parentNode) {
+                  errorMessage.parentNode.removeChild(errorMessage);
+                }
+              }, 5000);
+            }
           })
           .on("IN-PROGRESS", (results: Record<string, unknown>) => {
             console.log("⏳ Payment in progress:", results);
@@ -278,6 +307,11 @@ export const useIntaSendPaymentButton = () => {
     
     // Add additional debugging attributes
     button.setAttribute('data-live', String(config.intasend.environment === 'live'));
+    
+    // Enable Apple Pay and other payment methods
+    button.setAttribute('data-payment-methods', 'card,apple_pay,google_pay,mpesa');
+    button.setAttribute('data-allow-remember-me', 'true');
+    button.setAttribute('data-show-payment-methods', 'true');
 
     console.log('🔍 Button attributes set:', {
       amount: button.getAttribute('data-amount'),
@@ -340,7 +374,12 @@ export const useIntaSendPaymentButton = () => {
           publicAPIKey: config.intasend.publicKey,
           live: config.intasend.environment === 'live',
           // Add API base URL if supported by the SDK
-          apiBaseUrl: config.intasend.apiBaseUrl
+          apiBaseUrl: config.intasend.apiBaseUrl,
+          // Enable Apple Pay and other payment methods
+          paymentMethods: ['card', 'apple_pay', 'google_pay', 'mpesa'],
+          // Configure for better user experience
+          allowRememberMe: true,
+          showPaymentMethods: true
         });
         
         // Set up event handlers
@@ -353,7 +392,32 @@ export const useIntaSendPaymentButton = () => {
           })
           .on("FAILED", (results: Record<string, unknown>) => {
             console.log("❌ Payment failed:", results);
-            alert('Payment failed. Please try again.');
+            // Show a more professional error message instead of alert
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'payment-error-message';
+            errorMessage.style.cssText = `
+              background: #fee2e2;
+              border: 1px solid #fecaca;
+              color: #dc2626;
+              padding: 12px 16px;
+              border-radius: 8px;
+              margin-top: 8px;
+              font-size: 14px;
+              text-align: center;
+            `;
+            errorMessage.textContent = 'Payment was not completed. Please try again or contact support.';
+            
+            // Insert error message after the button
+            const buttonContainer = document.querySelector('[data-payment-button]');
+            if (buttonContainer) {
+              buttonContainer.appendChild(errorMessage);
+              // Remove error message after 5 seconds
+              setTimeout(() => {
+                if (errorMessage.parentNode) {
+                  errorMessage.parentNode.removeChild(errorMessage);
+                }
+              }, 5000);
+            }
           })
           .on("IN-PROGRESS", (results: Record<string, unknown>) => {
             console.log("⏳ Payment in progress:", results);
