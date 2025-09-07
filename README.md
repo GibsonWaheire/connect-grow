@@ -1,5 +1,17 @@
 # Academic Services Pro - Quick Orders & Secure Payments
 
+## ⚠️ **IMPORTANT: COPYRIGHT NOTICE**
+
+**Copyright (c) 2024 Peter's School Help. All rights reserved.**
+
+This software is proprietary and confidential. Unauthorized copying, distribution, modification, or use of this code is strictly prohibited without explicit written permission from the copyright holder.
+
+**Commercial Use Restriction:** This software is provided for educational and personal use only. Commercial use, redistribution, or resale of this software or its components is strictly prohibited.
+
+**For licensing inquiries:** pwriter455@gmail.com
+
+---
+
 ## 🚀 Project Overview
 
 A modern, refactored React application for academic services, offering quick orders and secure payments for students worldwide. Built with a scalable architecture and optimized for performance.

@@ -1,3 +1,13 @@
+/**
+ * Copyright (c) 2024 Peter's School Help
+ * All rights reserved.
+ * 
+ * This software is proprietary and confidential.
+ * Unauthorized copying, distribution, or use is strictly prohibited.
+ * 
+ * For licensing inquiries: pwriter455@gmail.com
+ */
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
