@@ -83,7 +83,7 @@ app.post('/api/intasend/create-payment', async (req, res) => {
         last_name,
         reference,
         description,
-        environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
+        environment: process.env.INTASEND_ENVIRONMENT || 'sandbox',
         metadata,
         // Optional enhanced parameters
         ...(country && { country }),
@@ -145,7 +145,7 @@ app.post('/api/create-intasend-checkout', async (req, res) => {
     }
 
     // Use sandbox API for testing
-    const apiUrl = process.env.VITE_INTASEND_ENVIRONMENT === 'live' 
+    const apiUrl = process.env.INTASEND_ENVIRONMENT === 'live' 
       ? 'https://api.intasend.com/v1/checkout/'
       : 'https://sandbox.intasend.com/api/v1/checkout/';
 
@@ -164,7 +164,7 @@ app.post('/api/create-intasend-checkout', async (req, res) => {
         last_name,
         comment,
         redirect_url,
-        environment: process.env.VITE_INTASEND_ENVIRONMENT || 'sandbox'
+        environment: process.env.INTASEND_ENVIRONMENT || 'sandbox'
       }),
     });
 
