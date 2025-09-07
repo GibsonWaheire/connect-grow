@@ -35,7 +35,8 @@ export const useIntaSendPaymentButton = () => {
       try {
         const instance = new window.IntaSend({
           publicAPIKey: config.intasend.publicKey,
-          live: config.intasend.environment === 'live'
+          live: config.intasend.environment === 'live',
+          apiBaseUrl: config.intasend.apiBaseUrl
         });
         
         // Set up global event handlers
@@ -77,7 +78,8 @@ export const useIntaSendPaymentButton = () => {
           try {
             const instance = new window.IntaSend({
               publicAPIKey: config.intasend.publicKey,
-              live: config.intasend.environment === 'live'
+              live: config.intasend.environment === 'live',
+              apiBaseUrl: config.intasend.apiBaseUrl
             });
             
             // Set up global event handlers
@@ -113,9 +115,9 @@ export const useIntaSendPaymentButton = () => {
 
     // Try multiple SDK URLs for better reliability
     const sdkUrls = [
-      'https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js',
+      'https://unpkg.com/intasend-inlinejs-sdk@4.0.6/build/intasend-inline.js',
       'https://unpkg.com/intasend-inlinejs-sdk@latest/build/intasend-inline.js',
-      'https://cdn.jsdelivr.net/npm/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js'
+      'https://cdn.jsdelivr.net/npm/intasend-inlinejs-sdk@4.0.6/build/intasend-inline.js'
     ];
 
     let currentUrlIndex = 0;
@@ -141,7 +143,8 @@ export const useIntaSendPaymentButton = () => {
             try {
               const instance = new window.IntaSend({
                 publicAPIKey: config.intasend.publicKey,
-                live: config.intasend.environment === 'live'
+                live: config.intasend.environment === 'live',
+                apiBaseUrl: config.intasend.apiBaseUrl
               });
               
               // Set up global event handlers
@@ -310,124 +313,66 @@ export const useIntaSendPaymentButton = () => {
       button.style.boxShadow = 'none';
     });
 
-    // Add click debugging (without preventing default behavior)
+    // Add a simple click handler for debugging
     button.addEventListener('click', (e) => {
       console.log('🔍 Payment button clicked!');
-      console.log('🔍 Event:', e);
       console.log('🔍 Button element:', button);
       console.log('🔍 IntaSend instance available:', !!intaSendInstance);
-      console.log('🔍 Window.IntaSend available:', !!window.IntaSend);
       
-      // Check if IntaSend has detected this button
-      const buttons = document.querySelectorAll('.intaSendPayButton');
-      console.log('🔍 Found IntaSend buttons on page:', buttons.length);
-      
-      // Don't prevent default - let IntaSend handle it naturally
-      // If IntaSend doesn't work, we'll fall back to manual approach
-      setTimeout(() => {
-        console.log('🔍 Checking if IntaSend handled the click...');
-        // If nothing happened after 2 seconds, try manual approach
-        if (!e.defaultPrevented) {
-          console.log('🔍 IntaSend didn\'t handle the click, trying manual approach...');
-          
-          if (!intaSendInstance) {
-            console.error('❌ IntaSend instance not available');
-            alert('Payment system not ready. Please try again.');
-            return;
-          }
-
-          try {
-            console.log('🔍 Attempting to create payment with IntaSend...');
-            
-            // Try different methods to trigger payment
-            if (typeof intaSendInstance.createPayment === 'function') {
-              console.log('🔍 Using createPayment method...');
-              intaSendInstance.createPayment({
-                amount: options.amount,
-                currency: options.currency,
-                email: options.email,
-                first_name: options.first_name,
-                last_name: options.last_name,
-                phone: options.phone,
-                redirect_url: `${window.location.origin}/payment-success`,
-                callback_url: `${window.location.origin}/payment-success`,
-                host: window.location.origin
-              });
-            } else {
-              console.log('🔍 Available methods on IntaSend instance:', Object.getOwnPropertyNames(intaSendInstance));
-              console.log('🔍 Trying alternative approach - direct URL redirect...');
-              
-              // Try to construct the IntaSend payment URL directly
-              const paymentData = {
-                amount: String(options.amount),
-                currency: options.currency,
-                email: options.email,
-                first_name: options.first_name,
-                last_name: options.last_name,
-                phone: options.phone,
-                redirect_url: `${window.location.origin}/payment-success`,
-                callback_url: `${window.location.origin}/payment-success`,
-                host: window.location.origin,
-                public_key: config.intasend.publicKey
-              };
-              
-              console.log('🔍 Payment data:', paymentData);
-              
-              // Try to redirect to IntaSend payment page directly
-              const baseUrl = config.intasend.environment === 'live' 
-                ? 'https://pay.intasend.com' 
-                : 'https://sandbox.intasend.com';
-              
-              const paymentUrl = `${baseUrl}/pay?${new URLSearchParams(paymentData).toString()}`;
-              console.log('🔍 Redirecting to payment URL:', paymentUrl);
-              
-              // Open payment in new window/tab
-              window.open(paymentUrl, '_blank');
-            }
-            
-            console.log('✅ Payment request sent to IntaSend');
-          } catch (error) {
-            console.error('❌ Failed to create payment:', error);
-            alert('Failed to initiate payment. Please try again.');
-          }
-        }
-      }, 2000);
+      // Let IntaSend SDK handle the payment flow
+      // Don't prevent default behavior
+      console.log('🔍 Letting IntaSend SDK handle the payment...');
     });
 
     element.appendChild(button);
 
-    // The IntaSend SDK auto-detects buttons with the 'intaSendPayButton' class
-    // Event handlers are already set up globally
     console.log('✅ IntaSend button created and ready');
-    
-    // Add a small delay to ensure the SDK has time to detect the button
+
+    // Re-initialize IntaSend SDK to detect the new button
     setTimeout(() => {
-      console.log('🔍 Checking if IntaSend detected the button...');
-      if (window.IntaSend && intaSendInstance) {
-        console.log('✅ IntaSend instance is ready and should auto-detect the button');
-        console.log('🔍 IntaSend instance methods:', Object.getOwnPropertyNames(intaSendInstance));
-        console.log('🔍 IntaSend instance prototype methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(intaSendInstance)));
+      console.log('🔍 Re-initializing IntaSend SDK to detect new button...');
+      console.log('🔍 Using API Base URL:', config.intasend.apiBaseUrl);
+      console.log('🔍 Environment:', config.intasend.environment);
+      
+      try {
+        // Create a new IntaSend instance to detect the button
+        const newInstance = new window.IntaSend({
+          publicAPIKey: config.intasend.publicKey,
+          live: config.intasend.environment === 'live',
+          // Add API base URL if supported by the SDK
+          apiBaseUrl: config.intasend.apiBaseUrl
+        });
         
-        // Try to manually trigger button detection if available
-        if (typeof intaSendInstance.detectButtons === 'function') {
-          console.log('🔍 Manually triggering button detection...');
-          intaSendInstance.detectButtons();
-        }
+        // Set up event handlers
+        newInstance
+          .on("COMPLETE", (results: Record<string, unknown>) => {
+            console.log("✅ Payment completed:", results);
+            if (results.invoice_id) {
+              window.location.href = `/payment-success?invoice_id=${results.invoice_id}`;
+            }
+          })
+          .on("FAILED", (results: Record<string, unknown>) => {
+            console.log("❌ Payment failed:", results);
+            alert('Payment failed. Please try again.');
+          })
+          .on("IN-PROGRESS", (results: Record<string, unknown>) => {
+            console.log("⏳ Payment in progress:", results);
+          });
+
+        setIntaSendInstance(newInstance);
+        console.log('✅ New IntaSend instance created and should auto-detect button');
         
-        // Check if there's a method to manually trigger payment
-        if (typeof intaSendInstance.triggerPayment === 'function') {
-          console.log('🔍 Found triggerPayment method');
-        }
-        if (typeof intaSendInstance.startPayment === 'function') {
-          console.log('🔍 Found startPayment method');
-        }
-        if (typeof intaSendInstance.processPayment === 'function') {
-          console.log('🔍 Found processPayment method');
-        }
-      } else {
-        console.warn('⚠️ IntaSend instance not ready, button may not work');
+        // Check if button was detected
+        const buttons = document.querySelectorAll('.intaSendPayButton');
+        console.log('🔍 Found IntaSend buttons on page:', buttons.length);
+        
+        // Log available methods for debugging
+        console.log('🔍 IntaSend instance methods:', Object.getOwnPropertyNames(newInstance));
+        
+      } catch (error) {
+        console.error('❌ Failed to re-initialize IntaSend:', error);
       }
-    }, 1000);
+    }, 500); // Short delay to ensure button is in DOM
 
     console.log('IntaSend payment button created with options:', options);
   };

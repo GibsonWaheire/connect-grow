@@ -13,6 +13,9 @@ export const config = {
     environment: import.meta.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
     currency: 'USD',
     country: 'US',
+    apiBaseUrl: import.meta.env.VITE_INTASEND_ENVIRONMENT === 'live' 
+      ? 'https://payment.intasend.com/api/' 
+      : 'https://sandbox.intasend.com/api/',
   },
   features: {
     darkMode: import.meta.env.VITE_ENABLE_DARK_MODE === 'true',
