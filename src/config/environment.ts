@@ -4,7 +4,7 @@ export const config = {
     timeout: 10000,
   },
   whatsapp: {
-    number: import.meta.env.VITE_WHATSAPP_NUMBER || '14438697500',
+    number: import.meta.env.VITE_WHATSAPP_NUMBER || '14438697500', // +1 443 869 7500 (no spaces for WhatsApp links)
     defaultMessage: "Hi Peter! I'd like to place an order",
   },
   intasend: {

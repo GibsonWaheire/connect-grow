@@ -21,6 +21,7 @@ import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import IntaSendTest from "./components/IntaSendTest";
+import WhatsAppNotificationPopup from "./components/WhatsAppNotificationPopup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +54,10 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        <WhatsAppNotificationPopup 
+          message="We have a new WhatsApp number for better service! Contact us now for faster support."
+          showDelay={0} // Show immediately
+        />
         <Analytics />
       </TooltipProvider>
     </AppProvider>
