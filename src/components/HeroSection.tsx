@@ -37,6 +37,10 @@ Best regards,
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
             <div className="mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-4">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-white">500+ Students Helped</span>
+              </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white/90 mb-2">
                 Hi there! I'm Peter 👋
               </h2>
@@ -46,11 +50,14 @@ Best regards,
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Professional <br />
-              <span className="text-white/90">Academic Support</span>
+              Ace Your <br />
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                Academic Goals
+              </span>
             </h1>
             <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
-              Essays, research papers, technical courses, presentations & exam help. 100% human research with Turnitin reports.
+              Professional essays, research papers, technical assignments & presentations. 
+              <span className="font-semibold text-yellow-300">100% human research</span> with Turnitin reports & 24/7 support.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
