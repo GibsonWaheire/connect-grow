@@ -2,10 +2,12 @@
  * Vercel serverless function to handle payment provider webhooks
  * 
  * Handles:
- * - Challenge verification (returns challenge string)
+ * - Challenge verification with fixed token validation
  * - Webhook events (logs and acknowledges)
  * - Method validation (POST only)
  */
+
+const VALID_CHALLENGE = process.env.WEBHOOK_CHALLENGE || "GibsonChallenge123";
 
 export default function handler(req, res) {
   // Set CORS headers for webhook requests
@@ -29,18 +31,21 @@ export default function handler(req, res) {
   try {
     const { challenge } = req.body;
 
-    // Handle challenge verification
-    if (challenge) {
-      console.log('Webhook challenge received:', challenge);
-      return res.status(200).send(challenge);
+    // Validate challenge token
+    if (challenge !== VALID_CHALLENGE) {
+      console.log('Invalid challenge received:', challenge);
+      return res.status(403).json({ 
+        error: 'Forbidden',
+        message: 'Invalid challenge token'
+      });
     }
 
-    // Handle other webhook events
+    // Challenge is valid - log webhook event and acknowledge
     console.log('Webhook event received:', JSON.stringify(req.body, null, 2));
     
     return res.status(200).json({ 
       success: true,
-      message: 'Webhook received and processed'
+      message: 'Webhook verified and processed'
     });
 
   } catch (error) {
