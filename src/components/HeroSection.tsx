@@ -45,7 +45,7 @@ Best regards,
                 Hi there! I'm Peter 👋
               </h2>
               <p className="text-lg md:text-xl text-white/80">
-                Remember me? I'm still here to help with your academic needs!
+                I'm here to help with your academic needs!
               </p>
             </div>
             
@@ -89,8 +89,23 @@ Best regards,
               </Button>
             </div>
             
-            <div className="mt-8 text-white/70 text-sm">
-              ✨ Human research only • Turnitin reports • 24/7 Support • 500+ satisfied students
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-white/70 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span>100% Human Research</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span>Turnitin Reports</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                <span>24/7 Support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                <span>500+ Students Helped</span>
+              </div>
             </div>
             
             {/* Privacy Notice */}
