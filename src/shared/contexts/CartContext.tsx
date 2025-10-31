@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useState, ReactNode, useEffect } from "react";
 import type { Product } from "@/data/products";
+import { useToast } from "@/hooks/use-toast";
 
 export interface CartItem {
   productId: string;
@@ -28,24 +29,56 @@ export const useCart = (): CartContextValue => {
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('cart-items');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cart-items', JSON.stringify(items));
+    }
+  }, [items]);
 
   const addItem = useCallback((product: Product, quantity: number = 1) => {
     setItems(prev => {
       const existing = prev.find(i => i.productId === product.id);
       if (existing) {
-        return prev.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + quantity } : i);
+        const newItems = prev.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + quantity } : i);
+        toast({
+          title: "Added to cart",
+          description: `${product.name} quantity updated to ${existing.quantity + quantity}`,
+        });
+        return newItems;
       }
-      return [
+      const newItems = [
         ...prev,
         { productId: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity }
       ];
+      toast({
+        title: "Added to cart",
+        description: `${product.name} added to your cart`,
+      });
+      return newItems;
     });
-  }, []);
+  }, [toast]);
 
   const removeItem = useCallback((productId: string) => {
-    setItems(prev => prev.filter(i => i.productId !== productId));
-  }, []);
+    setItems(prev => {
+      const item = prev.find(i => i.productId === productId);
+      if (item) {
+        toast({
+          title: "Removed from cart",
+          description: `${item.name} removed from your cart`,
+        });
+      }
+      return prev.filter(i => i.productId !== productId);
+    });
+  }, [toast]);
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     setItems(prev => prev.map(i => i.productId === productId ? { ...i, quantity } : i));
@@ -60,5 +93,3 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
-
-

@@ -24,6 +24,13 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import { ServicesPage } from "./pages/ServicesPage";
+import ServicesOverviewPage from "./pages/ServicesPage";
+import ProcessPage from "./pages/ProcessPage";
+import PricingPage from "./pages/PricingPage";
+import TechStackPage from "./pages/TechStackPage";
+import CaseStudiesPage from "./pages/CaseStudiesPage";
+import TestimonialsPage from "./pages/TestimonialsPage";
+import FAQPage from "./pages/FAQPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
@@ -61,6 +68,13 @@ const App = () => (
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services-overview" element={<ServicesOverviewPage />} />
+            <Route path="/process" element={<ProcessPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/tech-stack" element={<TechStackPage />} />
+            <Route path="/case-studies" element={<CaseStudiesPage />} />
+            <Route path="/testimonials" element={<TestimonialsPage />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/test-intasend" element={<IntaSendTest />} />
