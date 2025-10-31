@@ -33,17 +33,19 @@ export const AnimatedMetrics = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16">
       {[
-        { icon: TrendingUp, label: 'Projects Delivered', value: `${counts.projects}+`, colorClass: 'text-emerald-500' },
-        { icon: Users, label: 'Happy Clients', value: `${counts.clients}+`, colorClass: 'text-cyan-500' },
-        { icon: Award, label: 'Client Satisfaction', value: `${counts.satisfaction}%`, colorClass: 'text-indigo-500' },
-        { icon: Clock, label: 'Support Hours', value: `${counts.support}/7`, colorClass: 'text-orange-500' },
+        { icon: TrendingUp, label: 'Projects Delivered', value: `${counts.projects}+`, colorClass: 'text-emerald-400', bgClass: 'bg-emerald-500/10' },
+        { icon: Users, label: 'Happy Clients', value: `${counts.clients}+`, colorClass: 'text-cyan-400', bgClass: 'bg-cyan-500/10' },
+        { icon: Award, label: 'Client Satisfaction', value: `${counts.satisfaction}%`, colorClass: 'text-indigo-400', bgClass: 'bg-indigo-500/10' },
+        { icon: Clock, label: 'Support Hours', value: `${counts.support}/7`, colorClass: 'text-orange-400', bgClass: 'bg-orange-500/10' },
       ].map((metric) => (
-        <div key={metric.label} className="text-center p-6 rounded-xl bg-white border border-slate-200">
-          <metric.icon className={`w-8 h-8 mx-auto mb-3 ${metric.colorClass}`} />
-          <div className="text-3xl font-bold mb-1">{metric.value}</div>
-          <div className="text-sm text-slate-600">{metric.label}</div>
+        <div key={metric.label} className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all">
+          <div className={`w-12 h-12 mx-auto mb-3 rounded-lg ${metric.bgClass} flex items-center justify-center`}>
+            <metric.icon className={`w-6 h-6 ${metric.colorClass}`} />
+          </div>
+          <div className="text-3xl md:text-4xl font-bold mb-1 text-white">{metric.value}</div>
+          <div className="text-sm text-white/80">{metric.label}</div>
         </div>
       ))}
     </div>
