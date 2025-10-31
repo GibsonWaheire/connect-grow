@@ -4,17 +4,23 @@ import { CTASection } from "@/components/CTASection";
 import { FAQSection } from "@/components/FAQSection";
 import { AIHelpPopup } from "@/components/AIHelpPopup";
 import { MainLayout } from "@/layouts/MainLayout";
+import { Header } from "@/shared/components/Header";
 
 const Index = () => {
   return (
-    <MainLayout>
-      <HeroSection />
-      <TrustSection />
-      <SamplesSection />
-      <FAQSection />
-      <CTASection />
-      <AIHelpPopup />
-    </MainLayout>
+    <>
+      <Header />
+      <div className="pt-16">
+        <MainLayout>
+          <HeroSection />
+          <TrustSection />
+          <SamplesSection />
+          <FAQSection />
+          <CTASection />
+          <AIHelpPopup />
+        </MainLayout>
+      </div>
+    </>
   );
 };
 

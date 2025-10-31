@@ -14,8 +14,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/shared/contexts/AppContext";
+import { CartProvider } from "@/shared/contexts/CartContext";
 import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index";
+import DigitalHomePage from "./pages/DigitalHomePage";
+import ShopPage from "./pages/ShopPage";
+import ContactPage from "./pages/ContactPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
@@ -35,6 +42,7 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AppProvider>
+      <CartProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -45,7 +53,13 @@ const App = () => (
           }}
         >
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<DigitalHomePage />} />
+            <Route path="/course-help" element={<Index />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/:productId" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -60,6 +74,7 @@ const App = () => (
         />
         <Analytics />
       </TooltipProvider>
+      </CartProvider>
     </AppProvider>
   </QueryClientProvider>
 );

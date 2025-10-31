@@ -3,18 +3,21 @@ import { Button } from '@/components/ui/button';
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
 import { config } from '@/config/environment';
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from '@/shared/contexts/CartContext';
 
 const navigationItems = [
-  { name: 'Home', href: '#home' },
-  { name: 'Services', href: '#services' },
-  { name: 'Pricing', href: '#pricing' },
-  { name: 'About', href: '#about' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Digital', href: '/' },
+  { name: 'Shop', href: '/shop' },
+  { name: 'Course Help', href: '/course-help' },
+  { name: 'Portfolio', href: 'https://portfolio-main-two-bice.vercel.app/' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { sendMessage } = useWhatsApp();
+  const { totalQuantity } = useCart();
 
   const handleContact = () => {
     sendMessage("Hi! I'd like to discuss your services and get a quote.");
@@ -33,20 +36,31 @@ export const Header = () => {
               height={32}
               className="w-8 h-8 rounded"
             />
-            <span className="text-xl font-bold text-primary">Academic Services Pro</span>
+            <span className="text-xl font-bold text-primary">ConnectGrow Digital</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navigationItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-primary transition-colors font-medium"
-              >
-                {item.name}
-              </a>
-            ))}
+            {navigationItems.map((item) => {
+              const isExternal = item.href.startsWith('http');
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-700 hover:text-primary transition-colors font-medium"
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                >
+                  {item.name}
+                </a>
+              );
+            })}
+            <a href="/cart" className="relative text-gray-700 hover:text-primary">
+              <ShoppingCart className="w-6 h-6" />
+              {totalQuantity > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] rounded-full px-1.5 py-0.5">{totalQuantity}</span>
+              )}
+            </a>
             <Button onClick={handleContact} variant="default" size="sm">
               Get Quote
             </Button>
@@ -71,16 +85,24 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              {navigationItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-700 hover:text-primary transition-colors font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
+              {navigationItems.map((item) => {
+                const isExternal = item.href.startsWith('http');
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-700 hover:text-primary transition-colors font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                  >
+                    {item.name}
+                  </a>
+                );
+              })}
+              <a href="/cart" className="text-gray-700 hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+                Cart {totalQuantity > 0 ? `(${totalQuantity})` : ''}
+              </a>
               <Button onClick={handleContact} variant="default" size="sm" className="w-full">
                 Get Quote
               </Button>
