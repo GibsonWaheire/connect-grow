@@ -1,189 +1,177 @@
-# TODO.md - Peter's School Help Development Tasks
+# TODO - McGibs Digital Solutions
 
-## 🚀 **Current Status**
-- ✅ Landing page with email integration
-- ✅ Services page with order forms
-- ✅ Intasend payment integration (backend proxy) - **ENHANCED**
-- ✅ Payment success page
-- ✅ SEO optimization and favicon
-- ✅ React Router future flags fixed
-- ✅ **NEW**: IntaSend sandbox integration with enhanced parameters
+## ✅ Completed Features
 
-## 🎯 **Immediate Tasks**
+### Branding & Design
+- [x] Replaced all "Peter" references with "McGibs Digital Solutions"
+- [x] Redesigned hero section with dark gradient background
+- [x] Updated all email templates and contact messages
+- [x] Enhanced marketing popup (newsletter signup instead of WhatsApp)
 
-### **1. AI Help Popup Implementation** ⭐ **HIGH PRIORITY**
-- [x] Create AIHelpPopup component
-- [x] Add blinking animation (5-second delay)
-- [x] Position in bottom left corner
-- [x] Create modal with auto-generate feature
-- [x] Add form validation
-- [x] Integrate with email system
-- [x] Add to landing page
+### Navigation & Pages
+- [x] Added dropdown menus to all navbar items
+- [x] Created dedicated pages for all dropdown items:
+  - [x] Services Overview page
+  - [x] Process page
+  - [x] Pricing page
+  - [x] Tech Stack page
+  - [x] Case Studies page
+  - [x] Testimonials page
+  - [x] FAQ page
 
-### **2. Payment System Enhancement**
-- [ ] **Option A**: Create demo payment system (recommended)
-  - [ ] Replace live Intasend with demo API
-  - [ ] Create demo payment page
-  - [ ] Simulate payment processing
-  - [ ] No real API calls needed
-- [ ] **Option B**: Deploy backend to production
-  - [ ] Deploy to Vercel/Railway/Netlify
-  - [ ] Configure environment variables
-  - [ ] Test live payments
-- [x] **Option C**: Switch to sandbox mode ✅ **COMPLETED**
-  - [x] Use Intasend sandbox environment
-  - [x] Test with sandbox API keys
-  - [x] Enhanced with additional IntaSend parameters
+### Shop System
+- [x] Product listing with search and filtering
+- [x] Product detail pages
+- [x] Shopping cart with localStorage persistence
+- [x] Checkout page with IntaSend integration
+- [x] Toast notifications for cart actions
+- [x] Cart icon with badge in header
 
-## 🔧 **Technical Debt**
+### SEO & Indexing
+- [x] Updated meta tags in index.html
+- [x] Created sitemap.xml
+- [x] Created robots.txt
+- [x] Enhanced structured data (Schema.org)
+- [x] Open Graph and Twitter Card tags
+- [x] Dynamic SEO meta tags on Digital homepage
 
-### **Backend Issues**
-- [ ] Fix server.js ES module compatibility
-- [ ] Add proper error handling for API calls
-- [ ] Implement payment verification
-- [ ] Add logging and monitoring
+### Blog System (Structure Created)
+- [x] Blog listing page (`/blog`)
+- [x] Blog post detail page (`/blog/:id`)
+- [x] Admin panel for CRUD operations (`/admin/blog`)
+- [x] Backend API structure (`/api/blog`)
+- [x] Blog navigation in header
 
-### **Frontend Improvements**
-- [ ] Add loading states for all forms
-- [ ] Implement proper error boundaries
-- [ ] Add form validation feedback
-- [ ] Optimize bundle size
-
-## 📊 **Analytics & Monitoring**
-
-### **User Experience**
-- [ ] Add Google Analytics
-- [ ] Track conversion rates
-- [ ] Monitor payment success rates
-- [ ] Add user behavior tracking
-
-### **Performance**
-- [ ] Implement lazy loading
-- [ ] Add service worker for caching
-- [ ] Optimize image loading
-- [ ] Add performance monitoring
-
-## 🎨 **UI/UX Enhancements**
-
-### **Landing Page**
-- [ ] Add AI help popup (current task)
-- [ ] Improve mobile responsiveness
-- [ ] Add more interactive elements
-- [ ] Enhance visual hierarchy
-
-### **Services Page**
-- [ ] Add progress indicators
-- [ ] Improve form UX
-- [ ] Add success animations
-- [ ] Enhance error messaging
-
-## 🔒 **Security & Compliance**
-
-### **Data Protection**
-- [ ] Implement GDPR compliance
-- [ ] Add privacy policy
-- [ ] Secure API endpoints
-- [ ] Add rate limiting
-
-### **Payment Security**
-- [ ] PCI compliance for payments
-- [ ] Secure payment processing
-- [ ] Add fraud detection
-- [ ] Implement refund system
-
-## 🚀 **Deployment & Infrastructure**
-
-### **Production Setup**
-- [ ] Choose hosting platform
-- [ ] Configure domain and SSL
-- [ ] Set up CI/CD pipeline
-- [ ] Configure monitoring
-
-### **Backup & Recovery**
-- [ ] Implement data backup
-- [ ] Add disaster recovery plan
-- [ ] Set up monitoring alerts
-- [ ] Create rollback procedures
-
-## 📈 **Business Features**
-
-### **Order Management**
-- [ ] Add order tracking
-- [ ] Implement order history
-- [ ] Add customer dashboard
-- [ ] Create admin panel
-
-### **Communication**
-- [ ] Add real-time chat
-- [ ] Implement email notifications
-- [ ] Add SMS notifications
-- [ ] Create support ticket system
-
-## 🧪 **Testing & Quality**
-
-### **Testing Strategy**
-- [ ] Add unit tests
-- [ ] Implement integration tests
-- [ ] Add E2E tests
-- [ ] Set up automated testing
-
-### **Code Quality**
-- [ ] Add TypeScript strict mode
-- [ ] Implement code review process
-- [ ] Add linting rules
-- [ ] Set up pre-commit hooks
-
-## 📚 **Documentation**
-
-### **Technical Documentation**
-- [ ] API documentation
-- [ ] Component documentation
-- [ ] Deployment guide
-- [ ] Troubleshooting guide
-
-### **User Documentation**
-- [ ] User manual
-- [ ] FAQ section
-- [ ] Video tutorials
-- [ ] Help center
-
-## 🎯 **Priority Matrix**
-
-### **High Priority (This Week)**
-1. AI Help Popup Implementation
-2. Fix payment system (demo or deploy)
-3. Basic error handling
-
-### **Medium Priority (Next 2 Weeks)**
-1. Analytics implementation
-2. Performance optimization
-3. Security enhancements
-
-### **Low Priority (Next Month)**
-1. Advanced features
-2. Admin panel
-3. Advanced analytics
-
-## 📝 **Notes**
-
-### **Current Challenges**
-- Payment system needs deployment or demo mode
-- Backend needs proper error handling
-- Need to decide on payment approach
-
-### **Decisions Needed**
-- [ ] Payment system approach (demo vs live)
-- [ ] Hosting platform choice
-- [ ] Analytics platform selection
-- [ ] Security compliance level
-
-### **Resources**
-- Intasend API documentation
-- Vercel/Netlify deployment guides
-- React best practices
-- Payment security guidelines
+### Backend API Structure
+- [x] Blog API endpoints (GET, POST, PUT, DELETE)
+- [x] Shop products API endpoints (GET, POST, PUT, DELETE)
+- [x] Placeholder structure ready for database integration
 
 ---
 
-**Last Updated**: December 2024
-**Next Review**: Next Week
+## 🚧 In Progress / Pending
+
+### Backend Integration (High Priority)
+- [ ] Connect blog API to database (MongoDB, PostgreSQL, or Supabase)
+- [ ] Connect shop products API to database
+- [ ] Implement authentication for admin panel
+- [ ] Add file upload for blog images
+- [ ] Set up product image storage
+
+### Blog Enhancements
+- [ ] Rich text editor for blog content (Tiptap, Quill, or similar)
+- [ ] Image upload functionality
+- [ ] Blog categories/tags management
+- [ ] SEO fields for each post (meta description, keywords)
+- [ ] Blog post scheduling
+- [ ] Related posts feature
+- [ ] Comments system (optional)
+
+### Shop Enhancements
+- [ ] Admin panel for product management
+- [ ] Product variants (sizes, colors, etc.)
+- [ ] Inventory management
+- [ ] Product reviews and ratings
+- [ ] Wishlist functionality
+- [ ] Order management system
+- [ ] Shipping calculations
+- [ ] Order tracking
+
+### SEO Improvements
+- [ ] Dynamic sitemap generation
+- [ ] Blog posts added to sitemap automatically
+- [ ] Add canonical URLs to all pages
+- [ ] Implement breadcrumbs
+- [ ] Add JSON-LD structured data to blog posts
+- [ ] Optimize images (WebP, lazy loading)
+- [ ] Add alt text to all images
+
+### User Experience
+- [ ] Loading skeletons for all pages
+- [ ] Error boundaries for graceful error handling
+- [ ] Search functionality for blog posts
+- [ ] Pagination for blog listing
+- [ ] Newsletter email integration (Mailchimp, ConvertKit, etc.)
+- [ ] Contact form with email sending
+
+### Performance
+- [ ] Code splitting for routes
+- [ ] Image optimization (WebP format)
+- [ ] Implement service worker for offline support
+- [ ] Bundle size optimization
+- [ ] Lighthouse score improvements
+
+---
+
+## 🔮 Future Enhancements
+
+### Advanced Features
+- [ ] User accounts and dashboard
+- [ ] Order history for customers
+- [ ] Saved addresses
+- [ ] Product comparison tool
+- [ ] Live chat integration (Tawk.to, Crisp)
+- [ ] Analytics dashboard
+- [ ] A/B testing capabilities
+- [ ] Multi-language support
+
+### Marketing & Growth
+- [ ] Email marketing campaigns
+- [ ] Referral program
+- [ ] Customer loyalty program
+- [ ] Social media integration
+- [ ] Content sharing buttons
+- [ ] Exit-intent popup
+- [ ] Conversion tracking
+
+### Technical
+- [ ] Unit tests for critical components
+- [ ] E2E tests (Playwright/Cypress)
+- [ ] CI/CD pipeline improvements
+- [ ] Monitoring and error tracking (Sentry)
+- [ ] Performance monitoring
+- [ ] Security audit
+
+---
+
+## 📝 Notes
+
+### Current Tech Stack
+- Frontend: React + TypeScript + Vite
+- UI: Tailwind CSS + shadcn/ui + Radix UI
+- Routing: React Router v6
+- State: React Query + Context API
+- Payments: IntaSend
+- Hosting: Vercel
+
+### Database Recommendations
+- **Option 1**: MongoDB + Mongoose (simple, flexible)
+- **Option 2**: PostgreSQL + Prisma (robust, type-safe)
+- **Option 3**: Supabase (PostgreSQL + auth + storage all-in-one)
+- **Option 4**: Firebase/Firestore (quick setup, serverless)
+
+### API Integration Points Needed
+1. Blog CRUD operations → Database
+2. Product management → Database
+3. Newsletter signup → Email service
+4. Contact form → Email service
+5. File uploads → Storage service (AWS S3, Cloudinary, etc.)
+
+---
+
+## 🐛 Known Issues
+- Blog API currently returns empty array (needs database)
+- Shop API currently returns empty array (needs database)
+- Admin panel has no authentication (add before production)
+- No image upload functionality yet
+
+---
+
+## 📚 Resources
+- Portfolio: https://portfolio-main-two-bice.vercel.app/
+- Main Site: https://connect-grow.vercel.app/
+- GitHub: https://github.com/GibsonWaheire/connect-grow
+
+---
+
+**Last Updated**: January 2024
