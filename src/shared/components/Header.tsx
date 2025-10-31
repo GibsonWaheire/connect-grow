@@ -58,7 +58,15 @@ const navigationItems = [
     dropdown: [
       { label: 'View Portfolio', href: 'https://portfolio-main-two-bice.vercel.app/', external: true },
       { label: 'Featured Work', href: '/#featured-work', external: false },
-      { label: 'Case Studies', href: '/#case-studies', external: false },
+      { label: 'Case Studies', href: '/case-studies', external: false },
+    ],
+  },
+  {
+    name: 'Blog',
+    href: '/blog',
+    dropdown: [
+      { label: 'All Posts', href: '/blog' },
+      { label: 'Admin Panel', href: '/admin/blog' },
     ],
   },
   {

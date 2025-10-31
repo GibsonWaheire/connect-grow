@@ -55,7 +55,7 @@ export const PaymentSuccess = () => {
 
   const handleEmailPeter = () => {
     const subject = encodeURIComponent(`Order Confirmation - ${orderData?.orderId}`);
-    const body = encodeURIComponent(`Hi Peter,
+    const body = encodeURIComponent(`Hi McGibs Digital Solutions,
 
 I have successfully completed my payment for the following order:
 
@@ -102,13 +102,13 @@ ${orderData?.phone}`);
             <CheckCircle className="w-8 h-8 text-red-600" />
           </div>
           <h2 className="text-2xl font-bold text-red-600 mb-4">Payment Failed</h2>
-          <p className="text-gray-600 mb-6">There was an issue with your payment. Please try again or contact Peter directly.</p>
+          <p className="text-gray-600 mb-6">There was an issue with your payment. Please try again or contact us directly.</p>
           <div className="space-y-3">
             <Button onClick={handleNewOrder} className="w-full">
               Try Again
             </Button>
             <Button variant="outline" onClick={handleEmailPeter} className="w-full">
-              Contact Peter
+              Contact Us
             </Button>
           </div>
         </div>
@@ -196,12 +196,12 @@ ${orderData?.phone}`);
 
           <div className="text-center space-y-4">
             <p className="text-gray-600">
-              Peter will review your order and get back to you within 24 hours with the next steps.
+              Our team will review your order and get back to you within 24 hours with the next steps.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button onClick={handleEmailPeter} className="bg-green-600 hover:bg-green-700">
                 <Mail className="w-4 h-4 mr-2" />
-                Email Peter
+                Contact Us
               </Button>
               <Button variant="outline" onClick={handleNewOrder}>
                 Place Another Order

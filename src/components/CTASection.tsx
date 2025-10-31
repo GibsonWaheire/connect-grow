@@ -8,9 +8,9 @@ export const CTASection = () => {
 
   const handleEmail = () => {
     const subject = encodeURIComponent("School Help Inquiry - Ready to Get Started");
-    const body = encodeURIComponent(`Hi Peter,
+    const body = encodeURIComponent(`Hi McGibs Digital Solutions,
 
-I'm ready to get started with your school help services!
+I'm ready to get started with your academic writing services!
 
 Could you please provide:
 - Current pricing for your services
@@ -63,7 +63,7 @@ Best regards,
                 alt="Email"
                 className="h-6 w-6 rounded object-cover"
               />
-              Email Peter
+              Contact Us
             </Button>
           </div>
           

@@ -185,7 +185,7 @@ Additional Notes:
   };
 
   const handleSubmit = () => {
-    const message = `Hi Peter! I need custom AI research help:
+    const message = `Hi McGibs Digital Solutions! I need custom AI research help:
 
 Name: ${formData.name}
 Email: ${formData.email}
@@ -429,7 +429,7 @@ Please let me know if you can help with this custom request and provide a quote.
               {/* Enhanced Note */}
               <div className="text-sm text-center space-y-2">
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
-                  <p className="font-semibold text-green-800">✨ Peter will review your request and get back to you within 24 hours</p>
+                  <p className="font-semibold text-green-800">✨ Our team will review your request and get back to you within 24 hours</p>
                 </div>
                 <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border border-red-200">
                   <p className="font-semibold text-red-800">🚨 Specializing in AI detection removal and human rewriting</p>

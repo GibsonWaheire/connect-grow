@@ -13,9 +13,9 @@ export const HeroSection = () => {
 
   const handleEmail = () => {
     const subject = encodeURIComponent("School Help Inquiry - Services & Pricing");
-    const body = encodeURIComponent(`Hi Peter,
+    const body = encodeURIComponent(`Hi McGibs Digital Solutions,
 
-I remember you from before and I'm interested in your school help services.
+I'm interested in your academic writing and course help services.
 
 Could you please tell me about:
 - Your current services and pricing
@@ -42,10 +42,10 @@ Best regards,
                 <span className="text-sm font-medium text-white">500+ Students Helped</span>
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white/90 mb-2">
-                Hi there! I'm Peter 👋
+                Welcome to McGibs Digital Solutions 👋
               </h2>
               <p className="text-lg md:text-xl text-white/80">
-                I'm here to help with your academic needs!
+                Expert academic writing and course assistance to help you succeed!
               </p>
             </div>
             
@@ -85,7 +85,7 @@ Best regards,
                   alt="Email" 
                   className="h-5 w-5 rounded"
                 />
-                Email Peter
+                Contact Us
               </Button>
             </div>
             

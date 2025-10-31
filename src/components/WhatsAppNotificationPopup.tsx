@@ -90,7 +90,7 @@ const WhatsAppNotificationPopup: React.FC<WhatsAppNotificationPopupProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <MessageCircle className="h-6 w-6 text-green-600" />
             <AlertDialogTitle className="text-lg font-semibold">
-              New WhatsApp Number!
+              Get Started with Your Project
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
@@ -110,18 +110,11 @@ const WhatsAppNotificationPopup: React.FC<WhatsAppNotificationPopupProps> = ({
             Maybe Later
           </AlertDialogCancel>
           <AlertDialogAction 
-            onClick={handleCallClick}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Phone className="h-4 w-4 mr-2" />
-            Call Now
-          </AlertDialogAction>
-          <AlertDialogAction 
             onClick={handleWhatsAppClick}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
-            WhatsApp
+            Chat with Us
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

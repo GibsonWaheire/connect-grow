@@ -23,19 +23,21 @@ import ContactPage from "./pages/ContactPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
-import { ServicesPage } from "./pages/ServicesPage";
-import ServicesOverviewPage from "./pages/ServicesPage";
+import ServicesPage from "./pages/ServicesPage";
 import ProcessPage from "./pages/ProcessPage";
 import PricingPage from "./pages/PricingPage";
 import TechStackPage from "./pages/TechStackPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
 import FAQPage from "./pages/FAQPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import AdminBlogPage from "./pages/AdminBlogPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import IntaSendTest from "./components/IntaSendTest";
-import WhatsAppNotificationPopup from "./components/WhatsAppNotificationPopup";
+import MarketingPopup from "./components/MarketingPopup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,13 +70,16 @@ const App = () => (
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/services" element={<ServicesPage />} />
-            <Route path="/services-overview" element={<ServicesOverviewPage />} />
+            <Route path="/services-overview" element={<ServicesPage />} />
             <Route path="/process" element={<ProcessPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/tech-stack" element={<TechStackPage />} />
             <Route path="/case-studies" element={<CaseStudiesPage />} />
             <Route path="/testimonials" element={<TestimonialsPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPostPage />} />
+            <Route path="/admin/blog" element={<AdminBlogPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/test-intasend" element={<IntaSendTest />} />
@@ -82,9 +87,10 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-        <WhatsAppNotificationPopup 
-          message="We have a new WhatsApp number for better service! Contact us now for faster support."
-          showDelay={0} // Show immediately
+        <MarketingPopup 
+          title="Limited Time Offer"
+          message="Get 20% off your first project! Sign up for our newsletter and receive exclusive updates, tips, and special offers."
+          showDelay={5000} // Show after 5 seconds
         />
         <Analytics />
       </TooltipProvider>
