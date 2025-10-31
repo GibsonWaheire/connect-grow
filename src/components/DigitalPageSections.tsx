@@ -81,22 +81,22 @@ export const FAQSection = () => {
   ];
 
   return (
-    <section id="faq" className="container mx-auto px-4 py-16 bg-white text-slate-900">
+    <section id="faq" className="container mx-auto px-4 py-16 bg-gradient-to-b from-white to-slate-50 text-slate-900">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className="max-w-3xl mx-auto space-y-3 md:space-y-4">
         {faqs.map((faq, i) => (
-          <div key={i} className="border border-slate-200 rounded-xl overflow-hidden">
+          <div key={i} className="border-2 border-slate-200 rounded-xl overflow-hidden bg-gradient-to-br from-white to-slate-50 shadow-sm hover:shadow-md transition-all">
             <button
-              className="w-full p-6 text-left flex items-center justify-between hover:bg-slate-50 transition"
+              className="w-full p-4 md:p-6 text-left flex items-center justify-between hover:bg-slate-50/50 transition"
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
             >
-              <span className="font-semibold">{faq.q}</span>
-              <svg className={`w-5 h-5 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="font-semibold text-sm md:text-base">{faq.q}</span>
+              <svg className={`w-5 h-5 transition-transform flex-shrink-0 ${openIndex === i ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {openIndex === i && (
-              <div className="px-6 pb-6 text-slate-600">{faq.a}</div>
+              <div className="px-4 md:px-6 pb-4 md:pb-6 text-slate-600 text-sm md:text-base">{faq.a}</div>
             )}
           </div>
         ))}
@@ -111,12 +111,12 @@ export const CaseStudiesSection = () => {
   };
 
   return (
-    <section id="case-studies" className="container mx-auto px-4 py-16 bg-slate-100 text-slate-900">
+    <section id="case-studies" className="container mx-auto px-4 py-16 bg-gradient-to-b from-white to-slate-50 text-slate-900">
       <div className="text-center mb-12">
         <h2 className="text-2xl md:text-3xl font-bold mb-4">Case Studies</h2>
         <p className="text-slate-600 max-w-2xl mx-auto">Real projects, real results. See how we've helped businesses scale their digital presence.</p>
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
         {[
           {
             title: "Fintech Dashboard Platform",
@@ -140,14 +140,14 @@ export const CaseStudiesSection = () => {
             href: "https://portfolio-main-two-bice.vercel.app/",
           },
         ].map((study) => (
-          <div key={study.title} className="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl transition">
+          <div key={study.title} className="bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden border-2 border-slate-200 shadow-md hover:shadow-xl transition-all hover:scale-[1.02]">
             <a href={study.href} target="_blank" rel="noopener noreferrer">
               <OptimizedImage src={study.img} alt={study.title} className="w-full h-48 object-cover" />
             </a>
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               <h3 className="font-bold text-lg mb-2">{study.title}</h3>
               <p className="text-slate-600 text-sm mb-4">{study.desc}</p>
-              <div className="p-3 bg-emerald-50 rounded-lg mb-4">
+              <div className="p-3 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg mb-4 border border-emerald-200">
                 <div className="text-xs font-semibold text-emerald-800 mb-1">Results</div>
                 <div className="text-sm text-emerald-700">{study.results}</div>
               </div>
@@ -169,9 +169,9 @@ export const CaseStudiesSection = () => {
 
 export const EnhancedTestimonials = () => {
   return (
-    <section id="testimonials" className="container mx-auto px-4 py-16 bg-white text-slate-900">
+    <section id="testimonials" className="container mx-auto px-4 py-16 bg-gradient-to-b from-slate-50 to-white text-slate-900">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">What clients say</h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {[
           {
             quote: "They delivered on time with a level of polish that impressed our stakeholders. The codebase is clean and maintainable.",
@@ -195,20 +195,20 @@ export const EnhancedTestimonials = () => {
             img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
           },
         ].map((t, i) => (
-          <div key={i} className="p-6 rounded-xl border border-slate-200 bg-white">
+          <div key={i} className="p-4 md:p-6 rounded-xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 shadow-md hover:shadow-lg transition-all">
             <div className="flex items-center gap-1 mb-4">
               {[...Array(5)].map((_, j) => (
-                <svg key={j} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg key={j} className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               ))}
             </div>
-            <p className="text-slate-700 mb-4">"{t.quote}"</p>
+            <p className="text-slate-700 mb-4 text-sm md:text-base">"{t.quote}"</p>
             <div className="flex items-center gap-3">
-              <OptimizedImage src={t.img} alt={t.author} className="w-12 h-12 rounded-full object-cover" />
+              <OptimizedImage src={t.img} alt={t.author} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
               <div>
-                <div className="font-semibold">{t.author}</div>
-                <div className="text-sm text-slate-600">{t.role}, {t.company}</div>
+                <div className="font-semibold text-sm md:text-base">{t.author}</div>
+                <div className="text-xs md:text-sm text-slate-600">{t.role}, {t.company}</div>
               </div>
             </div>
           </div>

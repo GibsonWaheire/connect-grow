@@ -201,8 +201,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Featured Work */}
-        <section id="featured-work" className="container mx-auto px-4 py-12 bg-slate-100 text-slate-900">
-          <div className="flex items-end justify-between mb-6">
+        <section id="featured-work" className="container mx-auto px-4 py-12 bg-gradient-to-b from-white to-slate-50 text-slate-900">
+          <div className="flex items-end justify-between mb-6 flex-col sm:flex-row gap-2">
             <h2 className="text-2xl md:text-3xl font-bold">Featured Work</h2>
             <a
               href="https://portfolio-main-two-bice.vercel.app/"
@@ -213,7 +213,7 @@ const DigitalHomePage = () => {
               View full portfolio
             </a>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {[
               {
                 title: "SaaS Dashboard",
@@ -234,55 +234,56 @@ const DigitalHomePage = () => {
                 href: "https://portfolio-main-two-bice.vercel.app/",
               },
             ].map((p) => (
-              <a key={p.title} href={p.href} target="_blank" rel="noopener noreferrer" className="group rounded-xl overflow-hidden border border-slate-200 bg-white hover:shadow-xl transition">
+              <a key={p.title} href={p.href} target="_blank" rel="noopener noreferrer" className="group rounded-xl overflow-hidden border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 hover:shadow-xl transition-all hover:scale-[1.02]">
                 <div className="aspect-video overflow-hidden">
-                  <OptimizedImage src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+                  <OptimizedImage src={p.img} alt={p.title} className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform" />
                 </div>
-                <div className="p-4">
-                  <div className="font-semibold">{p.title}</div>
-                  <div className="text-sm text-slate-600">{p.desc}</div>
+                <div className="p-4 md:p-5">
+                  <div className="font-semibold text-base md:text-lg">{p.title}</div>
+                  <div className="text-xs md:text-sm text-slate-600 mt-1">{p.desc}</div>
                 </div>
               </a>
             ))}
           </div>
         </section>
 
-        <section id="capabilities" className="container mx-auto px-4 py-16 lg:py-20 bg-white text-slate-900">
+        <section id="capabilities" className="container mx-auto px-4 py-16 lg:py-20 bg-gradient-to-b from-white to-slate-50 text-slate-900">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">What we do</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {[
-              { title: "Websites & CMS", desc: "Marketing sites, blogs, landing pages, and headless CMS." },
-              { title: "Web Apps", desc: "Dashboards, portals, and internal tools with modern stacks." },
-              { title: "Mobile Apps", desc: "iOS/Android apps with React Native or native integrations." },
-              { title: "E-commerce", desc: "Shops, payments, catalogs, and inventory flows." },
-              { title: "UI/UX Design", desc: "Wireframes, prototypes, and design systems." },
-              { title: "Cloud & DevOps", desc: "CI/CD, hosting, monitoring, and scalability." },
+              { title: "Websites & CMS", desc: "Marketing sites, blogs, landing pages, and headless CMS.", icon: "🌐", gradient: "from-blue-500/10 to-cyan-500/10", border: "border-blue-200" },
+              { title: "Web Apps", desc: "Dashboards, portals, and internal tools with modern stacks.", icon: "💻", gradient: "from-purple-500/10 to-pink-500/10", border: "border-purple-200" },
+              { title: "Mobile Apps", desc: "iOS/Android apps with React Native or native integrations.", icon: "📱", gradient: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-200" },
+              { title: "E-commerce", desc: "Shops, payments, catalogs, and inventory flows.", icon: "🛒", gradient: "from-orange-500/10 to-amber-500/10", border: "border-orange-200" },
+              { title: "UI/UX Design", desc: "Wireframes, prototypes, and design systems.", icon: "🎨", gradient: "from-indigo-500/10 to-violet-500/10", border: "border-indigo-200" },
+              { title: "Cloud & DevOps", desc: "CI/CD, hosting, monitoring, and scalability.", icon: "☁️", gradient: "from-slate-500/10 to-gray-500/10", border: "border-slate-200" },
             ].map((item) => (
-              <div key={item.title} className="p-6 rounded-xl border border-slate-200 shadow-sm bg-white">
+              <div key={item.title} className={`p-6 rounded-xl border-2 ${item.border} shadow-md hover:shadow-xl transition-all bg-gradient-to-br ${item.gradient} backdrop-blur-sm`}>
+                <div className="text-3xl mb-3">{item.icon}</div>
                 <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-slate-600">{item.desc}</p>
+                <p className="text-slate-700">{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Featured Products */}
-        <section className="container mx-auto px-4 py-16 bg-slate-100 text-slate-900">
-          <div className="flex items-end justify-between mb-6">
+        <section className="container mx-auto px-4 py-16 bg-gradient-to-b from-slate-50 to-white text-slate-900">
+          <div className="flex items-end justify-between mb-6 flex-col sm:flex-row gap-2">
             <h2 className="text-2xl md:text-3xl font-bold">Featured Products</h2>
             <a href="/shop" className="text-primary hover:underline">Browse all</a>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {products.slice(0, 3).map((p) => (
-              <div key={p.id} className="rounded-xl overflow-hidden border border-slate-200 bg-white flex flex-col">
+              <div key={p.id} className="rounded-xl overflow-hidden border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 flex flex-col shadow-md hover:shadow-xl transition-all hover:scale-[1.02]">
                 <a href={`/shop/${p.id}`}><OptimizedImage src={p.imageUrl} alt={p.name} className="w-full h-48 object-cover" /></a>
-                <div className="p-5 flex-1 flex flex-col">
-                  <a href={`/shop/${p.id}`} className="font-semibold hover:underline">{p.name}</a>
-                  <p className="text-sm text-slate-600 mt-1 line-clamp-2">{p.description}</p>
-                  <div className="mt-3 font-semibold">${p.price.toFixed(2)}</div>
-                  <div className="mt-auto pt-4 flex gap-2">
-                    <Button size="sm" onClick={() => addItem(p, 1)} className="flex-1">Add to Cart</Button>
-                    <a href={`/shop/${p.id}`} className="inline-flex items-center justify-center rounded-md border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">Details</a>
+                <div className="p-4 md:p-5 flex-1 flex flex-col">
+                  <a href={`/shop/${p.id}`} className="font-semibold hover:underline text-sm md:text-base">{p.name}</a>
+                  <p className="text-xs md:text-sm text-slate-600 mt-1 line-clamp-2">{p.description}</p>
+                  <div className="mt-3 font-semibold text-base md:text-lg">${p.price.toFixed(2)}</div>
+                  <div className="mt-auto pt-4 flex gap-2 flex-col sm:flex-row">
+                    <Button size="sm" onClick={() => addItem(p, 1)} className="flex-1 text-xs md:text-sm">Add to Cart</Button>
+                    <a href={`/shop/${p.id}`} className="inline-flex items-center justify-center rounded-md border-2 border-slate-200 px-3 text-xs md:text-sm font-medium text-slate-700 hover:bg-slate-50 transition">Details</a>
                   </div>
                 </div>
               </div>
@@ -291,73 +292,79 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Process */}
-        <section id="process" className="container mx-auto px-4 py-12 bg-white text-slate-900">
+        <section id="process" className="container mx-auto px-4 py-12 bg-gradient-to-b from-slate-50 to-white text-slate-900">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">Process</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
-              { step: "01", title: "Discovery", desc: "Goals, scope, and constraints." },
-              { step: "02", title: "Design", desc: "Wireframes, UI kit, prototypes." },
-              { step: "03", title: "Build", desc: "Iterative development & QA." },
-              { step: "04", title: "Launch", desc: "Deploy, monitor, handover." },
+              { step: "01", title: "Discovery", desc: "Goals, scope, and constraints.", color: "from-blue-500/10 to-indigo-500/10", border: "border-blue-200" },
+              { step: "02", title: "Design", desc: "Wireframes, UI kit, prototypes.", color: "from-purple-500/10 to-pink-500/10", border: "border-purple-200" },
+              { step: "03", title: "Build", desc: "Iterative development & QA.", color: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-200" },
+              { step: "04", title: "Launch", desc: "Deploy, monitor, handover.", color: "from-orange-500/10 to-amber-500/10", border: "border-orange-200" },
             ].map((s) => (
-              <div key={s.step} className="p-6 rounded-xl border border-slate-200 bg-white">
-                <div className="text-sm text-slate-500 mb-1">{s.step}</div>
-                <div className="font-semibold mb-1">{s.title}</div>
-                <div className="text-slate-600 text-sm">{s.desc}</div>
+              <div key={s.step} className={`p-6 rounded-xl border-2 ${s.border} shadow-md hover:shadow-lg transition-all bg-gradient-to-br ${s.color}`}>
+                <div className="text-sm text-slate-600 mb-2 font-medium">{s.step}</div>
+                <div className="font-semibold text-lg mb-2">{s.title}</div>
+                <div className="text-slate-700 text-sm">{s.desc}</div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Tech Stack */}
-        <section id="tech-stack" className="container mx-auto px-4 py-12 bg-slate-100 text-slate-900">
+        <section id="tech-stack" className="container mx-auto px-4 py-12 bg-gradient-to-b from-white to-slate-50 text-slate-900">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">Tech we use</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 text-center">
             {["React", "TypeScript", "Node.js", "Vite", "Tailwind", "React Query", "Radix", "IntaSend", "Vercel", "Docker"].map((t) => (
-              <div key={t} className="p-4 rounded-lg border border-slate-200 bg-white">{t}</div>
+              <div key={t} className="p-3 md:p-4 rounded-lg border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm hover:shadow-md hover:border-emerald-300 transition-all">{t}</div>
             ))}
           </div>
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="container mx-auto px-4 py-16 bg-white text-slate-900">
+        <section id="pricing" className="container mx-auto px-4 py-16 bg-gradient-to-b from-slate-50 to-white text-slate-900">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Simple, transparent pricing</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
             {[
               {
                 name: "Website Starter",
                 price: "$499",
                 features: ["1 landing page", "SEO setup", "Analytics", "1 revision"],
                 highlight: false,
+                gradient: "from-blue-50 to-cyan-50",
+                border: "border-blue-200",
               },
               {
                 name: "App Pro",
                 price: "$1,999",
                 features: ["Web app or mobile app", "Auth & dashboard", "Payments", "2 revisions"],
                 highlight: true,
+                gradient: "from-emerald-50 to-teal-50",
+                border: "border-emerald-300",
               },
               {
                 name: "Commerce Plus",
                 price: "$1,499",
                 features: ["Product catalog", "Checkout (IntaSend)", "Admin tools", "2 revisions"],
                 highlight: false,
+                gradient: "from-purple-50 to-pink-50",
+                border: "border-purple-200",
               },
             ].map((plan) => (
-              <div key={plan.name} className={`p-6 rounded-2xl border ${plan.highlight ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-white'}`}>
+              <div key={plan.name} className={`p-6 rounded-2xl border-2 ${plan.border} shadow-lg hover:shadow-xl transition-all bg-gradient-to-br ${plan.gradient} ${plan.highlight ? 'scale-105 ring-2 ring-emerald-300' : ''}`}>
                 <div className="flex items-baseline justify-between mb-4">
-                  <div className="font-semibold">{plan.name}</div>
+                  <div className="font-semibold text-lg">{plan.name}</div>
                   <div className="text-2xl font-bold">{plan.price}</div>
                 </div>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-sm mb-6">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                       <span className="text-slate-700">{f}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="mt-6">
-                  <Button onClick={handleQuote} className="w-full">Get started</Button>
+                  <Button onClick={handleQuote} className={`w-full ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}>Get started</Button>
                 </div>
               </div>
             ))}

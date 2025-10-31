@@ -44,40 +44,19 @@ const navigationItems = [
   {
     name: 'Course Help',
     href: '/course-help',
-    dropdown: [
-      { label: 'Services', href: '/course-help#services' },
-      { label: 'Samples', href: '/course-help#samples' },
-      { label: 'FAQ', href: '/course-help#faq' },
-      { label: 'Get Started', href: '/course-help' },
-    ],
   },
   {
     name: 'Portfolio',
     href: 'https://portfolio-main-two-bice.vercel.app/',
     external: true,
-    dropdown: [
-      { label: 'View Portfolio', href: 'https://portfolio-main-two-bice.vercel.app/', external: true },
-      { label: 'Featured Work', href: '/#featured-work', external: false },
-      { label: 'Case Studies', href: '/case-studies', external: false },
-    ],
   },
   {
     name: 'Blog',
     href: '/blog',
-    dropdown: [
-      { label: 'All Posts', href: '/blog' },
-      { label: 'Admin Panel', href: '/admin/blog' },
-    ],
   },
   {
     name: 'Contact',
     href: '/contact',
-    dropdown: [
-      { label: 'Get Quote', href: '/contact' },
-      { label: 'WhatsApp', href: '#', action: 'whatsapp' },
-      { label: 'Email Us', href: 'mailto:pwriter455@gmail.com', external: true },
-      { label: 'Schedule Call', href: '/contact' },
-    ],
   },
 ];
 
