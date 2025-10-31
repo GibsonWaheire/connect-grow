@@ -1,233 +1,121 @@
-# Academic Services Pro - Quick Orders & Secure Payments
+# Connect Grow - Digital Solutions Platform
 
-## ⚠️ **IMPORTANT: COPYRIGHT NOTICE**
+A full-stack application for digital solutions, e-commerce, and course help services.
 
-**Copyright (c) 2024 Peter's School Help. All rights reserved.**
+## Project Structure
 
-This software is proprietary and confidential. Unauthorized copying, distribution, modification, or use of this code is strictly prohibited without explicit written permission from the copyright holder.
-
-**Commercial Use Restriction:** This software is provided for educational and personal use only. Commercial use, redistribution, or resale of this software or its components is strictly prohibited.
-
-**For licensing inquiries:** pwriter455@gmail.com
-
----
-
-## 🚀 Project Overview
-
-A modern, refactored React application for academic services, offering quick orders and secure payments for students worldwide. Built with a scalable architecture and optimized for performance.
-
-## 🏗️ Architecture
-
-This project follows a feature-based architecture with shared components and utilities:
+This project is organized into a monorepo structure:
 
 ```
-src/
-├── features/           # Feature-based modules
-│   ├── auth/           # Authentication (future)
-│   ├── orders/         # Order management
-│   ├── payments/       # Payment processing
-│   └── services/       # Service offerings
-├── shared/             # Shared components & utilities
-│   ├── components/     # Reusable UI components
-│   ├── hooks/          # Custom hooks
-│   ├── utils/          # Utility functions
-│   └── types/          # TypeScript types
-├── layouts/            # Layout components
-├── pages/              # Page components
-└── config/             # Configuration files
+connect-grow/
+├── api/            # API routes (Vercel serverless functions - must be at root)
+│   ├── blog/
+│   ├── shop/
+│   └── ...
+│
+├── client/         # Frontend React application
+│   ├── src/        # React source code
+│   ├── public/     # Static assets
+│   ├── index.html  # Entry HTML file
+│   └── package.json
+│
+├── server/         # Backend server code
+│   ├── server.js   # Express server (for local development)
+│   └── package.json
+│
+└── package.json    # Root package.json for workspace scripts
 ```
 
-## 🛠️ Technologies Used
+**Note:** The `api/` directory must remain at the root level because Vercel requires serverless functions to be in the root `api/` folder.
 
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite with optimized configuration
-- **Styling**: Tailwind CSS with shadcn/ui components
-- **State Management**: React Context + Custom Hooks
-- **Routing**: React Router DOM
-- **Forms**: React Hook Form with Zod validation
-- **Data Fetching**: React Query (TanStack Query)
-- **Icons**: Unsplash images (optimized)
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
+## Getting Started
 
 ### Installation
 
+Install all dependencies:
 ```bash
-# Clone the repository
-git clone https://github.com/GibsonWaheire/Personal.git
+npm run install:all
+```
 
-# Navigate to the project directory
-cd connect-order-grow
-
-# Install dependencies
+Or install separately:
+```bash
+# Install root dependencies
 npm install
 
-# Start development server
+# Install client dependencies
+cd client && npm install
+
+# Install server dependencies
+cd ../server && npm install
+```
+
+### Development
+
+Run both client and server together:
+```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
-
-## 📜 Available Scripts
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production with optimizations
-- `npm run preview` - Preview production build locally
-- `npm run lint` - Run ESLint for code quality
-
-## ✨ Key Features
-
-### 🎨 **Modern UI/UX**
-- Responsive design with mobile-first approach
-- Optimized images with loading states and fallbacks
-- Smooth animations and transitions
-- Accessibility compliant
-
-### 🔧 **Performance Optimizations**
-- Code splitting with manual chunks
-- Lazy loading for components
-- Optimized bundle size
-- Efficient re-renders with React.memo
-
-### 🎯 **User Experience**
-- WhatsApp integration for quick orders
-- Real-time form validation
-- Loading states and error handling
-- Progressive enhancement
-
-### 🏗️ **Developer Experience**
-- TypeScript for type safety
-- Custom hooks for reusable logic
-- Feature-based organization
-- Comprehensive error boundaries
-
-## 📁 Project Structure
-
-```
-src/
-├── features/
-│   └── services/
-│       └── components/
-│           └── ServicesSection.tsx    # Refactored services
-├── shared/
-│   ├── components/
-│   │   ├── OptimizedImage.tsx        # Image optimization
-│   │   └── ServiceCard.tsx           # Reusable service card
-│   ├── hooks/
-│   │   ├── useWhatsApp.ts            # WhatsApp integration
-│   │   ├── useServices.ts            # Services management
-│   │   └── useBreakpoint.ts         # Responsive utilities
-│   ├── contexts/
-│   │   └── AppContext.tsx            # Global state
-│   ├── types/
-│   │   └── index.ts                  # TypeScript definitions
-│   └── utils/
-│       └── index.ts                  # Utility functions
-├── layouts/
-│   └── MainLayout.tsx                # Main layout wrapper
-├── config/
-│   └── environment.ts                # Environment configuration
-└── pages/
-    └── Index.tsx                     # Main page
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-VITE_API_BASE_URL=http://localhost:3000
-VITE_WHATSAPP_NUMBER=1234567890
-VITE_ENABLE_DARK_MODE=true
-VITE_ENABLE_ANALYTICS=true
-```
-
-### Build Optimizations
-
-- **Code Splitting**: Vendor, UI, and utility chunks
-- **Tree Shaking**: Unused code elimination
-- **Minification**: Production build optimization
-- **Source Maps**: Development debugging
-
-## 🚀 Deployment
-
-### Static Hosting
-
-This project can be deployed to any static hosting service:
-
+Or run separately:
 ```bash
-# Build for production
-npm run build
+# Frontend only (port 5173)
+npm run dev:client
 
-# Deploy to Vercel
-vercel --prod
-
-# Deploy to Netlify
-netlify deploy --prod
+# Backend only (port 3001)
+npm run dev:server
 ```
 
-### Supported Platforms
+### Building
 
-- ✅ Vercel
-- ✅ Netlify  
-- ✅ GitHub Pages
-- ✅ AWS S3
-- ✅ Firebase Hosting
-- ✅ Cloudflare Pages
+Build the client for production:
+```bash
+npm run build:client
+```
 
-## 🧪 Testing Strategy
+Or from the root:
+```bash
+npm run build
+```
 
-### Unit Testing
-- Component testing with React Testing Library
-- Hook testing with custom test utilities
-- Utility function testing
+## Deployment
 
-### Integration Testing
-- Page-level testing
-- User flow testing
-- API integration testing
+### Vercel (Recommended)
 
-### E2E Testing
-- Critical user journeys
-- Cross-browser compatibility
-- Performance testing
+The project is configured for Vercel deployment:
+- Frontend: Deploy from `client/` directory
+- Backend: API routes are in `server/api/` (auto-deployed as serverless functions)
 
-## 📊 Analytics & Monitoring
+### Manual Deployment
 
-- Google Analytics integration
-- Performance monitoring
-- Error tracking
-- User behavior analytics
+1. Build the client:
+   ```bash
+   cd client && npm run build
+   ```
 
-## 🔒 Security
+2. Deploy the `client/dist` directory to your hosting service
 
-- Environment variable protection
-- Input validation with Zod
-- XSS prevention
-- Secure payment integration
+3. Deploy API routes from `server/api/` to your serverless platform
 
-## 🤝 Contributing
+## Tech Stack
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Frontend (Client)
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Radix UI
+- React Query
 
-## 📄 License
+### Backend (Server)
+- Node.js
+- Express (local development)
+- Vercel Serverless Functions (production)
 
-© 2024 Academic Services Pro. All rights reserved.
+## Scripts
 
-## 🙏 Acknowledgments
-
-- Built with [Vite](https://vitejs.dev/)
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
-- Styling with [Tailwind CSS](https://tailwindcss.com/)
-- Icons from [Unsplash](https://unsplash.com/)
+- `npm run dev` - Run both client and server
+- `npm run dev:client` - Run frontend only
+- `npm run dev:server` - Run backend only
+- `npm run build` - Build frontend for production
+- `npm run install:all` - Install all dependencies

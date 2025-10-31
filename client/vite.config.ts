@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  root: __dirname,
   build: {
     // Advanced minification settings
     minify: mode === 'production' ? 'terser' : false,
