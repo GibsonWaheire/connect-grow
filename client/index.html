@@ -80,6 +80,16 @@
     <!-- IntaSend SDK -->
     <script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js" async></script>
     
+    <!-- EmailJS SDK for sending emails -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+      // Initialize EmailJS - Replace with your Public Key
+      // Get your Public Key from: https://dashboard.emailjs.com/admin/integration
+      (function(){
+        emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Replace with actual public key
+      })();
+    </script>
+    
   </head>
 
   <body>

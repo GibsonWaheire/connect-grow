@@ -1,0 +1,375 @@
+import { useState } from "react";
+import { MainLayout } from "@/layouts/MainLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Header } from "@/shared/components/Header";
+import { sendEmailViaFormSpree } from "@/utils/emailService";
+import { 
+  Mail, 
+  Phone, 
+  User, 
+  FileText,
+  Send,
+  CheckCircle2,
+  ArrowRight
+} from "lucide-react";
+
+const QuoteRequestPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    projectType: "",
+    budget: "",
+    timeline: "",
+    description: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    const emailContent = {
+      to_email: "pwriter455@gmail.com",
+      to_name: "McGibs Digital Solutions",
+      from_name: formData.name,
+      from_email: formData.email,
+      phone: formData.phone,
+      company: formData.company || 'N/A',
+      project_type: formData.projectType || 'Not specified',
+      budget: formData.budget || 'Not specified',
+      timeline: formData.timeline || 'Not specified',
+      description: formData.description,
+      subject: `Quote Request - ${formData.projectType || 'Digital Solutions'}`,
+      message: `Hello McGibs Digital Solutions,
+
+I would like to request a quote for my project.
+
+CONTACT INFORMATION:
+- Name: ${formData.name}
+- Email: ${formData.email}
+- Phone: ${formData.phone}
+- Company: ${formData.company || 'N/A'}
+
+PROJECT DETAILS:
+- Project Type: ${formData.projectType || 'Not specified'}
+- Budget Range: ${formData.budget || 'Not specified'}
+- Timeline: ${formData.timeline || 'Not specified'}
+
+PROJECT DESCRIPTION:
+${formData.description}
+
+---
+This quote request was submitted through the website form.`
+    };
+
+    try {
+      // Try to send email via FormSpree (simpler, no setup needed initially)
+      // Falls back to mailto if FormSpree is not configured
+      const emailSent = await sendEmailViaFormSpree({
+        to_email: emailContent.to_email,
+        to_name: emailContent.to_name,
+        from_name: emailContent.from_name,
+        from_email: emailContent.from_email,
+        subject: emailContent.subject,
+        message: emailContent.message,
+        phone: emailContent.phone,
+        company: emailContent.company,
+        project_type: emailContent.project_type,
+        budget: emailContent.budget,
+        timeline: emailContent.timeline,
+      });
+
+      if (emailSent) {
+        setSubmitStatus("success");
+        setIsSubmitting(false);
+        
+        // Reset form after showing success
+        setTimeout(() => {
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            company: "",
+            projectType: "",
+            budget: "",
+            timeline: "",
+            description: "",
+          });
+          setSubmitStatus("idle");
+        }, 3000);
+      } else {
+        setSubmitStatus("error");
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Email send error:', error);
+      setSubmitStatus("error");
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <Header />
+      <MainLayout>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-br from-emerald-50 via-white to-cyan-50 pt-24 pb-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">
+                Get Your Free Quote
+              </h1>
+              <p className="text-xl text-slate-600 mb-6">
+                Fill out the form below and we'll get back to you with a detailed quote within 24 hours.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Quote Request Form */}
+        <section className="container mx-auto px-4 py-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 md:p-12">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Contact Information */}
+                <div>
+                  <h2 className="text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+                    <User className="w-6 h-6 text-emerald-600" />
+                    Contact Information
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+                        Full Name *
+                      </label>
+                      <Input
+                        id="name"
+                        name="name"
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="John Doe"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                        Email Address *
+                      </label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="john@example.com"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
+                        Phone Number *
+                      </label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="+1 (555) 123-4567"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
+                        Company/Organization
+                      </label>
+                      <Input
+                        id="company"
+                        name="company"
+                        type="text"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        placeholder="Acme Inc. (optional)"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Details */}
+                <div>
+                  <h2 className="text-2xl font-bold mb-6 text-slate-900 flex items-center gap-2">
+                    <FileText className="w-6 h-6 text-emerald-600" />
+                    Project Details
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="projectType" className="block text-sm font-medium text-slate-700 mb-2">
+                        Project Type *
+                      </label>
+                      <select
+                        id="projectType"
+                        name="projectType"
+                        required
+                        value={formData.projectType}
+                        onChange={handleInputChange}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="">Select project type</option>
+                        <option value="Website">Website</option>
+                        <option value="Web Application">Web Application</option>
+                        <option value="Mobile App">Mobile App</option>
+                        <option value="E-commerce Platform">E-commerce Platform</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Full-Stack Solution">Full-Stack Solution</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="budget" className="block text-sm font-medium text-slate-700 mb-2">
+                        Budget Range *
+                      </label>
+                      <select
+                        id="budget"
+                        name="budget"
+                        required
+                        value={formData.budget}
+                        onChange={handleInputChange}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="">Select budget range</option>
+                        <option value="Under $1,000">Under $1,000</option>
+                        <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+                        <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                        <option value="$10,000 - $25,000">$10,000 - $25,000</option>
+                        <option value="$25,000+">$25,000+</option>
+                        <option value="Not sure">Not sure</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label htmlFor="timeline" className="block text-sm font-medium text-slate-700 mb-2">
+                      Timeline *
+                    </label>
+                    <select
+                      id="timeline"
+                      name="timeline"
+                      required
+                      value={formData.timeline}
+                      onChange={handleInputChange}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="">Select timeline</option>
+                      <option value="ASAP / Urgent">ASAP / Urgent</option>
+                      <option value="1-2 weeks">1-2 weeks</option>
+                      <option value="1 month">1 month</option>
+                      <option value="2-3 months">2-3 months</option>
+                      <option value="3-6 months">3-6 months</option>
+                      <option value="Flexible">Flexible</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Project Description */}
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-2">
+                    Project Description *
+                  </label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    required
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Tell us about your project, requirements, goals, and any specific features or functionality you need..."
+                    rows={6}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-slate-500 mt-2">
+                    The more details you provide, the more accurate our quote will be.
+                  </p>
+                </div>
+
+                {submitStatus === "success" && (
+                  <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>Form submitted! Your email client should open. If not, please check your email settings.</span>
+                  </div>
+                )}
+
+                {submitStatus === "error" && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
+                    Something went wrong. Please try again or contact us directly at pwriter455@gmail.com
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isSubmitting}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-lg font-semibold"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Send className="w-5 h-5 mr-2 animate-spin" />
+                      Opening Email Client...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      Submit Quote Request
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </>
+                  )}
+                </Button>
+              </form>
+
+              {/* Additional Info */}
+              <div className="mt-8 pt-8 border-t border-slate-200">
+                <div className="flex flex-col sm:flex-row items-start gap-6">
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-5 h-5 text-emerald-600 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-sm text-slate-900 mb-1">Email</h3>
+                      <p className="text-sm text-slate-600">pwriter455@gmail.com</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-5 h-5 text-emerald-600 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-sm text-slate-900 mb-1">Phone</h3>
+                      <p className="text-sm text-slate-600">+1 (443) 869-7500</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-4">
+                  After submitting, your email client will open with a pre-filled message. Simply review and send to receive your quote within 24 hours.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </MainLayout>
+    </>
+  );
+};
+
+export default QuoteRequestPage;
+
