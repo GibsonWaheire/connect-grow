@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
 import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { Header } from "@/shared/components/Header";
-import { Monitor, Smartphone, BarChart3, ArrowRight, Check, Zap, Shield, Code, Rocket, Heart } from "lucide-react";
+import { Monitor, Smartphone, BarChart3, ArrowRight, Check, Zap, Shield, Code, Rocket, Heart, ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
 import { products } from "@/data/products";
 import { useCart } from "@/shared/contexts/CartContext";
@@ -104,6 +104,13 @@ const DigitalHomePage = () => {
     sendMessage("Hi! I'm interested in your digital solutions (web/mobile/apps).");
   };
 
+  const handlePurchase = (packageName: string, price: string) => {
+    // Redirect to contact page with pre-filled package information
+    const message = `Hi! I'd like to purchase the ${packageName} package (${price}). Please proceed with payment and project setup.`;
+    const subject = `Purchase: ${packageName}`;
+    window.location.href = `/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`;
+  };
+
   return (
     <>
       <Header />
@@ -153,8 +160,17 @@ const DigitalHomePage = () => {
                 <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 mb-10 animate-fade-in-delay-2">
                   <Button 
                     size="lg" 
+                    onClick={() => window.location.href = '/pricing'} 
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg group shadow-lg hover:shadow-xl transition-all font-semibold"
+                  >
+                    🛒 View Pricing & Purchase
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                  <Button 
+                    size="lg" 
                     onClick={handleQuote} 
-                    className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg group shadow-lg hover:shadow-xl transition-all"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 px-8 py-6 text-lg group"
                   >
                     Get Free Quote
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -440,7 +456,7 @@ const DigitalHomePage = () => {
                 {
                   title: "SaaS Dashboard Platform",
                   desc: "Analytics, billing, and role-based access for enterprise teams.",
-                  img: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1600",
+                  img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
                   href: "https://portfolio-main-two-bice.vercel.app/",
                   category: "Web App",
                   badgeClass: "bg-emerald-500"
@@ -448,7 +464,7 @@ const DigitalHomePage = () => {
                 {
                   title: "E‑commerce Storefront",
                   desc: "High‑conversion product pages with seamless checkout experience.",
-                  img: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=1600",
+                  img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&h=900&fit=crop",
                   href: "https://portfolio-main-two-bice.vercel.app/",
                   category: "E-commerce",
                   badgeClass: "bg-blue-500"
@@ -676,12 +692,21 @@ const DigitalHomePage = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
-                    onClick={handleQuote} 
-                    className={`w-full py-6 text-lg ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-slate-800'}`}
-                  >
-                    Get Started
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={() => handlePurchase(plan.name, plan.price)} 
+                      className={`w-full py-6 text-lg font-semibold ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'}`}
+                    >
+                      🛒 Purchase Now
+                    </Button>
+                    <Button 
+                      onClick={handleQuote} 
+                      variant="outline"
+                      className={`w-full py-4 text-base border-2 ${plan.highlight ? 'border-emerald-300 text-emerald-700 hover:bg-emerald-50' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      Get Free Quote
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -708,18 +733,27 @@ const DigitalHomePage = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Button 
+                    onClick={() => window.location.href = '/pricing'} 
+                    size="lg" 
+                    className="bg-white text-emerald-600 hover:bg-slate-50 px-8 py-6 text-lg font-semibold shadow-lg"
+                  >
+                    🛒 View Packages & Purchase
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                  <Button 
                     onClick={handleQuote} 
                     size="lg" 
-                    className="bg-white text-emerald-600 hover:bg-slate-50 px-8 py-6 text-lg"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white/20 px-8 py-6 text-lg"
                   >
-                    Start Your Project
+                    Get Free Quote
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                   <a 
                     href="/contact" 
                     className="px-8 py-6 text-lg border-2 border-white rounded-lg hover:bg-white/10 transition-all"
                   >
-                    Schedule a Call
+                    Contact Us
                   </a>
                 </div>
               </div>

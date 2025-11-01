@@ -11,6 +11,13 @@ const PricingPage = () => {
     sendMessage("Hi! I'm interested in your pricing packages.");
   };
 
+  const handlePurchase = (packageName: string, price: string) => {
+    // Redirect to contact page with pre-filled package information
+    const message = `Hi! I'd like to purchase the ${packageName} package (${price}). Please proceed with payment and project setup.`;
+    const subject = `Purchase: ${packageName}`;
+    window.location.href = `/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`;
+  };
+
   return (
     <>
       <Header />
@@ -64,9 +71,21 @@ const PricingPage = () => {
                     </li>
                   ))}
                 </ul>
-                <Button onClick={handleQuote} className={`w-full ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}>
-                  Get started
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => handlePurchase(plan.name, plan.price)} 
+                    className={`w-full py-6 text-lg font-semibold ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-slate-800'}`}
+                  >
+                    🛒 Purchase Now
+                  </Button>
+                  <Button 
+                    onClick={handleQuote} 
+                    variant="outline"
+                    className={`w-full py-4 border-2 ${plan.highlight ? 'border-emerald-300 text-emerald-700 hover:bg-emerald-50' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}`}
+                  >
+                    Get Free Quote
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

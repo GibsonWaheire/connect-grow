@@ -40,6 +40,8 @@ import AboutPage from "./pages/AboutPage";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
 import CourseHelpPopup from "./components/CourseHelpPopup";
+import { StickyWhatsAppButton } from "./components/StickyWhatsAppButton";
+import { ExitIntentPopup } from "./components/ExitIntentPopup";
 import { HtmlRedirects } from "./components/HtmlRedirects";
 
 const queryClient = new QueryClient({
@@ -102,6 +104,8 @@ const App = () => (
             showDelay={5000} // Show after 5 seconds
           />
           <CourseHelpPopup />
+          <StickyWhatsAppButton />
+          <ExitIntentPopup />
         </BrowserRouter>
         <Analytics />
       </TooltipProvider>

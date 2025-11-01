@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +13,13 @@ import {
   Clock, 
   Send, 
   CheckCircle2,
-  Zap
+  Zap,
+  ShoppingCart
 } from "lucide-react";
 
 const ContactPage = () => {
   const { sendMessage } = useWhatsApp();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,6 +29,18 @@ const ContactPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Pre-fill form from URL parameters (for purchase links)
+  useEffect(() => {
+    const subject = searchParams.get('subject');
+    const message = searchParams.get('message');
+    if (subject) {
+      setFormData(prev => ({ ...prev, subject: decodeURIComponent(subject) }));
+    }
+    if (message) {
+      setFormData(prev => ({ ...prev, message: decodeURIComponent(message) }));
+    }
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -129,6 +144,21 @@ This message was sent from the contact form on your website.`;
 
         {/* Main Contact Section */}
         <section className="container mx-auto px-4 py-16">
+          {/* Purchase Indicator */}
+          {searchParams.get('subject')?.includes('Purchase') && (
+            <div className="mb-8 max-w-2xl mx-auto">
+              <div className="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-6 flex items-start gap-4">
+                <ShoppingCart className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-bold text-lg text-emerald-900 mb-2">Ready to Purchase!</h3>
+                  <p className="text-emerald-800 text-sm">
+                    We've pre-filled the form below with your package information. Just add your contact details and we'll process your order and send payment instructions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className="space-y-8">
