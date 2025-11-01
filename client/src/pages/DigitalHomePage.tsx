@@ -300,8 +300,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Value Proposition Section */}
-        <section className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 Why Choose McGibs Digital Solutions?
@@ -359,8 +359,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Services Section - Enhanced */}
-        <section id="capabilities" className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="capabilities" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 Complete Digital Solutions
@@ -443,8 +443,8 @@ const DigitalHomePage = () => {
         <EnhancedTestimonials />
 
         {/* Featured Work */}
-        <section id="featured-work" className="container mx-auto px-4 py-20 bg-gradient-to-b from-white to-slate-50">
-          <div className="max-w-6xl mx-auto">
+        <section id="featured-work" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-white to-slate-50">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Featured Projects</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -515,8 +515,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Process Section - Enhanced */}
-        <section id="process" className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="process" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Our Proven Process</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -572,8 +572,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="flex items-end justify-between mb-12 flex-col sm:flex-row gap-4">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">Featured Products</h2>
@@ -614,8 +614,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Tech Stack */}
-        <section id="tech-stack" className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="tech-stack" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Built With Modern Technology</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -633,8 +633,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="pricing" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Simple, Transparent Pricing</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -717,7 +717,7 @@ const DigitalHomePage = () => {
         <FAQSection />
 
         {/* Final CTA Section */}
-        <section className="container mx-auto px-4 pb-20">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <div className="max-w-4xl mx-auto">
             <div className="relative overflow-hidden p-12 rounded-3xl bg-gradient-to-r from-emerald-600 via-cyan-600 to-indigo-600 text-white">
               {/* Pattern overlay */}
