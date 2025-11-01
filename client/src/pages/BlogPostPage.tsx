@@ -29,13 +29,21 @@ const BlogPostPage = () => {
 
   const fetchPost = async (postId: string) => {
     try {
-      const response = await fetch(`/api/blog/${postId}`);
+      const response = await fetch(`/api/blog/${postId}`).catch(() => null);
+      if (!response || !response.ok) {
+        // Backend not available - show not found state gracefully
+        setPost(null);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         setPost(data.post);
+      } else {
+        setPost(null);
       }
     } catch (error) {
       console.error('Error fetching post:', error);
+      setPost(null);
     } finally {
       setLoading(false);
     }

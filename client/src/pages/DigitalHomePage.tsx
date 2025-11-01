@@ -1,9 +1,8 @@
 import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
-import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { Header } from "@/shared/components/Header";
-import { Monitor, Smartphone, BarChart3, ArrowRight, Check, Zap, Shield, Code, Rocket, Heart } from "lucide-react";
+import { Monitor, Smartphone, BarChart3, ArrowRight, Check, Zap, Shield, Code, Rocket, Heart, ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
 import { products } from "@/data/products";
 import { useCart } from "@/shared/contexts/CartContext";
@@ -11,7 +10,6 @@ import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
 
 const DigitalHomePage = () => {
-  const { sendMessage } = useWhatsApp();
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -101,7 +99,39 @@ const DigitalHomePage = () => {
   }, []);
 
   const handleQuote = () => {
-    sendMessage("Hi! I'm interested in your digital solutions (web/mobile/apps).");
+    const email = "pwriter455@gmail.com";
+    const subject = "Request for Quote - Digital Solutions";
+    const body = `Hello McGibs Digital Solutions,
+
+I'm interested in getting a quote for your digital solutions (web/mobile/apps).
+
+Please provide me with:
+- Pricing information
+- Timeline estimates
+- Available consultation slots
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`;
+    
+    // Create mailto link with proper encoding
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try multiple methods to ensure email client opens
+    try {
+      window.location.href = mailtoLink;
+    } catch (e) {
+      // Fallback: try window.open
+      window.open(mailtoLink, '_blank');
+    }
+  };
+
+  const handlePurchase = (packageName: string, price: string) => {
+    // Redirect to contact page with pre-filled package information
+    const message = `Hi! I'd like to purchase the ${packageName} package (${price}). Please proceed with payment and project setup.`;
+    const subject = `Purchase: ${packageName}`;
+    window.location.href = `/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`;
   };
 
   return (
@@ -153,8 +183,17 @@ const DigitalHomePage = () => {
                 <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 mb-10 animate-fade-in-delay-2">
                   <Button 
                     size="lg" 
+                    onClick={() => window.location.href = '/pricing'} 
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg group shadow-lg hover:shadow-xl transition-all font-semibold"
+                  >
+                    🛒 View Pricing & Purchase
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                  <Button 
+                    size="lg" 
                     onClick={handleQuote} 
-                    className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-6 text-lg group shadow-lg hover:shadow-xl transition-all"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white/20 px-8 py-6 text-lg group"
                   >
                     Get Free Quote
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -284,8 +323,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Value Proposition Section */}
-        <section className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 Why Choose McGibs Digital Solutions?
@@ -343,8 +382,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Services Section - Enhanced */}
-        <section id="capabilities" className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="capabilities" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
                 Complete Digital Solutions
@@ -427,8 +466,8 @@ const DigitalHomePage = () => {
         <EnhancedTestimonials />
 
         {/* Featured Work */}
-        <section id="featured-work" className="container mx-auto px-4 py-20 bg-gradient-to-b from-white to-slate-50">
-          <div className="max-w-6xl mx-auto">
+        <section id="featured-work" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-white to-slate-50">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Featured Projects</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -440,7 +479,7 @@ const DigitalHomePage = () => {
                 {
                   title: "SaaS Dashboard Platform",
                   desc: "Analytics, billing, and role-based access for enterprise teams.",
-                  img: "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1600",
+                  img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
                   href: "https://portfolio-main-two-bice.vercel.app/",
                   category: "Web App",
                   badgeClass: "bg-emerald-500"
@@ -448,7 +487,7 @@ const DigitalHomePage = () => {
                 {
                   title: "E‑commerce Storefront",
                   desc: "High‑conversion product pages with seamless checkout experience.",
-                  img: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=1600",
+                  img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&h=900&fit=crop",
                   href: "https://portfolio-main-two-bice.vercel.app/",
                   category: "E-commerce",
                   badgeClass: "bg-blue-500"
@@ -499,8 +538,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Process Section - Enhanced */}
-        <section id="process" className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="process" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Our Proven Process</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -556,8 +595,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="flex items-end justify-between mb-12 flex-col sm:flex-row gap-4">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">Featured Products</h2>
@@ -598,8 +637,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Tech Stack */}
-        <section id="tech-stack" className="container mx-auto px-4 py-20 bg-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="tech-stack" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Built With Modern Technology</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -617,8 +656,8 @@ const DigitalHomePage = () => {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="container mx-auto px-4 py-20 bg-gradient-to-b from-slate-50 to-white">
-          <div className="max-w-6xl mx-auto">
+        <section id="pricing" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-b from-slate-50 to-white">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Simple, Transparent Pricing</h2>
               <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -676,12 +715,21 @@ const DigitalHomePage = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button 
-                    onClick={handleQuote} 
-                    className={`w-full py-6 text-lg ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-slate-800'}`}
-                  >
-                    Get Started
-                  </Button>
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={() => handlePurchase(plan.name, plan.price)} 
+                      className={`w-full py-6 text-lg font-semibold ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'}`}
+                    >
+                      🛒 Purchase Now
+                    </Button>
+                    <Button 
+                      onClick={handleQuote} 
+                      variant="outline"
+                      className={`w-full py-4 text-base border-2 ${plan.highlight ? 'border-emerald-300 text-emerald-700 hover:bg-emerald-50' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      Get Free Quote
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -692,7 +740,7 @@ const DigitalHomePage = () => {
         <FAQSection />
 
         {/* Final CTA Section */}
-        <section className="container mx-auto px-4 pb-20">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
           <div className="max-w-4xl mx-auto">
             <div className="relative overflow-hidden p-12 rounded-3xl bg-gradient-to-r from-emerald-600 via-cyan-600 to-indigo-600 text-white">
               {/* Pattern overlay */}
@@ -708,18 +756,27 @@ const DigitalHomePage = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Button 
+                    onClick={() => window.location.href = '/pricing'} 
+                    size="lg" 
+                    className="bg-white text-emerald-600 hover:bg-slate-50 px-8 py-6 text-lg font-semibold shadow-lg"
+                  >
+                    🛒 View Packages & Purchase
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                  <Button 
                     onClick={handleQuote} 
                     size="lg" 
-                    className="bg-white text-emerald-600 hover:bg-slate-50 px-8 py-6 text-lg"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white/20 px-8 py-6 text-lg"
                   >
-                    Start Your Project
+                    Get Free Quote
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                   <a 
                     href="/contact" 
                     className="px-8 py-6 text-lg border-2 border-white rounded-lg hover:bg-white/10 transition-all"
                   >
-                    Schedule a Call
+                    Contact Us
                   </a>
                 </div>
               </div>

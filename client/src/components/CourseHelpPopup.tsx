@@ -48,7 +48,7 @@ const CourseHelpPopup: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 animate-slide-up safe-area-bottom safe-area-right" style={{ maxWidth: 'calc(100vw - 2rem)' }}>
-      <div className="bg-white rounded-lg shadow-2xl border-2 border-emerald-500 p-3 sm:p-4 max-w-xs w-full relative group hover:shadow-3xl transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-2xl border-2 border-emerald-500 p-4 sm:p-6 max-w-sm w-full relative group hover:shadow-3xl transition-all duration-300">
         {/* Close button */}
         <button
           onClick={handleDismiss}
@@ -59,29 +59,29 @@ const CourseHelpPopup: React.FC = () => {
         </button>
 
         {/* Content */}
-        <div className="flex items-start gap-3 pr-6">
-          <div className="bg-emerald-100 rounded-full p-2 flex-shrink-0">
-            <GraduationCap className="h-6 w-6 text-emerald-600" />
+        <div className="flex items-start gap-4 pr-8">
+          <div className="bg-emerald-100 rounded-full p-3 flex-shrink-0">
+            <GraduationCap className="h-7 w-7 text-emerald-600" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-slate-900 mb-1 text-sm">
+            <h3 className="font-bold text-slate-900 mb-2 text-base sm:text-lg">
               Need Course Help?
             </h3>
-            <p className="text-xs text-slate-600 mb-3">
-              Get expert assistance with your academic assignments and coursework.
+            <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+              Get expert assistance with your academic assignments and coursework. Quality guaranteed, fast delivery.
             </p>
             <Button
               onClick={handleClick}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs py-2 h-auto"
-              size="sm"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-3 h-auto shadow-lg hover:shadow-xl transition-all"
+              size="lg"
             >
-              Get Help Now
+              Get Help Now →
             </Button>
           </div>
         </div>
 
         {/* Decorative pulse animation */}
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+        <div className="absolute -top-2 -right-2 w-4 h-4 bg-emerald-500 rounded-full animate-pulse" />
       </div>
 
       <style>{`
