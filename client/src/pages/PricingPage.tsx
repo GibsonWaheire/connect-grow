@@ -2,13 +2,24 @@ import { MainLayout } from "@/layouts/MainLayout";
 import { Header } from "@/shared/components/Header";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
-import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
-
 const PricingPage = () => {
-  const { sendMessage } = useWhatsApp();
-
   const handleQuote = () => {
-    sendMessage("Hi! I'm interested in your pricing packages.");
+    const subject = encodeURIComponent("Request for Quote - Pricing Packages");
+    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'm interested in getting a quote for your pricing packages.
+
+Please provide me with:
+- Detailed pricing information
+- What's included in each package
+- Timeline for project completion
+- Available consultation slots
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`);
+    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
   };
 
   const handlePurchase = (packageName: string, price: string) => {

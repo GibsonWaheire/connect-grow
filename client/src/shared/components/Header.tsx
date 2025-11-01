@@ -67,7 +67,21 @@ export const Header = () => {
   const { totalQuantity } = useCart();
 
   const handleContact = () => {
-    sendMessage("Hi! I'd like to discuss your services and get a quote.");
+    const subject = encodeURIComponent("Request for Quote - Digital Solutions");
+    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'm interested in getting a quote for your digital solutions.
+
+Please provide me with:
+- Pricing information
+- Timeline estimates
+- Available consultation slots
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`);
+    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
   };
 
   const handleWhatsApp = () => {

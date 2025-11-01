@@ -2,12 +2,10 @@ import { MainLayout } from "@/layouts/MainLayout";
 import { Header } from "@/shared/components/Header";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
 import { Button } from "@/components/ui/button";
-import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { CheckCircle2, Users, Target, Award, Heart } from "lucide-react";
 import { useEffect } from "react";
 
 const AboutPage = () => {
-  const { sendMessage } = useWhatsApp();
 
   useEffect(() => {
     document.title = "About Us | McGibs Digital Solutions";
@@ -18,7 +16,22 @@ const AboutPage = () => {
   }, []);
 
   const handleContact = () => {
-    sendMessage("Hi! I'd like to learn more about your services and team.");
+    const subject = encodeURIComponent("Request for Quote - About Your Services");
+    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'd like to learn more about your services and team, and get a quote.
+
+Please provide me with:
+- Information about your services
+- Pricing details
+- Team availability
+- Timeline estimates
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`);
+    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (

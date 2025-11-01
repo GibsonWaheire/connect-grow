@@ -1,7 +1,6 @@
 import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
-import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { Header } from "@/shared/components/Header";
 import { Monitor, Smartphone, BarChart3, ArrowRight, Check, Zap, Shield, Code, Rocket, Heart, ShoppingCart } from "lucide-react";
 import { useEffect } from "react";
@@ -11,7 +10,6 @@ import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
 
 const DigitalHomePage = () => {
-  const { sendMessage } = useWhatsApp();
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -101,7 +99,21 @@ const DigitalHomePage = () => {
   }, []);
 
   const handleQuote = () => {
-    sendMessage("Hi! I'm interested in your digital solutions (web/mobile/apps).");
+    const subject = encodeURIComponent("Request for Quote - Digital Solutions");
+    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'm interested in getting a quote for your digital solutions (web/mobile/apps).
+
+Please provide me with:
+- Pricing information
+- Timeline estimates
+- Available consultation slots
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`);
+    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
   };
 
   const handlePurchase = (packageName: string, price: string) => {
