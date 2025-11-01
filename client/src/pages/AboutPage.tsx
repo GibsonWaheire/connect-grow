@@ -16,8 +16,9 @@ const AboutPage = () => {
   }, []);
 
   const handleContact = () => {
-    const subject = encodeURIComponent("Request for Quote - About Your Services");
-    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+    const email = "pwriter455@gmail.com";
+    const subject = "Request for Quote - About Your Services";
+    const body = `Hello McGibs Digital Solutions,
 
 I'd like to learn more about your services and team, and get a quote.
 
@@ -30,8 +31,18 @@ Please provide me with:
 My email is: [Your email]
 My phone: [Your phone]
 
-Looking forward to hearing from you!`);
-    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
+Looking forward to hearing from you!`;
+    
+    // Create mailto link with proper encoding
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try multiple methods to ensure email client opens
+    try {
+      window.location.href = mailtoLink;
+    } catch (e) {
+      // Fallback: try window.open
+      window.open(mailtoLink, '_blank');
+    }
   };
 
   return (

@@ -19,8 +19,9 @@ export const StickyWhatsAppButton = () => {
   }, []);
 
   const handleClick = () => {
-    const subject = encodeURIComponent("Request for Quote - Digital Solutions");
-    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+    const email = "pwriter455@gmail.com";
+    const subject = "Request for Quote - Digital Solutions";
+    const body = `Hello McGibs Digital Solutions,
 
 I'd like to get a quote for my project.
 
@@ -32,8 +33,18 @@ Please provide me with:
 My email is: [Your email]
 My phone: [Your phone]
 
-Looking forward to hearing from you!`);
-    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
+Looking forward to hearing from you!`;
+    
+    // Create mailto link with proper encoding
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try multiple methods to ensure email client opens
+    try {
+      window.location.href = mailtoLink;
+    } catch (e) {
+      // Fallback: try window.open
+      window.open(mailtoLink, '_blank');
+    }
   };
 
   if (!isVisible) return null;

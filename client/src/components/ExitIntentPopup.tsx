@@ -32,8 +32,9 @@ export const ExitIntentPopup = () => {
   };
 
   const handleGetDiscount = () => {
-    const subject = encodeURIComponent("Claim 10% Discount - First Project");
-    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+    const email = "pwriter455@gmail.com";
+    const subject = "Claim 10% Discount - First Project";
+    const body = `Hello McGibs Digital Solutions,
 
 I saw the 10% discount offer and I'd like to claim it for my project!
 
@@ -46,8 +47,19 @@ Please provide me with:
 My email is: [Your email]
 My phone: [Your phone]
 
-Looking forward to hearing from you!`);
-    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
+Looking forward to hearing from you!`;
+    
+    // Create mailto link with proper encoding
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try multiple methods to ensure email client opens
+    try {
+      window.location.href = mailtoLink;
+    } catch (e) {
+      // Fallback: try window.open
+      window.open(mailtoLink, '_blank');
+    }
+    
     handleDismiss();
   };
 

@@ -99,8 +99,9 @@ const DigitalHomePage = () => {
   }, []);
 
   const handleQuote = () => {
-    const subject = encodeURIComponent("Request for Quote - Digital Solutions");
-    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+    const email = "pwriter455@gmail.com";
+    const subject = "Request for Quote - Digital Solutions";
+    const body = `Hello McGibs Digital Solutions,
 
 I'm interested in getting a quote for your digital solutions (web/mobile/apps).
 
@@ -112,8 +113,18 @@ Please provide me with:
 My email is: [Your email]
 My phone: [Your phone]
 
-Looking forward to hearing from you!`);
-    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
+Looking forward to hearing from you!`;
+    
+    // Create mailto link with proper encoding
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Try multiple methods to ensure email client opens
+    try {
+      window.location.href = mailtoLink;
+    } catch (e) {
+      // Fallback: try window.open
+      window.open(mailtoLink, '_blank');
+    }
   };
 
   const handlePurchase = (packageName: string, price: string) => {

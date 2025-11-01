@@ -26,13 +26,21 @@ const BlogPage = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('/api/blog');
+      const response = await fetch('/api/blog').catch(() => null);
+      if (!response || !response.ok) {
+        // Backend not available - show empty state gracefully
+        setPosts([]);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         setPosts(data.posts || []);
+      } else {
+        setPosts([]);
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }

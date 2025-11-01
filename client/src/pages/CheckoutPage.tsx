@@ -35,11 +35,52 @@ const CheckoutPage = () => {
           comment: `Order with ${items.length} items`,
           redirect_url: `${window.location.origin}/payment-success`,
         }),
+      }).catch(() => {
+        // If backend is not available, redirect to contact page with order details
+        const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+        const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'd like to place an order with the following details:
+
+Order Summary:
+- Total Amount: $${subtotal.toFixed(2)}
+- Number of Items: ${items.length}
+- Items: ${items.map(item => item.name).join(', ')}
+
+Contact Information:
+- Name: ${firstName} ${lastName}
+- Email: ${email}
+- Phone: ${phone || 'Not provided'}
+
+Please proceed with payment processing and send me payment instructions.
+
+Thank you!`);
+        window.location.href = `/contact?subject=${subject}&message=${body}`;
+        return null;
       });
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.message || "Checkout failed");
+      if (!response || !response.ok) {
+        // Fallback to email contact if API fails
+        const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+        const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'd like to place an order with the following details:
+
+Order Summary:
+- Total Amount: $${subtotal.toFixed(2)}
+- Number of Items: ${items.length}
+- Items: ${items.map(item => item.name).join(', ')}
+
+Contact Information:
+- Name: ${firstName} ${lastName}
+- Email: ${email}
+- Phone: ${phone || 'Not provided'}
+
+Please proceed with payment processing and send me payment instructions.
+
+Thank you!`);
+        window.location.href = `/contact?subject=${subject}&message=${body}`;
+        return;
       }
 
       const data = await response.json();
@@ -51,7 +92,26 @@ const CheckoutPage = () => {
       }
       throw new Error("No redirect URL returned by payment provider");
     } catch (e: any) {
-      setError(e.message || "Checkout failed");
+      // Fallback to email contact on any error
+      const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+      const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I'd like to place an order with the following details:
+
+Order Summary:
+- Total Amount: $${subtotal.toFixed(2)}
+- Number of Items: ${items.length}
+- Items: ${items.map(item => item.name).join(', ')}
+
+Contact Information:
+- Name: ${firstName} ${lastName}
+- Email: ${email}
+- Phone: ${phone || 'Not provided'}
+
+Please proceed with payment processing and send me payment instructions.
+
+Thank you!`);
+      window.location.href = `/contact?subject=${subject}&message=${body}`;
     } finally {
       setLoading(false);
     }
