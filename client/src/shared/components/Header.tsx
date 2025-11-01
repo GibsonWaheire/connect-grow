@@ -18,6 +18,7 @@ const navigationItems = [
     name: 'Digital',
     href: '/',
     dropdown: [
+      { label: 'About Us', href: '/about' },
       { label: 'Services Overview', href: '/services-overview' },
       { label: 'Our Process', href: '/process' },
       { label: 'Pricing', href: '/pricing' },
@@ -74,23 +75,23 @@ export const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm safe-area-top">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center space-x-2">
+          <a href="/" className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 flex-shrink">
             <OptimizedImage
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=32&h=32&fit=crop&crop=center"
               alt="McGibs Digital Solutions"
               width={32}
               height={32}
-              className="w-8 h-8 rounded"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded flex-shrink-0"
             />
-            <span className="text-xl font-bold text-primary">McGibs Digital Solutions</span>
+            <span className="text-base sm:text-xl font-bold text-primary truncate">McGibs Digital Solutions</span>
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             {navigationItems.map((item) => {
               if (item.dropdown && item.dropdown.length > 0) {
                 return (
@@ -158,9 +159,10 @@ export const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2 -mr-2 touch-manipulation"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
@@ -174,7 +176,7 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="lg:hidden py-4 border-t border-gray-200 max-h-[calc(100vh-4rem)] overflow-y-auto safe-area-bottom">
             <nav className="flex flex-col space-y-4">
               {navigationItems.map((item) => (
                 <div key={item.name}>

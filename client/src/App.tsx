@@ -36,8 +36,11 @@ import AdminBlogPage from "./pages/AdminBlogPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
+import AboutPage from "./pages/AboutPage";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
+import CourseHelpPopup from "./components/CourseHelpPopup";
+import { HtmlRedirects } from "./components/HtmlRedirects";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +64,7 @@ const App = () => (
             v7_relativeSplatPath: true,
           }}
         >
+          <HtmlRedirects />
           <Routes>
             <Route path="/" element={<DigitalHomePage />} />
             <Route path="/course-help" element={<Index />} />
@@ -69,6 +73,7 @@ const App = () => (
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services-overview" element={<ServicesPage />} />
             <Route path="/process" element={<ProcessPage />} />
@@ -83,15 +88,21 @@ const App = () => (
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/test-intasend" element={<IntaSendTest />} />
+            {/* Legacy HTML routes - redirect handled by HtmlRedirects component */}
+            <Route path="/about.html" element={<AboutPage />} />
+            <Route path="/contact.html" element={<ContactPage />} />
+            <Route path="/services.html" element={<ServicesPage />} />
+            <Route path="/blog-post-1.html" element={<BlogPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <MarketingPopup 
+            title="Limited Time Offer"
+            message="Get 20% off your first project! Sign up for our newsletter and receive exclusive updates, tips, and special offers."
+            showDelay={5000} // Show after 5 seconds
+          />
+          <CourseHelpPopup />
         </BrowserRouter>
-        <MarketingPopup 
-          title="Limited Time Offer"
-          message="Get 20% off your first project! Sign up for our newsletter and receive exclusive updates, tips, and special offers."
-          showDelay={5000} // Show after 5 seconds
-        />
         <Analytics />
       </TooltipProvider>
       </CartProvider>
