@@ -4,9 +4,11 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // Development server configuration (not used in production build)
   server: {
     host: "::",
     port: 5173,
+    // Proxy is ONLY for local development - NOT included in production build
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
@@ -26,7 +28,7 @@ export default defineConfig(({ mode }) => ({
   root: __dirname,
   build: {
     // Advanced minification settings
-    minify: mode === 'production' ? 'terser' : false,
+    minify: mode === 'production' ? 'terser' : 'esbuild',
     terserOptions: mode === 'production' ? {
       compress: {
         drop_console: true, // Remove console.log statements
