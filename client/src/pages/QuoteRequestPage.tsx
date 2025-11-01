@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Header } from "@/shared/components/Header";
+import { sendEmailViaFormSpree } from "@/utils/emailService";
 import { 
   Mail, 
   Phone, 
@@ -38,9 +39,19 @@ const QuoteRequestPage = () => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
-    const email = "pwriter455@gmail.com";
-    const subject = `Quote Request - ${formData.projectType || 'Digital Solutions'}`;
-    const body = `Hello McGibs Digital Solutions,
+    const emailContent = {
+      to_email: "pwriter455@gmail.com",
+      to_name: "McGibs Digital Solutions",
+      from_name: formData.name,
+      from_email: formData.email,
+      phone: formData.phone,
+      company: formData.company || 'N/A',
+      project_type: formData.projectType || 'Not specified',
+      budget: formData.budget || 'Not specified',
+      timeline: formData.timeline || 'Not specified',
+      description: formData.description,
+      subject: `Quote Request - ${formData.projectType || 'Digital Solutions'}`,
+      message: `Hello McGibs Digital Solutions,
 
 I would like to request a quote for my project.
 
@@ -59,20 +70,31 @@ PROJECT DESCRIPTION:
 ${formData.description}
 
 ---
-This quote request was submitted through the website form.`;
+This quote request was submitted through the website form.`
+    };
 
     try {
-      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      // Open email client with pre-filled form data
-      window.location.href = mailtoLink;
-      
-      // Show success message
-      setTimeout(() => {
+      // Try to send email via FormSpree (simpler, no setup needed initially)
+      // Falls back to mailto if FormSpree is not configured
+      const emailSent = await sendEmailViaFormSpree({
+        to_email: emailContent.to_email,
+        to_name: emailContent.to_name,
+        from_name: emailContent.from_name,
+        from_email: emailContent.from_email,
+        subject: emailContent.subject,
+        message: emailContent.message,
+        phone: emailContent.phone,
+        company: emailContent.company,
+        project_type: emailContent.project_type,
+        budget: emailContent.budget,
+        timeline: emailContent.timeline,
+      });
+
+      if (emailSent) {
         setSubmitStatus("success");
         setIsSubmitting(false);
         
-        // Reset form after 3 seconds
+        // Reset form after showing success
         setTimeout(() => {
           setFormData({
             name: "",
@@ -86,8 +108,12 @@ This quote request was submitted through the website form.`;
           });
           setSubmitStatus("idle");
         }, 3000);
-      }, 500);
+      } else {
+        setSubmitStatus("error");
+        setIsSubmitting(false);
+      }
     } catch (error) {
+      console.error('Email send error:', error);
       setSubmitStatus("error");
       setIsSubmitting(false);
     }

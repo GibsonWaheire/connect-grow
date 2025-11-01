@@ -42,7 +42,7 @@ import GetStartedPage from "./pages/GetStartedPage";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
 import CourseHelpPopup from "./components/CourseHelpPopup";
-import { StickyWhatsAppButton } from "./components/StickyWhatsAppButton";
+import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
 import { HtmlRedirects } from "./components/HtmlRedirects";
 
@@ -108,7 +108,7 @@ const App = () => (
             showDelay={5000} // Show after 5 seconds
           />
           <CourseHelpPopup />
-          <StickyWhatsAppButton />
+          <WhatsAppChatbot />
           <ExitIntentPopup />
         </BrowserRouter>
         <Analytics />

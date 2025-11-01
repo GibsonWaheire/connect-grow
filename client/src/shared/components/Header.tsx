@@ -67,32 +67,8 @@ export const Header = () => {
   const { totalQuantity } = useCart();
 
   const handleContact = () => {
-    const email = "pwriter455@gmail.com";
-    const subject = "Request for Quote - Digital Solutions";
-    const body = `Hello McGibs Digital Solutions,
-
-I'm interested in getting a quote for your digital solutions.
-
-Please provide me with:
-- Pricing information
-- Timeline estimates
-- Available consultation slots
-
-My email is: [Your email]
-My phone: [Your phone]
-
-Looking forward to hearing from you!`;
-    
-    // Create mailto link with proper encoding
-    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Try multiple methods to ensure email client opens
-    try {
-      window.location.href = mailtoLink;
-    } catch (e) {
-      // Fallback: try window.open
-      window.open(mailtoLink, '_blank');
-    }
+    // Redirect to quote form page
+    window.location.href = '/quote';
   };
 
   const handleWhatsApp = () => {

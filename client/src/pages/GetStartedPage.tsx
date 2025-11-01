@@ -3,6 +3,7 @@ import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/shared/components/Header";
+import { getAvailablePaymentMethods } from "@/utils/paymentProviders";
 import { 
   CreditCard,
   CheckCircle2,
@@ -251,17 +252,21 @@ Thank you!`;
                       Select Payment Method *
                     </label>
                     <div className="space-y-3">
-                      {[
-                        { value: "Credit/Debit Card", icon: CreditCard },
-                        { value: "Bank Transfer", icon: Shield },
-                        { value: "Mobile Money", icon: Lock },
-                      ].map((method) => {
-                        const Icon = method.icon;
+                      {getAvailablePaymentMethods().map((method) => {
+                        // Map method names to icons
+                        const getIcon = () => {
+                          if (method.toLowerCase().includes('card')) return CreditCard;
+                          if (method.toLowerCase().includes('bank') || method.toLowerCase().includes('transfer')) return Shield;
+                          if (method.toLowerCase().includes('mobile') || method.toLowerCase().includes('money')) return Lock;
+                          return CreditCard;
+                        };
+                        const Icon = getIcon();
+                        
                         return (
                           <label
-                            key={method.value}
+                            key={method}
                             className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                              formData.paymentMethod === method.value
+                              formData.paymentMethod === method
                                 ? "border-emerald-600 bg-emerald-50"
                                 : "border-slate-200 hover:border-emerald-300"
                             }`}
@@ -269,18 +274,21 @@ Thank you!`;
                             <input
                               type="radio"
                               name="paymentMethod"
-                              value={method.value}
-                              checked={formData.paymentMethod === method.value}
+                              value={method}
+                              checked={formData.paymentMethod === method}
                               onChange={handleInputChange}
                               className="w-5 h-5 text-emerald-600"
                               required
                             />
                             <Icon className="w-6 h-6 text-emerald-600" />
-                            <span className="font-medium">{method.value}</span>
+                            <span className="font-medium">{method}</span>
                           </label>
                         );
                       })}
                     </div>
+                    <p className="text-xs text-slate-500 mt-2">
+                      Payment provider can be configured in paymentProviders.ts. Currently showing default methods.
+                    </p>
                   </div>
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
