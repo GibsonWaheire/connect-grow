@@ -37,6 +37,8 @@ import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import AboutPage from "./pages/AboutPage";
+import QuoteRequestPage from "./pages/QuoteRequestPage";
+import GetStartedPage from "./pages/GetStartedPage";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
 import CourseHelpPopup from "./components/CourseHelpPopup";
@@ -74,8 +76,10 @@ const App = () => (
             <Route path="/shop/:productId" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/quote" element={<QuoteRequestPage />} />
+                <Route path="/get-started" element={<GetStartedPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services-overview" element={<ServicesPage />} />
             <Route path="/process" element={<ProcessPage />} />

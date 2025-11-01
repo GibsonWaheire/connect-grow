@@ -3,42 +3,6 @@ import { Header } from "@/shared/components/Header";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 const PricingPage = () => {
-  const handleQuote = () => {
-    const email = "pwriter455@gmail.com";
-    const subject = "Request for Quote - Pricing Packages";
-    const body = `Hello McGibs Digital Solutions,
-
-I'm interested in getting a quote for your pricing packages.
-
-Please provide me with:
-- Detailed pricing information
-- What's included in each package
-- Timeline for project completion
-- Available consultation slots
-
-My email is: [Your email]
-My phone: [Your phone]
-
-Looking forward to hearing from you!`;
-    
-    // Create mailto link with proper encoding
-    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Try multiple methods to ensure email client opens
-    try {
-      window.location.href = mailtoLink;
-    } catch (e) {
-      // Fallback: try window.open
-      window.open(mailtoLink, '_blank');
-    }
-  };
-
-  const handlePurchase = (packageName: string, price: string) => {
-    // Redirect to contact page with pre-filled package information
-    const message = `Hi! I'd like to purchase the ${packageName} package (${price}). Please proceed with payment and project setup.`;
-    const subject = `Purchase: ${packageName}`;
-    window.location.href = `/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`;
-  };
 
   return (
     <>
@@ -95,13 +59,13 @@ Looking forward to hearing from you!`;
                 </ul>
                 <div className="space-y-3">
                   <Button 
-                    onClick={() => handlePurchase(plan.name, plan.price)} 
+                    onClick={() => window.location.href = '/get-started'} 
                     className={`w-full py-6 text-lg font-semibold ${plan.highlight ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-slate-800'}`}
                   >
-                    🛒 Purchase Now
+                    🛒 Get Started
                   </Button>
                   <Button 
-                    onClick={handleQuote} 
+                    onClick={() => window.location.href = '/quote'} 
                     variant="outline"
                     className={`w-full py-4 border-2 ${plan.highlight ? 'border-emerald-300 text-emerald-700 hover:bg-emerald-50' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}`}
                   >
@@ -114,7 +78,7 @@ Looking forward to hearing from you!`;
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Need a custom solution? Let's discuss your requirements.</p>
-            <Button variant="outline" onClick={handleQuote}>Contact us for custom pricing</Button>
+            <Button variant="outline" onClick={() => window.location.href = '/quote'}>Contact us for custom pricing</Button>
           </div>
         </section>
       </MainLayout>
