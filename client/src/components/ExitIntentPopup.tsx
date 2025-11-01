@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { X, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
 
 export const ExitIntentPopup = () => {
-  const { sendMessage } = useWhatsApp();
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -34,7 +32,22 @@ export const ExitIntentPopup = () => {
   };
 
   const handleGetDiscount = () => {
-    sendMessage("Hi! I saw the 10% discount offer. I'd like to claim it for my project.");
+    const subject = encodeURIComponent("Claim 10% Discount - First Project");
+    const body = encodeURIComponent(`Hello McGibs Digital Solutions,
+
+I saw the 10% discount offer and I'd like to claim it for my project!
+
+Please provide me with:
+- Details about the 10% discount
+- Pricing information for my project
+- Timeline estimates
+- How to proceed with the discount
+
+My email is: [Your email]
+My phone: [Your phone]
+
+Looking forward to hearing from you!`);
+    window.location.href = `mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`;
     handleDismiss();
   };
 
