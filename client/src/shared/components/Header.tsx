@@ -13,7 +13,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const navigationItems = [
+interface DropdownItem {
+  label: string;
+  href: string;
+  action?: 'whatsapp';
+  external?: boolean;
+}
+
+interface NavigationItem {
+  name: string;
+  href: string;
+  dropdown?: DropdownItem[];
+  external?: boolean;
+}
+
+const navigationItems: NavigationItem[] = [
   {
     name: 'Digital',
     href: '/',
@@ -154,15 +168,11 @@ export const Header = () => {
               )}
             </a>
             <Button 
-              onClick={(e) => {
-                e.preventDefault();
-                handleContact();
-              }} 
+              onClick={handleContact}
               variant="default" 
               size="sm"
-              asChild
             >
-              <a href="/quote">Get Quote</a>
+              Get Quote
             </Button>
           </nav>
 
