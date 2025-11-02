@@ -224,3 +224,5 @@ const ExtraServicesSection = () => {
 };
 
 export default ExtraServicesSection;
+
+export { ExtraServicesSection };

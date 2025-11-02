@@ -8,7 +8,7 @@ import { products } from "@/data/products";
 import { useCart } from "@/shared/contexts/CartContext";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
-import { ExtraServicesSection } from "@/components/ExtraServicesSection";
+import ExtraServicesSection from "@/components/ExtraServicesSection";
 
 const DigitalHomePage = () => {
   const { addItem } = useCart();
