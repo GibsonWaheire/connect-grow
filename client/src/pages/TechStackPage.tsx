@@ -36,6 +36,23 @@ const TechStackPage = () => {
               </div>
             ))}
           </div>
+
+          {/* About Us CTA */}
+          <div className="mt-16 text-center bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-10 border-2 border-emerald-200">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-slate-900">Learn About Our Expertise</h2>
+            <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
+              Get to know the team behind these technologies and our commitment to staying at the forefront of innovation.
+            </p>
+            <a
+              href="/about"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl text-lg"
+            >
+              Learn More About Us
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
         </section>
       </MainLayout>
     </>

@@ -68,11 +68,18 @@ const FAQPage = () => {
               ))}
             </div>
 
-            <div className="mt-12 p-6 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
-              <p className="text-gray-700 mb-4">Still have questions?</p>
-              <a href="/contact" className="text-emerald-600 hover:text-emerald-700 font-semibold">
-                Contact us →
-              </a>
+            <div className="mt-12 space-y-6">
+              <div className="p-6 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+                <p className="text-gray-700 mb-4">Still have questions?</p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a href="/contact" className="inline-flex items-center justify-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition-all">
+                    Contact us →
+                  </a>
+                  <a href="/about" className="inline-flex items-center justify-center px-6 py-3 border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 rounded-lg font-semibold transition-all">
+                    Learn About Us →
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </section>

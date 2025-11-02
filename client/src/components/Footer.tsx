@@ -36,6 +36,7 @@ export const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Company</h4>
             <ul className="space-y-2 text-white/70">
+              <li><Link to="/about" className="hover:text-white">About Us</Link></li>
               <li><a href="https://portfolio-main-two-bice.vercel.app/" target="_blank" rel="noopener noreferrer" className="hover:text-white">Portfolio</a></li>
               <li><Link to="/privacy-policy" className="hover:text-white">Privacy Policy</Link></li>
             </ul>

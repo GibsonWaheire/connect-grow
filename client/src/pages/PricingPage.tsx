@@ -76,9 +76,12 @@ const PricingPage = () => {
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center space-y-4">
             <p className="text-gray-600 mb-4">Need a custom solution? Let's discuss your requirements.</p>
-            <Button variant="outline" onClick={() => window.location.href = '/quote'}>Contact us for custom pricing</Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button variant="outline" onClick={() => window.location.href = '/quote'}>Contact us for custom pricing</Button>
+              <Button variant="outline" onClick={() => window.location.href = '/about'}>Learn More About Us</Button>
+            </div>
           </div>
         </section>
       </MainLayout>

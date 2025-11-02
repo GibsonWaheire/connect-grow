@@ -8,6 +8,7 @@ import { products } from "@/data/products";
 import { useCart } from "@/shared/contexts/CartContext";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
+import { ExtraServicesSection } from "@/components/ExtraServicesSection";
 
 const DigitalHomePage = () => {
   const { addItem } = useCart();
@@ -703,6 +704,7 @@ const DigitalHomePage = () => {
         </section>
 
         <CaseStudiesSection />
+        <ExtraServicesSection />
         <FAQSection />
 
         {/* Final CTA Section */}
@@ -743,6 +745,12 @@ const DigitalHomePage = () => {
                     className="px-8 py-6 text-lg border-2 border-white rounded-lg hover:bg-white/10 transition-all"
                   >
                     Contact Us
+                  </a>
+                  <a 
+                    href="/about" 
+                    className="px-8 py-6 text-lg border-2 border-white rounded-lg hover:bg-white/10 transition-all"
+                  >
+                    About Us
                   </a>
                 </div>
               </div>
