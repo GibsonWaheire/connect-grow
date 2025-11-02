@@ -153,8 +153,16 @@ export const Header = () => {
                 <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] rounded-full px-1.5 py-0.5">{totalQuantity}</span>
               )}
             </a>
-            <Button onClick={handleContact} variant="default" size="sm">
-              Get Quote
+            <Button 
+              onClick={(e) => {
+                e.preventDefault();
+                handleContact();
+              }} 
+              variant="default" 
+              size="sm"
+              asChild
+            >
+              <a href="/quote">Get Quote</a>
             </Button>
           </nav>
 
