@@ -96,6 +96,22 @@ The project is configured for Vercel deployment:
 
 3. Deploy API routes from `server/api/` to your serverless platform
 
+## Environment Variables
+
+### Flutterwave Webhook
+
+For Flutterwave payment notifications, set:
+
+| Variable        | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------- |
+| `FLW_SECRET_HASH` | Secret hash from Flutterwave dashboard (Settings → Webhooks → Secret hash) |
+
+**Webhook URL:** `https://yourdomain.com/api/flutterwave/webhook`
+
+1. In [Flutterwave Dashboard](https://dashboard.flutterwave.com) → Settings → Webhooks
+2. Add the webhook URL above
+3. Set the same secret hash in the dashboard and in `FLW_SECRET_HASH`
+
 ## Tech Stack
 
 ### Frontend (Client)
