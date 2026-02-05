@@ -16,7 +16,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/shared/contexts/AppContext";
 import { CartProvider } from "@/shared/contexts/CartContext";
 import { Analytics } from "@vercel/analytics/react";
-import Index from "./pages/Index";
 import DigitalHomePage from "./pages/DigitalHomePage";
 import ShopPage from "./pages/ShopPage";
 import ContactPage from "./pages/ContactPage";
@@ -41,7 +40,6 @@ import QuoteRequestPage from "./pages/QuoteRequestPage";
 import GetStartedPage from "./pages/GetStartedPage";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
-import CourseHelpPopup from "./components/CourseHelpPopup";
 import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
 import { HtmlRedirects } from "./components/HtmlRedirects";
@@ -71,7 +69,7 @@ const App = () => (
           <HtmlRedirects />
           <Routes>
             <Route path="/" element={<DigitalHomePage />} />
-            <Route path="/course-help" element={<Index />} />
+            <Route path="/course-help" element={<NotFound />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:productId" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
@@ -107,7 +105,6 @@ const App = () => (
             message="Get 20% off your first project! Sign up for our newsletter and receive exclusive updates, tips, and special offers."
             showDelay={5000} // Show after 5 seconds
           />
-          <CourseHelpPopup />
           <WhatsAppChatbot />
           <ExitIntentPopup />
         </BrowserRouter>

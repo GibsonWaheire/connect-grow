@@ -57,10 +57,6 @@ const navigationItems: NavigationItem[] = [
     ],
   },
   {
-    name: 'Course Help',
-    href: '/course-help',
-  },
-  {
     name: 'Portfolio',
     href: 'https://portfolio-main-two-bice.vercel.app/',
     external: true,
