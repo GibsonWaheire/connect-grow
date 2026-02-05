@@ -15,8 +15,8 @@ export const config = {
       publicKey: import.meta.env.VITE_INTASEND_PUBLIC_KEY || '',
       secretKey: import.meta.env.VITE_INTASEND_SECRET_KEY || '',
       environment: import.meta.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
-      currency: 'USD',
-      country: 'US',
+      currency: 'KES',
+      country: 'KE',
       apiBaseUrl: import.meta.env.VITE_INTASEND_ENVIRONMENT === 'live' 
         ? 'https://payment.intasend.com/api/' 
         : 'https://sandbox.intasend.com/api/',
@@ -40,8 +40,8 @@ export const config = {
     publicKey: import.meta.env.VITE_INTASEND_PUBLIC_KEY || '',
     secretKey: import.meta.env.INTASEND_SECRET_KEY || '',
     environment: import.meta.env.VITE_INTASEND_ENVIRONMENT || 'sandbox',
-    currency: 'USD',
-    country: 'US',
+    currency: 'KES',
+    country: 'KE',
     apiBaseUrl: import.meta.env.VITE_INTASEND_ENVIRONMENT === 'live' 
       ? 'https://payment.intasend.com/api/' 
       : 'https://sandbox.intasend.com/api/',

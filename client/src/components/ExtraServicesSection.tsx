@@ -1,18 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { 
-  Sparkles, 
-  FileText, 
   Globe, 
   Smartphone, 
-  ShoppingCart,
   Code,
   Search,
+  Share2,
+  FileText,
   Palette,
   Cloud,
   Zap,
   ArrowRight,
   CheckCircle2
 } from "lucide-react";
+import { formatPrice } from "@/shared/utils";
 
 const ExtraServicesSection = () => {
   const services = [
@@ -33,6 +33,8 @@ const ExtraServicesSection = () => {
     {
       category: "Web Development",
       icon: Globe,
+      shopCategory: "Web Development",
+      priceFrom: 6500,
       services: [
         "Custom Website Development",
         "E-commerce Platforms",
@@ -47,6 +49,8 @@ const ExtraServicesSection = () => {
     {
       category: "Mobile Development",
       icon: Smartphone,
+      shopCategory: null,
+      priceFrom: null,
       services: [
         "Mobile App Development (iOS & Android)",
         "Cross-Platform Apps",
@@ -58,8 +62,25 @@ const ExtraServicesSection = () => {
       borderColor: "border-green-200"
     },
     {
+      category: "Social Media",
+      icon: Share2,
+      shopCategory: "Social Media",
+      priceFrom: 1300,
+      services: [
+        "Social Media Posts",
+        "Content Creation",
+        "Social Media Management",
+        "Engagement & Analytics"
+      ],
+      color: "from-pink-500 to-rose-500",
+      bgColor: "from-pink-50 to-rose-50",
+      borderColor: "border-pink-200"
+    },
+    {
       category: "Digital Marketing",
       icon: Search,
+      shopCategory: "Digital Marketing",
+      priceFrom: 2600,
       services: [
         "SEO Optimization",
         "Digital Marketing Strategy",
@@ -73,6 +94,8 @@ const ExtraServicesSection = () => {
     {
       category: "Business Solutions",
       icon: Code,
+      shopCategory: null,
+      priceFrom: null,
       services: [
         "Business Automation",
         "CRM Development",
@@ -84,8 +107,25 @@ const ExtraServicesSection = () => {
       borderColor: "border-indigo-200"
     },
     {
+      category: "Content",
+      icon: FileText,
+      shopCategory: "Content",
+      priceFrom: 3250,
+      services: [
+        "Blog Posts",
+        "Articles",
+        "Content Packages",
+        "SEO-Optimized Copy"
+      ],
+      color: "from-amber-500 to-yellow-500",
+      bgColor: "from-amber-50 to-yellow-50",
+      borderColor: "border-amber-200"
+    },
+    {
       category: "Design Services",
       icon: Palette,
+      shopCategory: "Design",
+      priceFrom: 1950,
       services: [
         "UI/UX Design",
         "Brand Identity Design",
@@ -99,6 +139,8 @@ const ExtraServicesSection = () => {
     {
       category: "Cloud & Infrastructure",
       icon: Cloud,
+      shopCategory: null,
+      priceFrom: null,
       services: [
         "Cloud Migration",
         "DevOps & CI/CD",
@@ -112,6 +154,8 @@ const ExtraServicesSection = () => {
     {
       category: "Specialized Services",
       icon: Zap,
+      shopCategory: null,
+      priceFrom: null,
       services: [
         "Blockchain Development",
         "AI/ML Integration",
@@ -152,23 +196,29 @@ const ExtraServicesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {services.filter((c) => c.category !== "AI & Content Services").map((category, index) => {
             const Icon = category.icon;
+            const shopCategory = (category as { shopCategory?: string | null }).shopCategory;
+            const priceFrom = (category as { priceFrom?: number | null }).priceFrom;
             return (
               <div
                 key={index}
-                className={`bg-gradient-to-br ${category.bgColor} border-2 ${category.borderColor} rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group`}
+                className={`bg-gradient-to-br ${category.bgColor} border-2 ${category.borderColor} rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group flex flex-col`}
               >
                 {/* Icon */}
                 <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${category.color} rounded-xl text-white mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
                   <Icon className="h-6 w-6" />
                 </div>
 
-                {/* Category Title */}
-                <h3 className="font-bold text-lg mb-4 text-slate-900">
+                {/* Category Title & Price */}
+                <h3 className="font-bold text-lg mb-1 text-slate-900">
                   {category.category}
                 </h3>
+                {priceFrom != null && (
+                  <p className="text-sm font-semibold text-emerald-700 mb-4">from {formatPrice(priceFrom)}</p>
+                )}
+                {priceFrom == null && <div className="mb-4" />}
 
                 {/* Services List */}
-                <ul className="space-y-2 mb-4">
+                <ul className="space-y-2 mb-4 flex-1">
                   {category.services.map((service, serviceIndex) => (
                     <li key={serviceIndex} className="flex items-start gap-2 text-sm text-slate-700">
                       <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
@@ -176,6 +226,27 @@ const ExtraServicesSection = () => {
                     </li>
                   ))}
                 </ul>
+
+                {/* CTA Button */}
+                {shopCategory ? (
+                  <Button
+                    onClick={() => window.location.href = `/shop?category=${encodeURIComponent(shopCategory)}`}
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-auto border-2"
+                  >
+                    View in Shop <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => handleContact(category.category)}
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-auto border-2"
+                  >
+                    Get Quote <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                )}
               </div>
             );
           })}

@@ -27,7 +27,7 @@ const CheckoutPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           amount: subtotal,
-          currency: "USD",
+          currency: "KES",
           email,
           first_name: firstName,
           last_name: lastName,
@@ -37,13 +37,13 @@ const CheckoutPage = () => {
         }),
       }).catch(() => {
         // If backend is not available, redirect to contact page with order details
-        const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+        const subject = encodeURIComponent(`Order Request - KES ${subtotal.toLocaleString()}`);
         const body = encodeURIComponent(`Hello McGibs Digital Solutions,
 
 I'd like to place an order with the following details:
 
 Order Summary:
-- Total Amount: $${subtotal.toFixed(2)}
+- Total Amount: KES ${subtotal.toLocaleString()}
 - Number of Items: ${items.length}
 - Items: ${items.map(item => item.name).join(', ')}
 
@@ -61,13 +61,13 @@ Thank you!`);
 
       if (!response || !response.ok) {
         // Fallback to email contact if API fails
-        const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+        const subject = encodeURIComponent(`Order Request - KES ${subtotal.toLocaleString()}`);
         const body = encodeURIComponent(`Hello McGibs Digital Solutions,
 
 I'd like to place an order with the following details:
 
 Order Summary:
-- Total Amount: $${subtotal.toFixed(2)}
+- Total Amount: KES ${subtotal.toLocaleString()}
 - Number of Items: ${items.length}
 - Items: ${items.map(item => item.name).join(', ')}
 
@@ -93,13 +93,13 @@ Thank you!`);
       throw new Error("No redirect URL returned by payment provider");
     } catch (e: any) {
       // Fallback to email contact on any error
-      const subject = encodeURIComponent(`Order Request - $${subtotal.toFixed(2)}`);
+      const subject = encodeURIComponent(`Order Request - KES ${subtotal.toLocaleString()}`);
       const body = encodeURIComponent(`Hello McGibs Digital Solutions,
 
 I'd like to place an order with the following details:
 
 Order Summary:
-- Total Amount: $${subtotal.toFixed(2)}
+- Total Amount: KES ${subtotal.toLocaleString()}
 - Number of Items: ${items.length}
 - Items: ${items.map(item => item.name).join(', ')}
 
@@ -161,13 +161,13 @@ Thank you!`);
                   {items.map((i) => (
                     <div key={i.productId} className="flex items-center justify-between text-sm">
                       <span>{i.name} × {i.quantity}</span>
-                      <span>${(i.price * i.quantity).toFixed(2)}</span>
+                      <span>KES {(i.price * i.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">KES {subtotal.toLocaleString()}</span>
                 </div>
               </div>
             </div>

@@ -96,7 +96,7 @@ export const getPaymentConfig = (provider: PaymentProvider): PaymentConfig => {
  */
 export const processPayment = async (
   amount: number,
-  currency: string = 'USD',
+  currency: string = 'KES',
   customerInfo: {
     email: string;
     name: string;

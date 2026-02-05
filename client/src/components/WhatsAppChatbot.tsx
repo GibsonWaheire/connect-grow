@@ -24,15 +24,15 @@ const QUICK_MESSAGES: Record<string, QuickReply[]> = {
     { label: "💬 Need Support", value: "I need help with something", action: 'support' },
   ],
   quote: [
-    { label: "🌐 Website Package", value: "I need a quote for the Website Starter package ($499)", action: 'custom' },
-    { label: "📱 App Development", value: "I need a quote for the App Pro package ($1,999)", action: 'custom' },
-    { label: "🛒 E-commerce Store", value: "I need a quote for the Commerce Plus package ($1,499)", action: 'custom' },
+    { label: "📱 Social Media Post", value: "I need a quote for Social Media Post (KES 1,300)", action: 'custom' },
+    { label: "🎨 Logo Design", value: "I need a quote for Logo Design (KES 1,950)", action: 'custom' },
+    { label: "🔍 SEO Audit", value: "I need a quote for SEO Audit (KES 2,600)", action: 'custom' },
     { label: "📋 Custom Project", value: "I have a custom project requirement", action: 'custom' },
   ],
   purchase: [
-    { label: "Website Starter - $499", value: "I want to purchase the Website Starter package for $499", action: 'custom' },
-    { label: "App Pro - $1,999", value: "I want to purchase the App Pro package for $1,999", action: 'custom' },
-    { label: "Commerce Plus - $1,499", value: "I want to purchase the Commerce Plus package for $1,499", action: 'custom' },
+    { label: "Social Media Post - KES 1,300", value: "I want to purchase Social Media Post for KES 1,300", action: 'custom' },
+    { label: "Landing Page - KES 6,500", value: "I want to purchase Landing Page Design for KES 6,500", action: 'custom' },
+    { label: "Website Starter - KES 19,500", value: "I want to purchase Website Starter Kit for KES 19,500", action: 'custom' },
   ],
   info: [
     { label: "Our Services", value: "What services do you offer?", action: 'custom' },

@@ -81,9 +81,15 @@ Thank you!`;
   };
 
   const packages = [
-    { name: "Website Starter", price: "$499", value: "Website Starter - $499" },
-    { name: "App Pro", price: "$1,999", value: "App Pro - $1,999" },
-    { name: "Commerce Plus", price: "$1,499", value: "Commerce Plus - $1,499" },
+    { name: "Social Media Post (Single)", price: "KES 1,300", value: "Social Media Post (Single) - KES 1,300" },
+    { name: "Logo Design (Basic)", price: "KES 1,950", value: "Logo Design (Basic) - KES 1,950" },
+    { name: "SEO Audit (Basic)", price: "KES 2,600", value: "SEO Audit (Basic) - KES 2,600" },
+    { name: "Content Creation (500 words)", price: "KES 3,250", value: "Content Creation (500 words) - KES 3,250" },
+    { name: "Social Media Management (Monthly)", price: "KES 4,550", value: "Social Media Management (Monthly) - KES 4,550" },
+    { name: "Landing Page Design", price: "KES 6,500", value: "Landing Page Design - KES 6,500" },
+    { name: "Brand Identity Kit", price: "KES 9,750", value: "Brand Identity Kit - KES 9,750" },
+    { name: "Content Package (5 articles)", price: "KES 13,000", value: "Content Package (5 articles) - KES 13,000" },
+    { name: "Website Starter Kit", price: "KES 19,500", value: "Website Starter Kit - KES 19,500" },
   ];
 
   return (

@@ -5,6 +5,7 @@ import { Header } from "@/shared/components/Header";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/shared/contexts/CartContext";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
+import { formatPrice } from "@/shared/utils";
 
 const ProductDetailPage = () => {
   const params = useParams();
@@ -37,7 +38,7 @@ const ProductDetailPage = () => {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.name}</h1>
               <p className="text-gray-600 mb-4">{product.description}</p>
-              <div className="text-2xl font-semibold mb-6">${product.price.toFixed(2)}</div>
+              <div className="text-2xl font-semibold mb-6">{formatPrice(product.price)}</div>
               <div className="flex gap-3">
                 <Button onClick={() => addItem(product, 1)}>Add to Cart</Button>
                 <a href="/cart" className="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">View Cart</a>

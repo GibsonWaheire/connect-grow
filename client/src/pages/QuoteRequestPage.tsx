@@ -255,11 +255,11 @@ This quote request was submitted through the website form.`
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         <option value="">Select budget range</option>
-                        <option value="Under $1,000">Under $1,000</option>
-                        <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                        <option value="$5,000 - $10,000">$5,000 - $10,000</option>
-                        <option value="$10,000 - $25,000">$10,000 - $25,000</option>
-                        <option value="$25,000+">$25,000+</option>
+                        <option value="Under KES 10,000">Under KES 10,000</option>
+                        <option value="KES 10,000 - 50,000">KES 10,000 - 50,000</option>
+                        <option value="KES 50,000 - 100,000">KES 50,000 - 100,000</option>
+                        <option value="KES 100,000 - 250,000">KES 100,000 - 250,000</option>
+                        <option value="KES 250,000+">KES 250,000+</option>
                         <option value="Not sure">Not sure</option>
                       </select>
                     </div>

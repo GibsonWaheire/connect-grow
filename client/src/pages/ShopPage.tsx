@@ -11,7 +11,7 @@ const ShopPage = () => {
   const { addItem } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000]);
 
   const categories = Array.from(new Set(products.map(p => p.category)));
 
@@ -31,7 +31,7 @@ const ShopPage = () => {
       <MainLayout>
         <section className="container mx-auto px-4 pt-24 pb-12">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Shop</h1>
-          <p className="text-gray-600 mb-8">Quality tech for creators and businesses. Secure payments with IntaSend.</p>
+          <p className="text-gray-600 mb-8">Digital services for your business. Secure payments with IntaSend.</p>
 
           {/* Search and Filters */}
           <div className="mb-8 space-y-4">
@@ -83,13 +83,13 @@ const ShopPage = () => {
               <input
                 type="range"
                 min="0"
-                max="2000"
-                step="50"
+                max="20000"
+                step="500"
                 value={priceRange[1]}
                 onChange={(e) => setPriceRange([0, Number(e.target.value)])}
                 className="flex-1"
               />
-              <span className="text-sm font-medium">${priceRange[1]}</span>
+              <span className="text-sm font-medium">KES {priceRange[1].toLocaleString()}</span>
             </div>
 
             <div className="text-sm text-gray-600">
@@ -101,7 +101,7 @@ const ShopPage = () => {
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 mb-4">No products found matching your criteria.</p>
-              <Button onClick={() => { setSearchQuery(""); setSelectedCategory(null); setPriceRange([0, 2000]); }}>
+              <Button onClick={() => { setSearchQuery(""); setSelectedCategory(null); setPriceRange([0, 20000]); }}>
                 Clear Filters
               </Button>
             </div>
@@ -118,7 +118,7 @@ const ShopPage = () => {
                       <span className="text-xs px-2 py-1 bg-slate-100 rounded text-slate-600">{p.category}</span>
                     </div>
                     <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.description}</p>
-                    <div className="mt-3 font-semibold text-lg">${p.price.toFixed(2)}</div>
+                    <div className="mt-3 font-semibold text-lg">KES {p.price.toLocaleString()}</div>
                     <div className="mt-auto pt-4 flex gap-2">
                       <Button size="sm" onClick={() => addItem(p, 1)} className="flex-1">Add to Cart</Button>
                       <a href={`/shop/${p.id}`} className="inline-flex items-center justify-center rounded-md border border-gray-300 px-3 text-sm font-medium text-gray-700 hover:bg-gray-50">

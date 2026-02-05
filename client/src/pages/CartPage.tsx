@@ -23,7 +23,7 @@ const CartPage = () => {
                     <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded" />
                     <div className="flex-1">
                       <div className="font-medium">{item.name}</div>
-                      <div className="text-sm text-gray-500">${item.price.toFixed(2)}</div>
+                      <div className="text-sm text-gray-500">KES {item.price.toLocaleString()}</div>
                       <div className="mt-2 flex items-center gap-2">
                         <input
                           type="number"
@@ -35,7 +35,7 @@ const CartPage = () => {
                         <button onClick={() => removeItem(item.productId)} className="text-red-600 hover:underline">Remove</button>
                       </div>
                     </div>
-                    <div className="font-semibold">${(item.price * item.quantity).toFixed(2)}</div>
+                    <div className="font-semibold">KES {(item.price * item.quantity).toLocaleString()}</div>
                   </div>
                 ))}
               </div>
@@ -43,7 +43,7 @@ const CartPage = () => {
               <div className="p-6 border rounded-xl h-fit">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">KES {subtotal.toLocaleString()}</span>
                 </div>
                 <a href="/checkout"><Button className="w-full">Proceed to Checkout</Button></a>
               </div>

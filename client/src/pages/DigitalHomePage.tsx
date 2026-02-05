@@ -9,6 +9,7 @@ import { useCart } from "@/shared/contexts/CartContext";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
 import ExtraServicesSection from "@/components/ExtraServicesSection";
+import { formatPrice } from "@/shared/utils";
 
 const DigitalHomePage = () => {
   const { addItem } = useCart();
@@ -56,24 +57,15 @@ const DigitalHomePage = () => {
         "email": "pwriter455@gmail.com"
       },
       "offers": [
-        {
-          "@type": "Offer",
-          "name": "Website Starter",
-          "price": "499",
-          "priceCurrency": "USD"
-        },
-        {
-          "@type": "Offer",
-          "name": "App Pro",
-          "price": "1999",
-          "priceCurrency": "USD"
-        },
-        {
-          "@type": "Offer",
-          "name": "Commerce Plus",
-          "price": "1499",
-          "priceCurrency": "USD"
-        }
+        { "@type": "Offer", "name": "Social Media Post", "price": "1300", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Logo Design", "price": "1950", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "SEO Audit", "price": "2600", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Content Creation", "price": "3250", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Social Media Management", "price": "4550", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Landing Page Design", "price": "6500", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Brand Identity Kit", "price": "9750", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Content Package", "price": "13000", "priceCurrency": "KES" },
+        { "@type": "Offer", "name": "Website Starter Kit", "price": "19500", "priceCurrency": "KES" }
       ]
     };
     let script = document.querySelector('script[type="application/ld+json"]');
@@ -566,11 +558,11 @@ const DigitalHomePage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-end justify-between mb-12 flex-col sm:flex-row gap-4">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">Featured Products</h2>
-                <p className="text-slate-600">Handpicked quality tech products</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">Featured Digital Services</h2>
+                <p className="text-slate-600">Digital services from KES 1,300 to KES 19,500</p>
               </div>
               <a href="/shop" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 rounded-lg hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all">
-                Browse All <ArrowRight className="w-5 h-5" />
+                Browse All Services <ArrowRight className="w-5 h-5" />
               </a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -583,7 +575,7 @@ const DigitalHomePage = () => {
                     <a href={`/shop/${p.id}`} className="font-bold text-lg hover:text-emerald-600 transition-colors mb-2">{p.name}</a>
                     <p className="text-sm text-slate-600 mb-4 line-clamp-2 flex-1">{p.description}</p>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="text-2xl font-bold text-slate-900">${p.price.toFixed(2)}</div>
+                      <div className="text-2xl font-bold text-slate-900">{formatPrice(p.price)}</div>
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
                           <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -633,33 +625,9 @@ const DigitalHomePage = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                {
-                  name: "Website Starter",
-                  price: "$499",
-                  period: "one-time",
-                  features: ["1-2 page website", "SEO optimization", "Analytics setup", "Mobile responsive", "1 revision round"],
-                  highlight: false,
-                  gradient: "from-blue-50 to-cyan-50",
-                  border: "border-blue-300",
-                },
-                {
-                  name: "App Pro",
-                  price: "$1,999",
-                  period: "one-time",
-                  features: ["Web or mobile app", "User authentication", "Dashboard/Admin panel", "Payment integration", "2 revision rounds"],
-                  highlight: true,
-                  gradient: "from-emerald-50 to-teal-50",
-                  border: "border-emerald-400",
-                },
-                {
-                  name: "Commerce Plus",
-                  price: "$1,499",
-                  period: "one-time",
-                  features: ["Full e-commerce site", "Product catalog", "Checkout (IntaSend)", "Admin dashboard", "2 revision rounds"],
-                  highlight: false,
-                  gradient: "from-purple-50 to-pink-50",
-                  border: "border-purple-300",
-                },
+                { name: "Social Media Post", price: 1300, period: "per post", features: ["Professional copy", "Basic design", "1 platform", "1 revision"], highlight: false, gradient: "from-blue-50 to-cyan-50", border: "border-blue-300" },
+                { name: "SEO Audit (Basic)", price: 2600, period: "one-time", features: ["Site analysis", "Keyword research", "Action plan", "Recommendations"], highlight: true, gradient: "from-emerald-50 to-teal-50", border: "border-emerald-400" },
+                { name: "Website Starter Kit", price: 19500, period: "one-time", features: ["1-2 pages", "Mobile responsive", "SEO setup", "Contact form"], highlight: false, gradient: "from-purple-50 to-pink-50", border: "border-purple-300" },
               ].map((plan) => (
                 <div key={plan.name} className={`p-8 rounded-2xl border-2 ${plan.border} shadow-xl hover:shadow-2xl transition-all bg-gradient-to-br ${plan.gradient} ${plan.highlight ? 'scale-105 ring-4 ring-emerald-200 relative' : ''}`}>
                   {plan.highlight && (
@@ -670,7 +638,7 @@ const DigitalHomePage = () => {
                   <div className="mb-6">
                     <div className="font-bold text-2xl mb-2 text-slate-900">{plan.name}</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
+                      <span className="text-4xl font-bold text-slate-900">{formatPrice(plan.price)}</span>
                       <span className="text-slate-600 text-sm">/{plan.period}</span>
                     </div>
                   </div>

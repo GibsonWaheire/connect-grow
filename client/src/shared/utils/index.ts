@@ -10,10 +10,12 @@ export const trackPageView = (pageName: string) => {
   trackEvent('page_view', { page_name: pageName });
 };
 
-export const formatPrice = (price: number, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
+export const formatPrice = (price: number, currency = 'KES') => {
+  return new Intl.NumberFormat('en-KE', {
     style: 'currency',
     currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(price);
 };
 
