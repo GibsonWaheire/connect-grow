@@ -9,7 +9,6 @@ import {
   Palette,
   Cloud,
   Zap,
-  Sparkles,
   ArrowRight,
   CheckCircle2
 } from "lucide-react";
@@ -17,20 +16,6 @@ import { formatPrice } from "@/shared/utils";
 
 const ExtraServicesSection = () => {
   const services = [
-    {
-      category: "AI & Content Services",
-      icon: Sparkles,
-      services: [
-        "AI Content Humanizer - Remove AI detection markers",
-        "Turnitin Checkout - Pass plagiarism checks",
-        "AI Rewriting & Paraphrasing",
-        "Content Originality Enhancement",
-        "AI Detection Removal"
-      ],
-      color: "from-purple-500 to-pink-500",
-      bgColor: "from-purple-50 to-pink-50",
-      borderColor: "border-purple-200"
-    },
     {
       category: "Web Development",
       icon: Globe,
@@ -195,7 +180,7 @@ const ExtraServicesSection = () => {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {services.filter((c) => c.category !== "AI & Content Services").map((category, index) => {
+          {services.map((category, index) => {
             const Icon = category.icon;
             const shopCategory = (category as { shopCategory?: string | null }).shopCategory;
             const priceFrom = (category as { priceFrom?: number | null }).priceFrom;
