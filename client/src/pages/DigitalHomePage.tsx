@@ -9,6 +9,7 @@ import { useCart } from "@/shared/contexts/CartContext";
 import { CheckCircle2, Sparkles } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
 import ExtraServicesSection from "@/components/ExtraServicesSection";
+import { ServicesStickyPopup } from "@/components/ServicesStickyPopup";
 import { formatPrice } from "@/shared/utils";
 
 const DigitalHomePage = () => {
@@ -96,6 +97,7 @@ const DigitalHomePage = () => {
   return (
     <>
       <Header />
+      <ServicesStickyPopup />
       <MainLayout>
         {/* Hero Section - Real Images & Animations */}
         <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-24 pb-16 lg:pb-24">

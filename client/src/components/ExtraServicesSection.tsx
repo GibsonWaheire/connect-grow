@@ -9,6 +9,7 @@ import {
   Palette,
   Cloud,
   Zap,
+  Sparkles,
   ArrowRight,
   CheckCircle2
 } from "lucide-react";

@@ -11,12 +11,10 @@ export const trackPageView = (pageName: string) => {
 };
 
 export const formatPrice = (price: number, currency = 'KES') => {
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
+  if (currency === 'KES') {
+    return `KES ${price.toLocaleString('en-KE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  }
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
 };
 
 export const formatDate = (date: string | Date) => {
