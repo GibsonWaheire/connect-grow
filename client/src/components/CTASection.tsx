@@ -1,8 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/shared/components/OptimizedImage";
+import { useLocation } from "react-router-dom";
 
 export const CTASection = () => {
+  const location = useLocation();
+
   const handleGetStarted = () => {
+    // If on course-help page, ALWAYS scroll to services section - NEVER redirect
+    if (location.pathname === '/course-help' || location.pathname === '/course-help/') {
+      const scrollToServices = () => {
+        const servicesSection = document.getElementById('services');
+        if (servicesSection) {
+          servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // Retry after a short delay if element not found yet
+          setTimeout(scrollToServices, 100);
+        }
+      };
+      scrollToServices();
+      return;
+    }
+    // Otherwise redirect to services page
     window.location.href = '/services';
   };
 

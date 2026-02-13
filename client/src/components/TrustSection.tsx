@@ -134,7 +134,11 @@ const samples = [
   }
 ];
 
-export const TrustSection = () => {
+interface TrustSectionProps {
+  onSubjectClick?: (serviceId: string, subject: string) => void;
+}
+
+export const TrustSection = ({ onSubjectClick }: TrustSectionProps) => {
   const [selectedCategory, setSelectedCategory] = useState<'technical' | 'nonTechnical'>('technical');
 
   const handleDownload = (url: string, name: string) => {
@@ -143,6 +147,12 @@ export const TrustSection = () => {
       return;
     }
     window.open(url, '_blank');
+  };
+
+  const handleSubjectClick = (courseName: string, category: 'technical' | 'nonTechnical') => {
+    // Map category to service ID
+    const serviceId = category === 'technical' ? 'technical' : 'non-technical';
+    onSubjectClick?.(serviceId, courseName);
   };
 
   return (
@@ -260,10 +270,14 @@ export const TrustSection = () => {
                 
                 <div className="grid grid-cols-2 gap-3">
                   {courses[selectedCategory].map((course, index) => (
-                    <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors">
+                    <button
+                      key={index}
+                      onClick={() => handleSubjectClick(course.name, selectedCategory)}
+                      className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 hover:border-primary transition-colors cursor-pointer text-left"
+                    >
                       <span className="text-lg">{course.icon}</span>
                       <span className="text-sm font-medium">{course.name}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
