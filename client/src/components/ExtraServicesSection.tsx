@@ -9,6 +9,7 @@ import {
   Palette,
   Cloud,
   Zap,
+  Sparkles,
   ArrowRight,
   CheckCircle2
 } from "lucide-react";
@@ -16,6 +17,22 @@ import { formatPrice } from "@/shared/utils";
 
 const ExtraServicesSection = () => {
   const services = [
+    {
+      category: "AI & Content Services",
+      icon: Sparkles,
+      shopCategory: null,
+      priceFrom: null,
+      services: [
+        "AI Content Humanizer - Remove AI detection markers",
+        "Turnitin Checkout - Pass plagiarism checks",
+        "AI Rewriting & Paraphrasing",
+        "Content Originality Enhancement",
+        "AI Detection Removal"
+      ],
+      color: "from-purple-500 to-pink-500",
+      bgColor: "from-purple-50 to-pink-50",
+      borderColor: "border-purple-200"
+    },
     {
       category: "Web Development",
       icon: Globe,

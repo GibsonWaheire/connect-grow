@@ -38,6 +38,7 @@ import NotFound from "./pages/NotFound";
 import AboutPage from "./pages/AboutPage";
 import QuoteRequestPage from "./pages/QuoteRequestPage";
 import GetStartedPage from "./pages/GetStartedPage";
+import Index from "./pages/Index";
 import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
 import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
@@ -69,7 +70,7 @@ const App = () => (
           <HtmlRedirects />
           <Routes>
             <Route path="/" element={<DigitalHomePage />} />
-            <Route path="/course-help" element={<NotFound />} />
+            <Route path="/course-help" element={<Index />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/shop/:productId" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />

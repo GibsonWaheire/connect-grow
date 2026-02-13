@@ -65,6 +65,10 @@ const navigationItems: NavigationItem[] = [
     href: '/blog',
   },
   {
+    name: 'Course Help',
+    href: '/course-help',
+  },
+  {
     name: 'Contact',
     href: '/contact',
   },

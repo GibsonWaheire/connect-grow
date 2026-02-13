@@ -29,7 +29,7 @@ export const PrivacyPolicy = () => {
                     <ul className="list-disc list-inside mt-2 space-y-1 text-gray-700">
                       <li>Name and contact information (email, phone number)</li>
                       <li>Country and location information</li>
-                      <li>Project details and requirements</li>
+                      <li>Academic assignment details and requirements</li>
                       <li>Payment information (processed securely through IntaSend)</li>
                       <li>Communication records (WhatsApp messages, emails)</li>
                     </ul>
