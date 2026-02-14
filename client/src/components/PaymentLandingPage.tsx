@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -53,9 +54,10 @@ const CopyableRow = ({
   href?: string;
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const handleCopy = () => {
     navigator.clipboard.writeText(value);
-    toast({ title: "Copied to clipboard", duration: 2000 });
+    toast({ title: t("payment.copied"), duration: 2000 });
   };
   return (
     <p className="flex items-center justify-between gap-2">
@@ -91,9 +93,10 @@ const CopyableRow = ({
 const BlurredIntermediaryCode = ({ label, value }: { label: string; value: string }) => {
   const [revealed, setRevealed] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
   const handleCopy = () => {
     navigator.clipboard.writeText(value);
-    toast({ title: "Copied to clipboard", duration: 2000 });
+    toast({ title: t("payment.copied"), duration: 2000 });
   };
   return (
     <p className="mt-2 text-muted-foreground">
@@ -101,7 +104,7 @@ const BlurredIntermediaryCode = ({ label, value }: { label: string; value: strin
       {revealed ? (
         <span className="inline-flex items-center gap-2">
           <span className="font-mono">{value}</span>
-          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={handleCopy} aria-label="Copy">
+          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={handleCopy} aria-label={t("payment.copy")}>
             <Copy className="h-3.5 w-3.5" />
           </Button>
         </span>
@@ -112,7 +115,7 @@ const BlurredIntermediaryCode = ({ label, value }: { label: string; value: strin
           className="inline-flex items-center gap-2 rounded border border-dashed border-slate-300 bg-slate-50/50 px-2 py-1 font-mono text-xs select-none touch-manipulation hover:border-primary hover:bg-primary/5 transition-colors"
         >
           <span style={{ filter: "blur(4px)" }}>{value}</span>
-          <span className="text-primary text-[10px] font-medium whitespace-nowrap">Tap to reveal</span>
+          <span className="text-primary text-[10px] font-medium whitespace-nowrap">{t("payment.tapToReveal")}</span>
         </button>
       )}
     </p>
@@ -181,6 +184,7 @@ export const PaymentLandingPage = ({
   wisePaymentUrl = "https://wise.com/pay/business/mcgibsdigitalsolution?amount=50&currency=AED&utm_source=quick_pay",
   flutterwavePaymentUrl = "https://flutterwave.com/pay/qqtucsukcxrs",
 }: PaymentLandingPageProps) => {
+  const { t, i18n } = useTranslation();
   const [remitOpen, setRemitOpen] = useState(false);
   const [emoneyOpen, setEmoneyOpen] = useState(false);
   const [alAnsariOpen, setAlAnsariOpen] = useState(false);
@@ -192,7 +196,7 @@ export const PaymentLandingPage = ({
   const paymentMethods = [
     {
       id: "wise" as const,
-      name: "Wise Payment",
+      name: t("payment.methods.wise"),
       type: "link" as const,
       href: wisePaymentUrl,
       icon: Banknote,
@@ -200,7 +204,7 @@ export const PaymentLandingPage = ({
     },
     {
       id: "flutterwave" as const,
-      name: "Card Payment (via Flutterwave)",
+      name: t("payment.methods.flutterwave"),
       type: "link" as const,
       href: flutterwavePaymentUrl,
       icon: CreditCard,
@@ -208,7 +212,7 @@ export const PaymentLandingPage = ({
     },
     {
       id: "remitly" as const,
-      name: "Remitly / WorldRemit / Sendwave",
+      name: t("payment.methods.remitly"),
       type: "modal" as const,
       icon: Send,
       onOpen: () => setRemitlyOpen(true),
@@ -216,21 +220,21 @@ export const PaymentLandingPage = ({
     },
     {
       id: "apple" as const,
-      name: "Apple Pay",
+      name: t("payment.methods.apple"),
       type: "inactive" as const,
       icon: Apple,
       badge: undefined,
     },
     {
       id: "paypal" as const,
-      name: "PayPal",
+      name: t("payment.methods.paypal"),
       type: "inactive" as const,
       icon: CircleDollarSign,
       badge: undefined,
     },
     {
       id: "remit" as const,
-      name: "Remit",
+      name: t("payment.methods.remit"),
       type: "modal" as const,
       icon: Wallet,
       onOpen: () => setRemitOpen(true),
@@ -238,7 +242,7 @@ export const PaymentLandingPage = ({
     },
     {
       id: "emoney" as const,
-      name: "E&money",
+      name: t("payment.methods.emoney"),
       type: "modal" as const,
       icon: Smartphone,
       onOpen: () => setEmoneyOpen(true),
@@ -246,19 +250,19 @@ export const PaymentLandingPage = ({
     },
     {
       id: "alansari" as const,
-      name: "Al Ansari, Lulu, or Al Fardan Exchange",
+      name: t("payment.methods.alansari"),
       type: "modal" as const,
       icon: Landmark,
       onOpen: () => setAlAnsariOpen(true),
-      badge: "Recommended" as const,
+      badge: t("payment.recommended"),
     },
     {
       id: "bank" as const,
-      name: "Direct Bank Transfer",
+      name: t("payment.methods.bank"),
       type: "modal" as const,
       icon: Building2,
       onOpen: () => setBankTransferOpen(true),
-      badge: "Recommended" as const,
+      badge: t("payment.recommended"),
     },
   ];
 
@@ -298,8 +302,8 @@ export const PaymentLandingPage = ({
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm sm:text-base font-medium text-foreground">{method.name}</span>
-                {badge && (
-                  <span className="text-xs text-muted-foreground">Opens in new tab</span>
+                {method.type === "link" && (
+                  <span className="text-xs text-muted-foreground">{t("payment.opensNewTab")}</span>
                 )}
               </div>
             </div>
@@ -316,17 +320,17 @@ export const PaymentLandingPage = ({
             <Collapsible open={wiseDetailsOpen} onOpenChange={setWiseDetailsOpen}>
               <CollapsibleTrigger asChild>
                 <button className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 min-h-[44px] text-left text-sm text-muted-foreground hover:bg-slate-50 touch-manipulation">
-                  View AED account details for Swift transfer
+                  {t("payment.viewWiseDetails")}
                   <ChevronDown className={cn("h-4 w-4 transition-transform", wiseDetailsOpen && "rotate-180")} />
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="mt-2 rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs text-foreground space-y-1">
-                  <CopyableRow label="Name" value="McGibs Digital Solution" />
-                  <CopyableRow label="IBAN" value="GB71 TRWI 2314 7091 3577 91" />
-                  <CopyableRow label="Swift/BIC" value="TRWIGB2LXXX" />
-                  <p><span className="font-semibold">Bank:</span> Wise Payments Limited, 1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom</p>
-                  <BlurredIntermediaryCode label="Intermediary code for GBP" value="CITIGB2L" />
+                  <CopyableRow label={t("payment.name")} value="McGibs Digital Solution" />
+                  <CopyableRow label={t("payment.iban")} value="GB71 TRWI 2314 7091 3577 91" />
+                  <CopyableRow label={t("payment.swift")} value="TRWIGB2LXXX" />
+                  <p><span className="font-semibold">{t("payment.bank")}:</span> Wise Payments Limited, 1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom</p>
+                  <BlurredIntermediaryCode label={t("payment.intermediaryCode")} value="CITIGB2L" />
                 </div>
               </CollapsibleContent>
             </Collapsible>
@@ -350,7 +354,7 @@ export const PaymentLandingPage = ({
             <span className="text-sm sm:text-base font-medium text-slate-400">{method.name}</span>
           </div>
           <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-500">
-            Currently Inactive
+            {t("payment.currentlyInactive")}
           </span>
         </div>
       );
@@ -379,16 +383,43 @@ export const PaymentLandingPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-8 px-4 sm:py-12 safe-area-top safe-area-bottom safe-area-left safe-area-right pb-[max(2rem,env(safe-area-inset-bottom))]">
+    <div
+      className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-8 px-4 sm:py-12 safe-area-top safe-area-bottom safe-area-left safe-area-right pb-[max(2rem,env(safe-area-inset-bottom))]"
+      dir={i18n.language?.startsWith("ar") ? "rtl" : "ltr"}
+    >
       <div className="mx-auto max-w-2xl">
-        <Link
-          to="/course-help"
-          className="mb-4 inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-sm text-muted-foreground hover:text-foreground touch-manipulation min-h-[44px]"
-          style={{ WebkitTapHighlightColor: "transparent" }}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Course Help
-        </Link>
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <Link
+            to="/course-help"
+            className="inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-sm text-muted-foreground hover:text-foreground touch-manipulation min-h-[44px]"
+            style={{ WebkitTapHighlightColor: "transparent" }}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("payment.back")}
+          </Link>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage("en")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md min-h-[44px] touch-manipulation transition-colors",
+                i18n.language?.startsWith("en") ? "bg-primary text-primary-foreground" : "bg-slate-200 text-slate-600 hover:bg-slate-300"
+              )}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage("ar")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md min-h-[44px] touch-manipulation transition-colors",
+                i18n.language?.startsWith("ar") ? "bg-primary text-primary-foreground" : "bg-slate-200 text-slate-600 hover:bg-slate-300"
+              )}
+            >
+              ع
+            </button>
+          </div>
+        </div>
         <Card className="overflow-hidden border-slate-200 shadow-xl shadow-slate-200/50">
           <CardHeader className="border-b bg-white/80 backdrop-blur-sm">
             <div className="flex items-center gap-3">
@@ -397,32 +428,38 @@ export const PaymentLandingPage = ({
               </div>
               <div>
                 <CardTitle className="text-xl sm:text-2xl">
-                  Secure Payment Options
+                  {t("payment.title")}
                 </CardTitle>
                 <CardDescription>
-                  Choose your preferred payment method to complete your order
+                  {t("payment.subtitle")}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
+            <div className="flex justify-center">
+              <div className="inline-flex flex-col items-center gap-1 rounded-full border-2 border-primary/40 bg-primary/10 px-5 py-2.5 text-center shadow-md shadow-primary/10 ring-2 ring-primary/10">
+                <span className="text-sm font-semibold text-foreground">{t("payment.instruction")}</span>
+                <span className="text-xs font-medium text-muted-foreground" dir="rtl">{t("payment.instructionAr")}</span>
+              </div>
+            </div>
             {/* Payment Methods - Vertical layout */}
             <div className="space-y-6">
               <div>
                 <h3 className="mb-3 text-base font-semibold uppercase tracking-wide text-foreground">
-                  Mobile & wallet
+                  {t("payment.mobileWallet")}
                 </h3>
                 <div className="space-y-3">{walletMethods.map(renderMethodCard)}</div>
               </div>
               <div>
                 <h3 className="mb-3 text-base font-semibold uppercase tracking-wide text-foreground">
-                  Bank transfer
+                  {t("payment.bankTransfer")}
                 </h3>
                 <div className="space-y-3">{bankMethods.map(renderMethodCard)}</div>
               </div>
               <div>
                 <h3 className="mb-3 text-base font-semibold uppercase tracking-wide text-foreground">
-                  Online payment
+                  {t("payment.onlinePayment")}
                 </h3>
                 <div className="space-y-3">{onlineMethods.map(renderMethodCard)}</div>
               </div>
@@ -431,13 +468,10 @@ export const PaymentLandingPage = ({
             {/* Accuracy Disclaimer */}
             <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4">
               <p className="text-sm leading-relaxed text-amber-900">
-                Please use the exact recipient details provided for your chosen
-                method. Account details may vary by platform and region. Kindly
-                verify all information before finalizing your transfer.
+                {t("payment.disclaimer1")}
               </p>
               <p className="mt-2 text-xs font-medium text-amber-800">
-                Double-check recipient details before sending. We cannot reverse
-                transfers sent to the wrong account.
+                {t("payment.disclaimer2")}
               </p>
             </div>
 
@@ -447,7 +481,7 @@ export const PaymentLandingPage = ({
                 <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50/50 p-4 min-h-[52px] text-left hover:bg-slate-50 touch-manipulation">
                   <h3 className="flex items-center gap-2 font-semibold text-foreground">
                     <FileText className="h-5 w-5 text-primary" />
-                    Service Terms
+                    {t("payment.serviceTerms")}
                   </h3>
                   <ChevronDown className={cn("h-4 w-4 transition-transform", termsOpen && "rotate-180")} />
                 </button>
@@ -456,18 +490,15 @@ export const PaymentLandingPage = ({
                 <ul className="mt-3 space-y-2 px-4 pb-4 text-sm text-muted-foreground">
                   <li className="flex gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                    Orders are eligible for a full refund only if requested before
-                    work begins.
+                    {t("payment.term1")}
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                    Due to the custom nature of digital services, payments are
-                    final once delivery is completed.
+                    {t("payment.term2")}
                   </li>
                   <li className="flex gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                    We provide a 48-hour window for any necessary revisions or
-                    adjustments.
+                    {t("payment.term3")}
                   </li>
                 </ul>
               </CollapsibleContent>
@@ -481,7 +512,7 @@ export const PaymentLandingPage = ({
               className="flex items-center justify-center gap-2 rounded-xl border border-primary bg-primary/5 py-4 min-h-[52px] text-sm font-medium text-primary transition-colors hover:bg-primary/10 touch-manipulation active:scale-[0.99]"
             >
               <MessageCircle className="h-5 w-5" />
-              Questions? Contact us on WhatsApp
+              {t("payment.whatsappCta")}
             </a>
           </CardContent>
         </Card>
@@ -491,162 +522,154 @@ export const PaymentLandingPage = ({
       <PaymentMethodModal
         open={remitOpen}
         onOpenChange={setRemitOpen}
-        title="Remit Payment Details"
+        title={t("payment.modals.remit.title")}
       >
-        <p>You can send payment to M-Pesa via the ADIB app using Remit!</p>
+        <p>{t("payment.modals.remit.intro")}</p>
         <ol className="list-inside list-decimal space-y-2">
-          <li>Open ADIB App and go to &quot;Transfers&quot;</li>
-          <li>Select &quot;Remit!&quot; then &quot;International Wallet&quot;</li>
-          <li>Choose Kenya and enter the details below</li>
+          <li>{t("payment.modals.remit.step1")}</li>
+          <li>{t("payment.modals.remit.step2")}</li>
+          <li>{t("payment.modals.remit.step3")}</li>
         </ol>
         <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-          <CopyableRow label="Name" value="Gibson Waheire Giteru" />
-          <CopyableRow label="Phone" value="+254726899113" href="tel:+254726899113" />
-          <p><span className="font-semibold">Provider:</span> M-Pesa</p>
+          <CopyableRow label={t("payment.name")} value="Gibson Waheire Giteru" />
+          <CopyableRow label={t("payment.phone")} value="+254726899113" href="tel:+254726899113" />
+          <p><span className="font-semibold">{t("payment.provider")}:</span> M-Pesa</p>
         </div>
       </PaymentMethodModal>
 
       <PaymentMethodModal
         open={remitlyOpen}
         onOpenChange={setRemitlyOpen}
-        title="Remitly / WorldRemit / Sendwave (for US clients)"
+        title={t("payment.modals.remitly.title")}
       >
-        <p className="mb-2">
-          <strong>For US clients:</strong> Use Remitly, WorldRemit, or Sendwave to send payment. Use the same recipient details as below. You can pay via <strong>mobile banking / M-Pesa</strong>, <strong>bank transfer</strong>, or <strong>cash</strong> at supported locations.
-        </p>
+        <p className="mb-2">{t("payment.modals.remitly.intro")}</p>
 
         <div className="space-y-4">
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">Option 1: Mobile banking / M-Pesa</h4>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.remitly.opt1Title")}</h4>
             <ol className="list-inside list-decimal space-y-1 mb-2">
-              <li>Open Remitly, WorldRemit, or Sendwave app</li>
-              <li>Select send to Kenya, choose M-Pesa</li>
-              <li>Enter the recipient details below</li>
+              <li>{t("payment.modals.remitly.opt1Step1")}</li>
+              <li>{t("payment.modals.remitly.opt1Step2")}</li>
+              <li>{t("payment.modals.remitly.opt1Step3")}</li>
             </ol>
             <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="Name" value="Gibson Waheire Giteru" />
-              <p><span className="font-semibold">Country:</span> Kenya</p>
-              <p><span className="font-semibold">City:</span> Nairobi</p>
-              <CopyableRow label="M-Pesa phone" value="+254726899113" href="tel:+254726899113" />
+              <CopyableRow label={t("payment.name")} value="Gibson Waheire Giteru" />
+              <p><span className="font-semibold">{t("payment.country")}:</span> Kenya</p>
+              <p><span className="font-semibold">{t("payment.city")}:</span> Nairobi</p>
+              <CopyableRow label={t("payment.mpesaPhone")} value="+254726899113" href="tel:+254726899113" />
             </div>
           </div>
 
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">Option 2: Bank transfer (Equity Bank details)</h4>
-            <p className="mb-2 text-xs">For bank transfer, use these Equity Bank details:</p>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.remitly.opt2Title")}</h4>
+            <p className="mb-2 text-xs">{t("payment.modals.remitly.opt2Intro")}</p>
             <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="First & middle name" value="Gibson Waheire" />
-              <CopyableRow label="Last name" value="Giteru" />
-              <CopyableRow label="Bank" value="Equity Bank Ltd" />
-              <CopyableRow label="Account No" value="0020195655920" />
-              <CopyableRow label="Swift" value="EQBLKENA" />
-              <CopyableRow label="Branch code" value="68002" />
-              <p><span className="font-semibold">Nationality:</span> Kenya</p>
-              <CopyableRow label="Phone" value="+254721465219" href="tel:+254721465219" />
-              <BlurredIntermediaryCode label="Intermediary code (if asked)" value="CITIUS33" />
+              <CopyableRow label={t("payment.firstMiddleName")} value="Gibson Waheire" />
+              <CopyableRow label={t("payment.lastName")} value="Giteru" />
+              <CopyableRow label={t("payment.bank")} value="Equity Bank Ltd" />
+              <CopyableRow label={t("payment.accountNo")} value="0020195655920" />
+              <CopyableRow label={t("payment.swift")} value="EQBLKENA" />
+              <CopyableRow label={t("payment.branchCode")} value="68002" />
+              <p><span className="font-semibold">{t("payment.nationality")}:</span> Kenya</p>
+              <CopyableRow label={t("payment.phone")} value="+254721465219" href="tel:+254721465219" />
+              <BlurredIntermediaryCode label={t("payment.intermediaryCodeIfAsked")} value="CITIUS33" />
             </div>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            <strong>Cash:</strong> Cash pickup is available at supported Remitly/WorldRemit/Sendwave locations. Please retain your receipt and share the reference with us.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("payment.modals.remitly.cashNote")}</p>
         </div>
       </PaymentMethodModal>
 
       <PaymentMethodModal
         open={emoneyOpen}
         onOpenChange={setEmoneyOpen}
-        title="E&money Payment Details"
+        title={t("payment.modals.emoney.title")}
       >
-        <p>Use the e& money app to send funds. You can link your ADIB card easily.</p>
+        <p>{t("payment.modals.emoney.intro")}</p>
         <ol className="list-inside list-decimal space-y-2">
-          <li>In e& money, tap &quot;Add Money&quot; using your ADIB card</li>
-          <li>Go to &quot;Transfers&quot; &gt; &quot;International Remittance&quot;</li>
-          <li>Select Kenya and enter the details below</li>
+          <li>{t("payment.modals.emoney.step1")}</li>
+          <li>{t("payment.modals.emoney.step2")}</li>
+          <li>{t("payment.modals.emoney.step3")}</li>
         </ol>
         <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-          <CopyableRow label="Name" value="Gibson Waheire Giteru" />
-          <CopyableRow label="Phone" value="+254726899113" href="tel:+254726899113" />
-          <p><span className="font-semibold">Method:</span> M-Pesa</p>
+          <CopyableRow label={t("payment.name")} value="Gibson Waheire Giteru" />
+          <CopyableRow label={t("payment.phone")} value="+254726899113" href="tel:+254726899113" />
+          <p><span className="font-semibold">{t("payment.method")}:</span> M-Pesa</p>
         </div>
       </PaymentMethodModal>
 
       <PaymentMethodModal
         open={alAnsariOpen}
         onOpenChange={setAlAnsariOpen}
-        title="Al Ansari, Lulu, or Al Fardan Exchange Payment Details"
+        title={t("payment.modals.alansari.title")}
       >
-        <p className="mb-2">
-          At Al Ansari, Lulu, or Al Fardan exchange, you can pay via <strong>mobile banking / M-Pesa</strong>, <strong>bank transfer</strong>, or <strong>cash</strong>. All options are acceptable.
-        </p>
+        <p className="mb-2">{t("payment.modals.alansari.intro")}</p>
 
         <div className="space-y-4">
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">Option 1: Mobile banking / M-Pesa</h4>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.alansari.opt1Title")}</h4>
             <ol className="list-inside list-decimal space-y-1 mb-2">
-              <li>Visit an Al Ansari, Lulu, or Al Fardan branch</li>
-              <li>Request M-Pesa transfer to Kenya</li>
-              <li>Provide the recipient details below</li>
+              <li>{t("payment.modals.alansari.opt1Step1")}</li>
+              <li>{t("payment.modals.alansari.opt1Step2")}</li>
+              <li>{t("payment.modals.alansari.opt1Step3")}</li>
             </ol>
             <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="Name" value="Gibson Waheire Giteru" />
-              <p><span className="font-semibold">Country:</span> Kenya</p>
-              <p><span className="font-semibold">City:</span> Nairobi</p>
-              <CopyableRow label="M-Pesa phone" value="+254726899113" href="tel:+254726899113" />
+              <CopyableRow label={t("payment.name")} value="Gibson Waheire Giteru" />
+              <p><span className="font-semibold">{t("payment.country")}:</span> Kenya</p>
+              <p><span className="font-semibold">{t("payment.city")}:</span> Nairobi</p>
+              <CopyableRow label={t("payment.mpesaPhone")} value="+254726899113" href="tel:+254726899113" />
             </div>
           </div>
 
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">Option 2: Bank transfer (Equity Bank details)</h4>
-            <p className="mb-2 text-xs">For bank transfer at the exchange, use these Equity Bank details:</p>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.alansari.opt2Title")}</h4>
+            <p className="mb-2 text-xs">{t("payment.modals.alansari.opt2Intro")}</p>
             <div className="rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="First & middle name" value="Gibson Waheire" />
-              <CopyableRow label="Last name" value="Giteru" />
-              <CopyableRow label="Bank" value="Equity Bank Ltd" />
-              <CopyableRow label="Account No" value="0020195655920" />
-              <CopyableRow label="Swift" value="EQBLKENA" />
-              <CopyableRow label="Branch code" value="68002" />
-              <p><span className="font-semibold">Nationality:</span> Kenya</p>
-              <CopyableRow label="Phone" value="+254721465219" href="tel:+254721465219" />
-              <BlurredIntermediaryCode label="Intermediary code (if asked)" value="CITIUS33" />
+              <CopyableRow label={t("payment.firstMiddleName")} value="Gibson Waheire" />
+              <CopyableRow label={t("payment.lastName")} value="Giteru" />
+              <CopyableRow label={t("payment.bank")} value="Equity Bank Ltd" />
+              <CopyableRow label={t("payment.accountNo")} value="0020195655920" />
+              <CopyableRow label={t("payment.swift")} value="EQBLKENA" />
+              <CopyableRow label={t("payment.branchCode")} value="68002" />
+              <p><span className="font-semibold">{t("payment.nationality")}:</span> Kenya</p>
+              <CopyableRow label={t("payment.phone")} value="+254721465219" href="tel:+254721465219" />
+              <BlurredIntermediaryCode label={t("payment.intermediaryCodeIfAsked")} value="CITIUS33" />
             </div>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            <strong>Cash:</strong> Cash payment is also acceptable at the counter. Please retain your receipt and share the reference with us.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("payment.modals.alansari.cashNote")}</p>
         </div>
       </PaymentMethodModal>
 
       <PaymentMethodModal
         open={bankTransferOpen}
         onOpenChange={setBankTransferOpen}
-        title="Direct Bank Transfer Details"
+        title={t("payment.modals.bank.title")}
       >
-        <p className="font-medium">Use <strong>one</strong> of the options below. Do not mix details. Use the exact details for your chosen option to avoid processing delays.</p>
+        <p className="font-medium">{t("payment.modals.bank.intro")}</p>
         <div className="space-y-4">
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">UK Bank Transfer (Swift)</h4>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.bank.ukTitle")}</h4>
             <div className="rounded-lg border-2 border-blue-200 bg-blue-50/80 p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="Name" value="McGibs Digital Solution" />
-              <CopyableRow label="IBAN" value="GB71 TRWI 2314 7091 3577 91" />
-              <CopyableRow label="Swift/BIC" value="TRWIGB2LXXX" />
-              <p><span className="font-semibold">Bank:</span> Wise Payments Limited, 1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom</p>
-              <BlurredIntermediaryCode label="Intermediary code for GBP" value="CITIGB2L" />
+              <CopyableRow label={t("payment.name")} value="McGibs Digital Solution" />
+              <CopyableRow label={t("payment.iban")} value="GB71 TRWI 2314 7091 3577 91" />
+              <CopyableRow label={t("payment.swift")} value="TRWIGB2LXXX" />
+              <p><span className="font-semibold">{t("payment.bank")}:</span> Wise Payments Limited, 1st Floor, Worship Square, 65 Clifton Street, London, EC2A 4JE, United Kingdom</p>
+              <BlurredIntermediaryCode label={t("payment.intermediaryCode")} value="CITIGB2L" />
             </div>
           </div>
           <div>
-            <h4 className="mb-2 font-semibold text-foreground">International Bank Transfer – Kenya</h4>
+            <h4 className="mb-2 font-semibold text-foreground">{t("payment.modals.bank.keTitle")}</h4>
             <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50/80 p-4 font-mono text-xs space-y-1">
-              <CopyableRow label="First & middle name" value="Gibson Waheire" />
-              <CopyableRow label="Last name" value="Giteru" />
-              <CopyableRow label="Bank" value="Equity Bank Ltd" />
-              <CopyableRow label="Account No" value="0020195655920" />
-              <CopyableRow label="Swift" value="EQBLKENA" />
-              <CopyableRow label="Branch code" value="68002" />
-              <p><span className="font-semibold">Nationality:</span> Kenya</p>
-              <CopyableRow label="Phone" value="+254721465219" href="tel:+254721465219" />
-              <BlurredIntermediaryCode label="Intermediary code (if asked)" value="CITIUS33" />
+              <CopyableRow label={t("payment.firstMiddleName")} value="Gibson Waheire" />
+              <CopyableRow label={t("payment.lastName")} value="Giteru" />
+              <CopyableRow label={t("payment.bank")} value="Equity Bank Ltd" />
+              <CopyableRow label={t("payment.accountNo")} value="0020195655920" />
+              <CopyableRow label={t("payment.swift")} value="EQBLKENA" />
+              <CopyableRow label={t("payment.branchCode")} value="68002" />
+              <p><span className="font-semibold">{t("payment.nationality")}:</span> Kenya</p>
+              <CopyableRow label={t("payment.phone")} value="+254721465219" href="tel:+254721465219" />
+              <BlurredIntermediaryCode label={t("payment.intermediaryCodeIfAsked")} value="CITIUS33" />
             </div>
           </div>
         </div>

@@ -1,0 +1,98 @@
+{
+  "payment": {
+    "back": "Back to Course Help",
+    "title": "Secure Payment Options",
+    "subtitle": "Choose your preferred payment method to complete your order",
+    "instruction": "Tap an option below to view payment details",
+    "instructionAr": "اضغط على خيار أدناه لعرض تفاصيل الدفع",
+    "mobileWallet": "Mobile & wallet",
+    "bankTransfer": "Bank transfer",
+    "onlinePayment": "Online payment",
+    "opensNewTab": "Opens in new tab",
+    "recommended": "Recommended",
+    "currentlyInactive": "Currently Inactive",
+    "viewWiseDetails": "View AED account details for Swift transfer",
+    "copied": "Copied to clipboard",
+    "tapToReveal": "Tap to reveal",
+    "copy": "Copy",
+    "name": "Name",
+    "iban": "IBAN",
+    "swift": "Swift/BIC",
+    "bank": "Bank",
+    "provider": "Provider",
+    "method": "Method",
+    "phone": "Phone",
+    "country": "Country",
+    "city": "City",
+    "mpesaPhone": "M-Pesa phone",
+    "firstMiddleName": "First & middle name",
+    "lastName": "Last name",
+    "accountNo": "Account No",
+    "branchCode": "Branch code",
+    "nationality": "Nationality",
+    "intermediaryCode": "Intermediary code for GBP",
+    "intermediaryCodeIfAsked": "Intermediary code (if asked)",
+    "disclaimer1": "Please use the exact recipient details provided for your chosen method. Account details may vary by platform and region. Kindly verify all information before finalizing your transfer.",
+    "disclaimer2": "Double-check recipient details before sending. We cannot reverse transfers sent to the wrong account.",
+    "serviceTerms": "Service Terms",
+    "term1": "Orders are eligible for a full refund only if requested before work begins.",
+    "term2": "Due to the custom nature of digital services, payments are final once delivery is completed.",
+    "term3": "We provide a 48-hour window for any necessary revisions or adjustments.",
+    "whatsappCta": "Questions? Contact us on WhatsApp",
+    "methods": {
+      "wise": "Wise Payment",
+      "flutterwave": "Card Payment (via Flutterwave)",
+      "remitly": "Remitly / WorldRemit / Sendwave",
+      "apple": "Apple Pay",
+      "paypal": "PayPal",
+      "remit": "Remit",
+      "emoney": "E&money",
+      "alansari": "Al Ansari, Lulu, or Al Fardan Exchange",
+      "bank": "Direct Bank Transfer"
+    },
+    "modals": {
+      "remit": {
+        "title": "Remit Payment Details",
+        "intro": "You can send payment to M-Pesa via the ADIB app using Remit!",
+        "step1": "Open ADIB App and go to \"Transfers\"",
+        "step2": "Select \"Remit!\" then \"International Wallet\"",
+        "step3": "Choose Kenya and enter the details below"
+      },
+      "remitly": {
+        "title": "Remitly / WorldRemit / Sendwave (for US clients)",
+        "intro": "For US clients: Use Remitly, WorldRemit, or Sendwave to send payment. Use the same recipient details as below. You can pay via mobile banking / M-Pesa, bank transfer, or cash at supported locations.",
+        "opt1Title": "Option 1: Mobile banking / M-Pesa",
+        "opt1Step1": "Open Remitly, WorldRemit, or Sendwave app",
+        "opt1Step2": "Select send to Kenya, choose M-Pesa",
+        "opt1Step3": "Enter the recipient details below",
+        "opt2Title": "Option 2: Bank transfer (Equity Bank details)",
+        "opt2Intro": "For bank transfer, use these Equity Bank details:",
+        "cashNote": "Cash: Cash pickup is available at supported Remitly/WorldRemit/Sendwave locations. Please retain your receipt and share the reference with us."
+      },
+      "emoney": {
+        "title": "E&money Payment Details",
+        "intro": "Use the e& money app to send funds. You can link your ADIB card easily.",
+        "step1": "In e& money, tap \"Add Money\" using your ADIB card",
+        "step2": "Go to \"Transfers\" > \"International Remittance\"",
+        "step3": "Select Kenya and enter the details below"
+      },
+      "alansari": {
+        "title": "Al Ansari, Lulu, or Al Fardan Exchange Payment Details",
+        "intro": "At Al Ansari, Lulu, or Al Fardan exchange, you can pay via mobile banking / M-Pesa, bank transfer, or cash. All options are acceptable.",
+        "opt1Title": "Option 1: Mobile banking / M-Pesa",
+        "opt1Step1": "Visit an Al Ansari, Lulu, or Al Fardan branch",
+        "opt1Step2": "Request M-Pesa transfer to Kenya",
+        "opt1Step3": "Provide the recipient details below",
+        "opt2Title": "Option 2: Bank transfer (Equity Bank details)",
+        "opt2Intro": "For bank transfer at the exchange, use these Equity Bank details:",
+        "cashNote": "Cash: Cash payment is also acceptable at the counter. Please retain your receipt and share the reference with us."
+      },
+      "bank": {
+        "title": "Direct Bank Transfer Details",
+        "intro": "Use one of the options below. Do not mix details. Use the exact details for your chosen option to avoid processing delays.",
+        "ukTitle": "UK Bank Transfer (Swift)",
+        "keTitle": "International Bank Transfer – Kenya"
+      }
+    }
+  }
+}
