@@ -181,7 +181,7 @@ interface PaymentLandingPageProps {
 }
 
 export const PaymentLandingPage = ({
-  wisePaymentUrl = "https://wise.com/pay/business/mcgibsdigitalsolution?amount=50&currency=AED&utm_source=quick_pay",
+  wisePaymentUrl = "https://wise.com/pay/business/mcgibsdigitalsolution",
   flutterwavePaymentUrl = "https://flutterwave.com/pay/qqtucsukcxrs",
 }: PaymentLandingPageProps) => {
   const { t, i18n } = useTranslation();
