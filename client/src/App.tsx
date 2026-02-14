@@ -33,6 +33,7 @@ import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import AdminBlogPage from "./pages/AdminBlogPage";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
+import PaymentLandingPage from "./pages/PaymentLandingPage";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import AboutPage from "./pages/AboutPage";
@@ -91,6 +92,7 @@ const App = () => (
             <Route path="/blog/:id" element={<BlogPostPage />} />
             <Route path="/admin/blog" element={<AdminBlogPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment" element={<PaymentLandingPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/test-intasend" element={<IntaSendTest />} />
             {/* Legacy HTML routes - redirect handled by HtmlRedirects component */}
