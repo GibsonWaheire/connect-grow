@@ -8,10 +8,7 @@ const PaymentLandingPage = () => {
       <Header />
       <div className="pt-16">
         <MainLayout>
-          <PaymentLandingComponent
-            wisePaymentUrl="https://wise.com/pay/business/mcgibsdigitalsolution?amount=50&currency=AED&utm_source=quick_pay"
-            flutterwavePaymentUrl="https://flutterwave.com/pay/qqtucsukcxrs"
-          />
+          <PaymentLandingComponent flutterwavePaymentUrl="https://flutterwave.com/pay/qqtucsukcxrs" />
         </MainLayout>
       </div>
     </>
