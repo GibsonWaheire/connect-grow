@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,11 +24,15 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({
   showDelay = 5000, // Show after 5 seconds
   title = "Special Offer"
 }) => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [hasShownBefore, setHasShownBefore] = useState(false);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
+    // Never show on payment page
+    if (location.pathname === '/payment') return;
+
     // Check if popup has been shown before
     const hasShown = localStorage.getItem('marketing-popup-shown');
     if (hasShown) {
@@ -41,7 +46,7 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({
     }, showDelay);
 
     return () => clearTimeout(timer);
-  }, [showDelay]);
+  }, [showDelay, location.pathname]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -62,8 +67,8 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({
     handleClose();
   };
 
-  // Don't render if already shown before
-  if (hasShownBefore) {
+  // Don't render on payment page or if already shown before
+  if (location.pathname === '/payment' || hasShownBefore) {
     return null;
   }
 

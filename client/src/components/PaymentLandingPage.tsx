@@ -297,7 +297,7 @@ export const PaymentLandingPage = ({
                 <Icon className="h-5 w-5" />
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="font-medium text-foreground">{method.name}</span>
+                <span className="text-sm sm:text-base font-medium text-foreground">{method.name}</span>
                 {badge && (
                   <span className="text-xs text-muted-foreground">Opens in new tab</span>
                 )}
@@ -347,7 +347,7 @@ export const PaymentLandingPage = ({
             <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", iconTheme)}>
               <Icon className="h-5 w-5" />
             </div>
-            <span className="font-medium text-slate-400">{method.name}</span>
+            <span className="text-sm sm:text-base font-medium text-slate-400">{method.name}</span>
           </div>
           <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-500">
             Currently Inactive
@@ -368,7 +368,7 @@ export const PaymentLandingPage = ({
           <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", iconTheme)}>
             <Icon className="h-5 w-5" />
           </div>
-          <span className="font-medium text-foreground">{method.name}</span>
+          <span className="text-sm sm:text-base font-medium text-foreground">{method.name}</span>
         </div>
         <div className="flex items-center gap-2">
           {badge && <Badge variant="default" className="text-xs">{badge}</Badge>}
