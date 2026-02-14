@@ -43,7 +43,7 @@
       "wise": "الدفع عبر Wise",
       "flutterwave": "الدفع بالبطاقة (عبر Flutterwave)",
       "remitly": "Remitly / WorldRemit / Sendwave",
-      "apple": "Apple Pay",
+      "apple": "Apple Pay / IntaSend",
       "paypal": "PayPal",
       "remit": "Remit",
       "emoney": "E&money",
@@ -51,6 +51,20 @@
       "bank": "التحويل البنكي المباشر"
     },
     "modals": {
+      "intasend": {
+        "title": "الدفع عبر IntaSend",
+        "intro": "أدخل المبلغ بالدولار الأمريكي وتفاصيلك. سيتم توجيهك لإكمال الدفع بشكل آمن (بطاقة أو M-Pesa).",
+        "amountLabel": "المبلغ (USD)",
+        "amountHint": "أدخل المبلغ بالدولار الأمريكي",
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "emailLabel": "البريد الإلكتروني",
+        "submit": "متابعة للدفع",
+        "processing": "جاري إنشاء الدفع…",
+        "fillRequired": "يرجى تعبئة المبلغ والبريد والاسم الأول.",
+        "error": "حدث خطأ. حاول مرة أخرى.",
+        "comment": "دفع من صفحة الدفع"
+      },
       "remit": {
         "title": "تفاصيل الدفع عبر Remit",
         "intro": "يمكنك إرسال الدفع إلى M-Pesa عبر تطبيق ADIB باستخدام Remit!",

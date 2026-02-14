@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { config } from "@/config/environment";
@@ -136,7 +137,7 @@ const PaymentMethodModal = ({
   children,
 }: PaymentMethodModalProps) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="max-w-md sm:max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+    <DialogContent className="max-w-md sm:max-w-lg max-h-[85vh] overflow-hidden flex flex-col" aria-describedby={undefined}>
       <DialogHeader>
         <DialogTitle className="text-lg sm:text-xl flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary shrink-0" />
@@ -181,17 +182,70 @@ interface PaymentLandingPageProps {
 }
 
 export const PaymentLandingPage = ({
-  wisePaymentUrl = "https://wise.com/pay/business/mcgibsdigitalsolution",
+  wisePaymentUrl = "https://wise.com/pay/business/mcgibsdigitalsolution?currency=AED",
   flutterwavePaymentUrl = "https://flutterwave.com/pay/qqtucsukcxrs",
 }: PaymentLandingPageProps) => {
   const { t, i18n } = useTranslation();
+  const isDev = import.meta.env.DEV;
+
+  useEffect(() => {
+    i18n.changeLanguage("ar");
+  }, []);
+
   const [remitOpen, setRemitOpen] = useState(false);
   const [emoneyOpen, setEmoneyOpen] = useState(false);
   const [alAnsariOpen, setAlAnsariOpen] = useState(false);
   const [remitlyOpen, setRemitlyOpen] = useState(false);
   const [bankTransferOpen, setBankTransferOpen] = useState(false);
+  const [intasendOpen, setIntasendOpen] = useState(false);
   const [wiseDetailsOpen, setWiseDetailsOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+
+  const [intasendAmount, setIntasendAmount] = useState("");
+  const [intasendEmail, setIntasendEmail] = useState("");
+  const [intasendFirstName, setIntasendFirstName] = useState("");
+  const [intasendLastName, setIntasendLastName] = useState("");
+  const [intasendPhone, setIntasendPhone] = useState("");
+  const [intasendLoading, setIntasendLoading] = useState(false);
+  const [intasendError, setIntasendError] = useState<string | null>(null);
+
+  const handleIntasendSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIntasendError(null);
+    const amount = Number(intasendAmount);
+    if (!amount || amount <= 0 || !intasendEmail?.trim() || !intasendFirstName?.trim()) {
+      setIntasendError(t("payment.modals.intasend.fillRequired"));
+      return;
+    }
+    setIntasendLoading(true);
+    try {
+      const response = await fetch("/api/create-intasend-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100) / 100,
+          currency: "USD",
+          email: intasendEmail.trim(),
+          first_name: intasendFirstName.trim(),
+          last_name: (intasendLastName || "").trim(),
+          phone_number: (intasendPhone || "").trim(),
+          redirect_url: `${window.location.origin}/payment-success?method=intasend&amount=${amount}`,
+          comment: t("payment.modals.intasend.comment"),
+        }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "Payment creation failed");
+      }
+      const data = await response.json();
+      const url = data.invoice?.url ?? data.url;
+      if (url) window.location.href = url;
+      else throw new Error("No payment URL received");
+    } catch (err: unknown) {
+      setIntasendError(err instanceof Error ? err.message : t("payment.modals.intasend.error"));
+      setIntasendLoading(false);
+    }
+  };
 
   const paymentMethods = [
     {
@@ -218,13 +272,22 @@ export const PaymentLandingPage = ({
       onOpen: () => setRemitlyOpen(true),
       badge: undefined,
     },
-    {
-      id: "apple" as const,
-      name: t("payment.methods.apple"),
-      type: "inactive" as const,
-      icon: Apple,
-      badge: undefined,
-    },
+    ...(isDev
+      ? [{
+          id: "apple" as const,
+          name: t("payment.methods.apple"),
+          type: "modal" as const,
+          icon: Apple,
+          onOpen: () => setIntasendOpen(true),
+          badge: undefined,
+        }]
+      : [{
+          id: "apple" as const,
+          name: t("payment.methods.apple"),
+          type: "inactive" as const,
+          icon: Apple,
+          badge: undefined,
+        }]),
     {
       id: "paypal" as const,
       name: t("payment.methods.paypal"),
@@ -535,6 +598,71 @@ export const PaymentLandingPage = ({
           <CopyableRow label={t("payment.phone")} value="+254726899113" href="tel:+254726899113" />
           <p><span className="font-semibold">{t("payment.provider")}:</span> M-Pesa</p>
         </div>
+      </PaymentMethodModal>
+
+      <PaymentMethodModal
+        open={intasendOpen}
+        onOpenChange={(open) => {
+          setIntasendOpen(open);
+          if (!open) setIntasendError(null);
+        }}
+        title={t("payment.modals.intasend.title")}
+      >
+        <p className="mb-4">{t("payment.modals.intasend.intro")}</p>
+        <form onSubmit={handleIntasendSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-foreground">{t("payment.modals.intasend.amountLabel")}</label>
+            <Input
+              type="number"
+              min={0.01}
+              step={0.01}
+              placeholder="e.g. 50"
+              value={intasendAmount}
+              onChange={(e) => setIntasendAmount(e.target.value)}
+              className="font-mono"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">{t("payment.modals.intasend.amountHint")}</p>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-foreground">{t("payment.name")}</label>
+            <div className="flex gap-2">
+              <Input
+                placeholder={t("payment.modals.intasend.firstName")}
+                value={intasendFirstName}
+                onChange={(e) => setIntasendFirstName(e.target.value)}
+              />
+              <Input
+                placeholder={t("payment.modals.intasend.lastName")}
+                value={intasendLastName}
+                onChange={(e) => setIntasendLastName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-foreground">{t("payment.modals.intasend.emailLabel")}</label>
+            <Input
+              type="email"
+              placeholder="you@example.com"
+              value={intasendEmail}
+              onChange={(e) => setIntasendEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-foreground">{t("payment.phone")}</label>
+            <Input
+              type="tel"
+              placeholder="+254..."
+              value={intasendPhone}
+              onChange={(e) => setIntasendPhone(e.target.value)}
+            />
+          </div>
+          {intasendError && (
+            <p className="text-sm text-destructive">{intasendError}</p>
+          )}
+          <Button type="submit" className="w-full" disabled={intasendLoading}>
+            {intasendLoading ? t("payment.modals.intasend.processing") : t("payment.modals.intasend.submit")}
+          </Button>
+        </form>
       </PaymentMethodModal>
 
       <PaymentMethodModal
