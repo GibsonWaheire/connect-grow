@@ -3,14 +3,25 @@ import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Header } from "@/shared/components/Header";
-import { getAvailablePaymentMethods } from "@/utils/paymentProviders";
-import { 
-  CreditCard,
-  CheckCircle2,
-  ArrowRight,
-  Lock,
-  Shield
-} from "lucide-react";
+import { Smartphone, Building2, CreditCard, Copy, CheckCircle2, ArrowRight, Lock } from "lucide-react";
+
+const BANK = {
+  name: 'Equity Bank',
+  paybill: '247247',
+  account: '0020195655920',
+};
+
+const packages = [
+  { name: "Social Media Post (Single)",        price: 1300  },
+  { name: "Logo Design (Basic)",               price: 1950  },
+  { name: "SEO Audit (Basic)",                 price: 2600  },
+  { name: "Content Creation (500 words)",      price: 3250  },
+  { name: "Social Media Management (Monthly)", price: 4550  },
+  { name: "Landing Page Design",               price: 6500  },
+  { name: "Brand Identity Kit",                price: 9750  },
+  { name: "Content Package (5 articles)",      price: 13000 },
+  { name: "Website Starter Kit",               price: 19500 },
+];
 
 const GetStartedPage = () => {
   const [formData, setFormData] = useState({
@@ -18,11 +29,15 @@ const GetStartedPage = () => {
     lastName: "",
     email: "",
     phone: "",
-    packageType: "",
-    paymentMethod: "",
+    packageIndex: "",
   });
   const [step, setStep] = useState<"info" | "payment">("info");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<"bank" | "card" | null>(null);
+
+  const selectedPkg = packages[Number(formData.packageIndex)];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -31,72 +46,54 @@ const GetStartedPage = () => {
 
   const handleInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.firstName && formData.email && formData.packageType) {
+    if (formData.firstName && formData.email && formData.packageIndex !== "") {
       setStep("payment");
     }
   };
 
-  const handlePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const email = "pwriter455@gmail.com";
-    const subject = `Payment Request - ${formData.packageType}`;
-    const body = `Hello McGibs Digital Solutions,
-
-I'm ready to proceed with payment for the ${formData.packageType} package.
-
-CUSTOMER INFORMATION:
-- Name: ${formData.firstName} ${formData.lastName}
-- Email: ${formData.email}
-- Phone: ${formData.phone}
-
-PACKAGE SELECTED: ${formData.packageType}
-PAYMENT METHOD: ${formData.paymentMethod}
-
-Please send me payment instructions so I can complete the purchase.
-
-Thank you!`;
-
-    try {
-      const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.location.href = mailtoLink;
-      
-      setTimeout(() => {
-        setIsSubmitting(false);
-        // Reset form after sending
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          packageType: "",
-          paymentMethod: "",
-        });
-        setStep("info");
-      }, 1000);
-    } catch (error) {
-      setIsSubmitting(false);
-    }
+  const copy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2000);
   };
 
-  const packages = [
-    { name: "Social Media Post (Single)", price: "KES 1,300", value: "Social Media Post (Single) - KES 1,300" },
-    { name: "Logo Design (Basic)", price: "KES 1,950", value: "Logo Design (Basic) - KES 1,950" },
-    { name: "SEO Audit (Basic)", price: "KES 2,600", value: "SEO Audit (Basic) - KES 2,600" },
-    { name: "Content Creation (500 words)", price: "KES 3,250", value: "Content Creation (500 words) - KES 3,250" },
-    { name: "Social Media Management (Monthly)", price: "KES 4,550", value: "Social Media Management (Monthly) - KES 4,550" },
-    { name: "Landing Page Design", price: "KES 6,500", value: "Landing Page Design - KES 6,500" },
-    { name: "Brand Identity Kit", price: "KES 9,750", value: "Brand Identity Kit - KES 9,750" },
-    { name: "Content Package (5 articles)", price: "KES 13,000", value: "Content Package (5 articles) - KES 13,000" },
-    { name: "Website Starter Kit", price: "KES 19,500", value: "Website Starter Kit - KES 19,500" },
-  ];
+  const toggle = (method: "bank" | "card") => {
+    setExpanded(prev => (prev === method ? null : method));
+  };
+
+  const handleMpesa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.phone || !selectedPkg) return;
+    setLoading(true);
+    setResult(null);
+    try {
+      const res = await fetch("https://connect-grow.pwriter455.workers.dev/api/mpesa/stkpush", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: formData.phone,
+          amount: selectedPkg.price,
+          description: selectedPkg.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResult({ type: "success", message: "STK push sent! Check your phone and enter your M-Pesa PIN." });
+      } else {
+        setResult({ type: "error", message: data.error || "Payment failed. Please try again." });
+      }
+    } catch {
+      setResult({ type: "error", message: "Could not connect. Check your connection and try again." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <Header />
       <MainLayout>
-        {/* Hero Section */}
+        {/* Hero */}
         <section className="bg-gradient-to-br from-emerald-50 via-white to-cyan-50 pt-24 pb-12">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
@@ -104,30 +101,28 @@ Thank you!`;
                 {step === "info" ? "Get Started Today" : "Complete Your Payment"}
               </h1>
               <p className="text-xl text-slate-600 mb-6">
-                {step === "info" 
-                  ? "Fill out your information and choose your package to get started."
-                  : "Select your payment method to complete your order."
-                }
+                {step === "info"
+                  ? "Choose your package and fill in your details."
+                  : `Paying KES ${selectedPkg?.price.toLocaleString()} for ${selectedPkg?.name}`}
               </p>
             </div>
           </div>
         </section>
 
-        {/* Form Section */}
         <section className="container mx-auto px-4 py-16">
-          <div className="max-w-2xl mx-auto">
-            {/* Progress Steps */}
+          <div className="max-w-lg mx-auto">
+            {/* Progress */}
             <div className="flex items-center justify-center mb-8">
               <div className="flex items-center gap-4">
                 <div className={`flex items-center gap-2 ${step === "info" ? "text-emerald-600" : "text-slate-400"}`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "info" ? "bg-emerald-600 text-white" : "bg-emerald-100 text-emerald-600"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${step === "info" ? "bg-emerald-600 text-white" : "bg-emerald-100 text-emerald-600"}`}>
                     {step === "payment" ? <CheckCircle2 className="w-5 h-5" /> : "1"}
                   </div>
                   <span className="font-medium">Your Info</span>
                 </div>
-                <div className={`w-16 h-0.5 ${step === "payment" ? "bg-emerald-600" : "bg-slate-300"}`} />
+                <div className={`w-16 h-0.5 ${step === "payment" ? "bg-emerald-600" : "bg-slate-200"}`} />
                 <div className={`flex items-center gap-2 ${step === "payment" ? "text-emerald-600" : "text-slate-400"}`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === "payment" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${step === "payment" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"}`}>
                     2
                   </div>
                   <span className="font-medium">Payment</span>
@@ -135,208 +130,186 @@ Thank you!`;
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 md:p-12">
-              {step === "info" ? (
-                <form onSubmit={handleInfoSubmit} className="space-y-6">
+            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+              {/* ── Step 1: Info ── */}
+              {step === "info" && (
+                <form onSubmit={handleInfoSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-2">
-                        First Name *
-                      </label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        placeholder="John"
-                        className="w-full"
-                      />
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">First Name *</label>
+                      <Input name="firstName" required value={formData.firstName} onChange={handleInputChange} placeholder="John" />
                     </div>
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-2">
-                        Last Name *
-                      </label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        placeholder="Doe"
-                        className="w-full"
-                      />
+                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Last Name</label>
+                      <Input name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Doe" />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                      Email Address *
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="john@example.com"
-                      className="w-full"
-                    />
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
+                    <Input name="email" type="email" required value={formData.email} onChange={handleInputChange} placeholder="john@example.com" />
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">
-                      Phone Number *
-                    </label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+1 (555) 123-4567"
-                      className="w-full"
-                    />
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">M-Pesa Phone Number *</label>
+                    <Input name="phone" type="tel" required value={formData.phone} onChange={handleInputChange} placeholder="0712 345 678" />
+                    <p className="text-xs text-slate-400 mt-1">This number will receive the STK push prompt.</p>
                   </div>
 
                   <div>
-                    <label htmlFor="packageType" className="block text-sm font-medium text-slate-700 mb-2">
-                      Select Package *
-                    </label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Select Package *</label>
                     <select
-                      id="packageType"
-                      name="packageType"
+                      name="packageIndex"
                       required
-                      value={formData.packageType}
+                      value={formData.packageIndex}
                       onChange={handleInputChange}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="">Choose a package</option>
-                      {packages.map((pkg) => (
-                        <option key={pkg.value} value={pkg.value}>
-                          {pkg.name} - {pkg.price}
+                      {packages.map((pkg, i) => (
+                        <option key={pkg.name} value={i}>
+                          {pkg.name} — KES {pkg.price.toLocaleString()}
                         </option>
                       ))}
                     </select>
                   </div>
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-lg font-semibold"
-                  >
-                    Continue to Payment
-                    <ArrowRight className="ml-2 w-5 h-5" />
+                  <Button type="submit" size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-lg font-semibold">
+                    Continue to Payment <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </form>
-              ) : (
-                <form onSubmit={handlePayment} className="space-y-6">
-                  <div className="bg-slate-50 rounded-xl p-6 mb-6">
-                    <h3 className="font-semibold text-lg mb-4">Order Summary</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Package:</span>
-                        <span className="font-medium">{formData.packageType}</span>
+              )}
+
+              {/* ── Step 2: Payment ── */}
+              {step === "payment" && selectedPkg && (
+                <div className="space-y-4">
+                  {/* Order summary */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex justify-between items-center mb-2">
+                    <div>
+                      <p className="text-xs text-slate-500">{selectedPkg.name}</p>
+                      <p className="text-xs text-slate-400">{formData.firstName} · {formData.email}</p>
+                    </div>
+                    <span className="text-2xl font-bold text-slate-900">
+                      KES {selectedPkg.price.toLocaleString()}
+                    </span>
+                  </div>
+
+                  {/* M-Pesa — default */}
+                  <div className="bg-white border-2 border-emerald-500 rounded-2xl p-5 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="bg-emerald-100 p-2.5 rounded-xl">
+                        <Smartphone className="w-5 h-5 text-emerald-600" />
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Customer:</span>
-                        <span className="font-medium">{formData.firstName} {formData.lastName}</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">M-Pesa</p>
+                        <p className="text-xs text-emerald-600">Recommended · Instant</p>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-600">Email:</span>
-                        <span className="font-medium">{formData.email}</span>
+                      <span className="bg-emerald-500 text-white text-xs px-2.5 py-1 rounded-full font-medium">Default</span>
+                    </div>
+                    <form onSubmit={handleMpesa} className="space-y-3">
+                      <p className="text-sm text-slate-500">
+                        Sending to <span className="font-medium text-slate-700">{formData.phone}</span>
+                      </p>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-3 rounded-xl transition-all"
+                      >
+                        {loading ? "Sending prompt…" : `Pay KES ${selectedPkg.price.toLocaleString()} via M-Pesa`}
+                      </button>
+                    </form>
+                    {result && (
+                      <p className={`mt-3 text-sm text-center font-medium ${result.type === "success" ? "text-emerald-600" : "text-red-500"}`}>
+                        {result.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Other methods */}
+                  <p className="text-xs text-gray-400 uppercase tracking-widest text-center select-none">Other payment methods</p>
+
+                  {/* Bank Transfer */}
+                  <div
+                    className={`border rounded-2xl p-4 cursor-pointer transition-all ${expanded === "bank" ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"}`}
+                    onMouseEnter={() => setExpanded("bank")}
+                    onMouseLeave={() => setExpanded(prev => (prev === "bank" ? null : prev))}
+                    onClick={() => toggle("bank")}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2.5 rounded-xl transition-colors ${expanded === "bank" ? "bg-blue-100" : "bg-gray-100"}`}>
+                        <Building2 className={`w-5 h-5 ${expanded === "bank" ? "text-blue-600" : "text-gray-500"}`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-700">Bank Transfer</p>
+                        <p className={`text-xs ${expanded === "bank" ? "text-blue-500" : "text-gray-400"}`}>
+                          {expanded === "bank" ? "Equity Bank · Paybill" : "Hover to see details"}
+                        </p>
                       </div>
                     </div>
+                    {expanded === "bank" && (
+                      <div className="mt-4 space-y-2 text-sm">
+                        {[
+                          { label: "Bank",           value: BANK.name,    key: "bank-name", copyable: false },
+                          { label: "Paybill Number", value: BANK.paybill, key: "paybill",   copyable: true  },
+                          { label: "Account No.",    value: BANK.account, key: "account",   copyable: true  },
+                        ].map(row => (
+                          <div key={row.key} className="flex justify-between items-center bg-white rounded-xl px-3 py-2.5 border border-blue-100">
+                            <span className="text-gray-400">{row.label}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold font-mono text-gray-900">{row.value}</span>
+                              {row.copyable && (
+                                <button onClick={e => { e.stopPropagation(); copy(row.value, row.key); }} className="text-blue-400 hover:text-blue-600">
+                                  {copied === row.key ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <p className="text-xs text-blue-400 text-center pt-1">Use your name as payment description</p>
+                      </div>
+                    )}
                   </div>
 
-                  <div>
-                    <label htmlFor="paymentMethod" className="block text-sm font-medium text-slate-700 mb-4">
-                      Select Payment Method *
-                    </label>
-                    <div className="space-y-3">
-                      {getAvailablePaymentMethods().map((method) => {
-                        // Map method names to icons
-                        const getIcon = () => {
-                          if (method.toLowerCase().includes('card')) return CreditCard;
-                          if (method.toLowerCase().includes('bank') || method.toLowerCase().includes('transfer')) return Shield;
-                          if (method.toLowerCase().includes('mobile') || method.toLowerCase().includes('money')) return Lock;
-                          return CreditCard;
-                        };
-                        const Icon = getIcon();
-                        
-                        return (
-                          <label
-                            key={method}
-                            className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                              formData.paymentMethod === method
-                                ? "border-emerald-600 bg-emerald-50"
-                                : "border-slate-200 hover:border-emerald-300"
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="paymentMethod"
-                              value={method}
-                              checked={formData.paymentMethod === method}
-                              onChange={handleInputChange}
-                              className="w-5 h-5 text-emerald-600"
-                              required
-                            />
-                            <Icon className="w-6 h-6 text-emerald-600" />
-                            <span className="font-medium">{method}</span>
-                          </label>
-                        );
-                      })}
+                  {/* Card */}
+                  <div
+                    className={`border rounded-2xl p-4 cursor-pointer transition-all ${expanded === "card" ? "border-purple-400 bg-purple-50" : "border-gray-200 hover:border-purple-300 hover:bg-purple-50/50"}`}
+                    onMouseEnter={() => setExpanded("card")}
+                    onMouseLeave={() => setExpanded(prev => (prev === "card" ? null : prev))}
+                    onClick={() => toggle("card")}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2.5 rounded-xl transition-colors ${expanded === "card" ? "bg-purple-100" : "bg-gray-100"}`}>
+                        <CreditCard className={`w-5 h-5 ${expanded === "card" ? "text-purple-600" : "text-gray-500"}`} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-700">Card Payment</p>
+                        <p className={`text-xs ${expanded === "card" ? "text-purple-500" : "text-gray-400"}`}>
+                          {expanded === "card" ? "Visa · Mastercard" : "Hover to see details"}
+                        </p>
+                      </div>
+                      <span className="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded-full">Soon</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">
-                      Payment provider can be configured in paymentProviders.ts. Currently showing default methods.
-                    </p>
+                    {expanded === "card" && (
+                      <div className="mt-4 text-sm text-center text-purple-600 bg-white rounded-xl p-3 border border-purple-100">
+                        Card payments are coming soon. Use M-Pesa or Bank Transfer for now.
+                      </div>
+                    )}
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-blue-800">
-                      <strong>Note:</strong> After submitting, you'll receive payment instructions via email. We'll send you a secure payment link or account details to complete your purchase.
-                    </p>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setStep("info")}
-                      className="flex-1"
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      type="submit"
-                      size="lg"
-                      disabled={isSubmitting}
-                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-lg font-semibold"
-                    >
-                      {isSubmitting ? (
-                        "Processing..."
-                      ) : (
-                        <>
-                          Complete Payment Request
-                          <ArrowRight className="ml-2 w-5 h-5" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </form>
+                  <button
+                    onClick={() => { setStep("info"); setResult(null); }}
+                    className="w-full text-sm text-slate-400 hover:text-slate-600 transition-colors pt-2"
+                  >
+                    ← Back to details
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Security Badge */}
-            <div className="mt-8 text-center">
-              <div className="inline-flex items-center gap-2 text-sm text-slate-600">
+            <div className="mt-6 text-center">
+              <div className="inline-flex items-center gap-2 text-sm text-slate-500">
                 <Lock className="w-4 h-4" />
-                <span>Secure payment processing. Your information is protected.</span>
+                <span>Secure payment. Your information is protected.</span>
               </div>
             </div>
           </div>
@@ -347,4 +320,3 @@ Thank you!`;
 };
 
 export default GetStartedPage;
-
