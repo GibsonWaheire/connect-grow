@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { OptimizedImage } from '@/shared/components/OptimizedImage';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
-import { ShoppingCart, ChevronDown } from 'lucide-react';
-import { useCart } from '@/shared/contexts/CartContext';
+import { ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,17 +42,8 @@ const navigationItems: NavigationItem[] = [
     ],
   },
   {
-    name: 'Shop',
-    href: '/shop',
-    dropdown: [
-      { label: 'All Services', href: '/shop' },
-      { label: 'Social Media', href: '/shop?category=Social Media' },
-      { label: 'Design', href: '/shop?category=Design' },
-      { label: 'Digital Marketing', href: '/shop?category=Digital Marketing' },
-      { label: 'Content', href: '/shop?category=Content' },
-      { label: 'Web Development', href: '/shop?category=Web Development' },
-      { label: 'View Cart', href: '/cart' },
-    ],
+    name: 'Services',
+    href: '/services',
   },
   {
     name: 'Portfolio',
@@ -77,7 +67,6 @@ const navigationItems: NavigationItem[] = [
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { sendMessage } = useWhatsApp();
-  const { totalQuantity } = useCart();
 
   const handleContact = () => {
     // Redirect to quote form page
@@ -160,13 +149,7 @@ export const Header = () => {
                 </a>
               );
             })}
-            <a href="/cart" className="relative text-gray-700 hover:text-primary">
-              <ShoppingCart className="w-6 h-6" />
-              {totalQuantity > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] rounded-full px-1.5 py-0.5">{totalQuantity}</span>
-              )}
-            </a>
-            <Button 
+            <Button
               onClick={handleContact}
               variant="default" 
               size="sm"
@@ -230,9 +213,6 @@ export const Header = () => {
                   )}
                 </div>
               ))}
-              <a href="/cart" className="text-gray-700 hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
-                Cart {totalQuantity > 0 ? `(${totalQuantity})` : ''}
-              </a>
               <Button onClick={() => { handleContact(); setIsMenuOpen(false); }} variant="default" size="sm" className="w-full">
                 Get Quote
               </Button>

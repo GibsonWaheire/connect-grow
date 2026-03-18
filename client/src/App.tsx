@@ -14,15 +14,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/shared/contexts/AppContext";
-import { CartProvider } from "@/shared/contexts/CartContext";
 import { Analytics } from "@vercel/analytics/react";
 import DigitalHomePage from "./pages/DigitalHomePage";
-import ShopPage from "./pages/ShopPage";
 import ContactPage from "./pages/ContactPage";
-import ProductDetailPage from "./pages/ProductDetailPage";
-import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/CheckoutPage";
 import ServicesPage from "./pages/ServicesPage";
+import PaymentPage from "./pages/PaymentPage";
 import ProcessPage from "./pages/ProcessPage";
 import PricingPage from "./pages/PricingPage";
 import TechStackPage from "./pages/TechStackPage";
@@ -40,7 +36,6 @@ import AboutPage from "./pages/AboutPage";
 import QuoteRequestPage from "./pages/QuoteRequestPage";
 import GetStartedPage from "./pages/GetStartedPage";
 import Index from "./pages/Index";
-import IntaSendTest from "./components/IntaSendTest";
 import MarketingPopup from "./components/MarketingPopup";
 import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
@@ -58,7 +53,6 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AppProvider>
-      <CartProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -72,10 +66,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<DigitalHomePage />} />
             <Route path="/course-help" element={<Index />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/shop/:productId" element={<ProductDetailPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout" element={<PaymentPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/quote" element={<QuoteRequestPage />} />
@@ -94,7 +85,6 @@ const App = () => (
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment" element={<PaymentLandingPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/test-intasend" element={<IntaSendTest />} />
             {/* Legacy HTML routes - redirect handled by HtmlRedirects component */}
             <Route path="/about.html" element={<AboutPage />} />
             <Route path="/contact.html" element={<ContactPage />} />
@@ -113,7 +103,6 @@ const App = () => (
         </BrowserRouter>
         <Analytics />
       </TooltipProvider>
-      </CartProvider>
     </AppProvider>
   </QueryClientProvider>
 );

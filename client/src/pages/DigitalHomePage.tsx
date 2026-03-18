@@ -4,8 +4,6 @@ import { OptimizedImage } from "@/shared/components/OptimizedImage";
 import { Header } from "@/shared/components/Header";
 import { Smartphone, BarChart3, ArrowRight, Check } from "lucide-react";
 import { useEffect } from "react";
-import { products } from "@/data/products";
-import { useCart } from "@/shared/contexts/CartContext";
 import { CheckCircle2 } from "lucide-react";
 import { AnimatedMetrics, FAQSection, CaseStudiesSection, EnhancedTestimonials } from "@/components/DigitalPageSections";
 import ExtraServicesSection from "@/components/ExtraServicesSection";
@@ -13,8 +11,6 @@ import { ServicesStickyPopup } from "@/components/ServicesStickyPopup";
 import { formatPrice } from "@/shared/utils";
 
 const DigitalHomePage = () => {
-  const { addItem } = useCart();
-
   useEffect(() => {
     document.title = "McGibs Digital Solutions | Web, Mobile & E‑commerce";
     const desc = "McGibs Digital Solutions builds production‑grade websites, web apps, mobile apps, and e‑commerce with modern stacks and reliable delivery.";
@@ -451,45 +447,17 @@ const DigitalHomePage = () => {
           </div>
         </section>
 
-        {/* Featured Products */}
+        {/* Services CTA */}
         <section className="bg-white py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <div className="flex items-end justify-between mb-10 flex-col sm:flex-row gap-4">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-1.5">Featured Digital Services</h2>
-                <p className="text-slate-500">Digital services from KES 1,300 to KES 19,500</p>
-              </div>
-              <a href="/shop" className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors whitespace-nowrap">
-                Browse All <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.slice(0, 3).map((p) => (
-                <div key={p.id} className="rounded-xl overflow-hidden border border-slate-200 bg-white flex flex-col hover:border-slate-300 hover:shadow-md transition-all">
-                  <a href={`/shop/${p.id}`} className="relative overflow-hidden">
-                    <OptimizedImage src={p.imageUrl} alt={p.name} className="w-full h-44 object-cover" />
-                  </a>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <a href={`/shop/${p.id}`} className="font-semibold text-base text-slate-900 hover:text-emerald-600 transition-colors mb-1.5">{p.name}</a>
-                    <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-1">{p.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="text-xl font-bold text-slate-900">{formatPrice(p.price)}</div>
-                      <div className="flex items-center gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <svg key={i} className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={() => addItem(p, 1)} className="flex-1 bg-emerald-600 hover:bg-emerald-700">Add to Cart</Button>
-                      <a href={`/shop/${p.id}`} className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">View</a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">What We Build For You</h2>
+            <p className="text-slate-500 mb-8 max-w-xl mx-auto">From websites to mobile apps, cloud infrastructure to UI/UX — select a service and pay directly.</p>
+            <a
+              href="/services"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg"
+            >
+              View All Services <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </section>
 
