@@ -14,7 +14,6 @@ function json(data, status = 200) {
 }
 
 function getTimestamp() {
-  // Format: YYYYMMDDHHmmss
   return new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
 }
 
@@ -38,14 +37,15 @@ function normalizePhone(raw) {
   return phone;
 }
 
-async function handleSTKPush(request, env) {
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS });
-  }
-  if (request.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405);
-  }
+function getMpesaCredentials(env) {
+  const consumerKey    = env.MPESA_CONSUMER_KEY;
+  const consumerSecret = env.MPESA_CONSUMER_SECRET;
+  const shortCode      = env.MPESA_SHORTCODE;
+  const passkey        = env.MPESA_PASSKEY;
+  return { consumerKey, consumerSecret, shortCode, passkey };
+}
 
+async function handleSTKPush(request, env) {
   let body;
   try {
     body = await request.json();
@@ -54,25 +54,19 @@ async function handleSTKPush(request, env) {
   }
 
   const { phone, amount, description } = body;
-
   if (!phone || !amount) {
     return json({ error: 'phone and amount are required' }, 400);
   }
 
-  const consumerKey = env.MPESA_CONSUMER_KEY;
-  const consumerSecret = env.MPESA_CONSUMER_SECRET;
-
+  const { consumerKey, consumerSecret, shortCode, passkey } = getMpesaCredentials(env);
   if (!consumerKey || !consumerSecret) {
     return json({ error: 'M-Pesa credentials not configured on server' }, 500);
   }
-
-  const shortCode = env.MPESA_SHORTCODE;
-  const passkey = env.MPESA_PASSKEY;
-  const callbackUrl = env.MPESA_CALLBACK_URL || 'https://connect-grow.pwriter455.workers.dev/api/mpesa/callback';
-
   if (!shortCode || !passkey) {
     return json({ error: 'M-Pesa shortcode and passkey not configured on server' }, 500);
   }
+
+  const callbackUrl = env.MPESA_CALLBACK_URL || 'https://connect-grow.pwriter455.workers.dev/api/mpesa/callback';
 
   try {
     const timestamp = getTimestamp();
@@ -120,21 +114,80 @@ async function handleSTKPush(request, env) {
   }
 }
 
+async function handleSTKQuery(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body' }, 400);
+  }
+
+  const { checkoutRequestId } = body;
+  if (!checkoutRequestId) {
+    return json({ error: 'checkoutRequestId is required' }, 400);
+  }
+
+  const { consumerKey, consumerSecret, shortCode, passkey } = getMpesaCredentials(env);
+  if (!consumerKey || !consumerSecret || !shortCode || !passkey) {
+    return json({ error: 'M-Pesa credentials not configured on server' }, 500);
+  }
+
+  try {
+    const timestamp = getTimestamp();
+    const password = btoa(`${shortCode}${passkey}${timestamp}`);
+    const accessToken = await getAccessToken(consumerKey, consumerSecret);
+
+    const queryRes = await fetch(`${MPESA_BASE}/mpesa/stkpushquery/v1/query`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        BusinessShortCode: shortCode,
+        Password: password,
+        Timestamp: timestamp,
+        CheckoutRequestID: checkoutRequestId,
+      }),
+    });
+
+    const data = await queryRes.json();
+    const code = String(data.ResultCode);
+
+    if (code === '0') {
+      return json({ status: 'success', message: 'Payment confirmed. Thank you!' });
+    } else if (code === '1032') {
+      return json({ status: 'cancelled', message: 'Payment was cancelled.' });
+    } else if (code === '1037') {
+      return json({ status: 'timeout', message: 'Payment timed out.' });
+    } else if (data.errorCode === '500.001.1001') {
+      // Transaction still in progress — client should keep polling
+      return json({ status: 'pending', message: 'Waiting for payment...' });
+    } else {
+      // Any other non-zero code is still pending or unknown
+      return json({ status: 'pending', message: data.ResultDesc || 'Processing...' });
+    }
+  } catch (err) {
+    return json({ error: err.message || 'Query failed' }, 500);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // API routes FIRST
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS });
+    }
+
     if (url.pathname === '/api/mpesa/stkpush' && request.method === 'POST') {
       return handleSTKPush(request, env);
     }
 
-    // OPTIONS preflight for the API route
-    if (url.pathname === '/api/mpesa/stkpush' && request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: CORS });
+    if (url.pathname === '/api/mpesa/query' && request.method === 'POST') {
+      return handleSTKQuery(request, env);
     }
 
-    // Static assets LAST
     return env.ASSETS.fetch(request);
   },
 };
