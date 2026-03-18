@@ -45,23 +45,25 @@ const QuoteRequestPage = () => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
+    const templateParams = {
+      to_email: "help@mcgibsdigitalsolutions.com",
+      from_name: formData.name,
+      from_email: formData.email,
+      phone: formData.phone,
+      company: formData.company || "N/A",
+      project_type: formData.projectType || "Not specified",
+      budget: formData.budget || "Not specified",
+      timeline: formData.timeline || "Not specified",
+      message: formData.description,
+      // also send as plain {{name}} and {{email}} in case template uses defaults
+      name: formData.name,
+      email: formData.email,
+    };
+
+    console.log("EmailJS templateParams:", templateParams);
+
     try {
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          to_email: "help@mcgibsdigitalsolutions.com",
-          from_name: formData.name,
-          from_email: formData.email,
-          phone: formData.phone,
-          company: formData.company || "N/A",
-          project_type: formData.projectType || "Not specified",
-          budget: formData.budget || "Not specified",
-          timeline: formData.timeline || "Not specified",
-          message: formData.description,
-        },
-        PUBLIC_KEY
-      );
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
 
       setSubmitStatus("success");
       setIsSubmitting(false);
