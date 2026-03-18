@@ -2,6 +2,11 @@ name = "connect-grow"
 compatibility_date = "2026-03-18"
 workers_dev = true
 preview_urls = true
+main = "worker.js"
 
 [assets]
 directory = "client/dist"
+
+[vars]
+VITE_EMAILJS_SERVICE_ID = "service_f2b2p85"
+VITE_EMAILJS_TEMPLATE_ID = "template_uevit9n"
