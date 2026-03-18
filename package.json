@@ -10,7 +10,7 @@
     "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build",
     "build": "cd client && npm install && npm run build",
-    "deploy": "wrangler pages deploy client/dist",
+    "deploy": "wrangler deploy",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
     "lint": "cd client && npm run lint"
   },
