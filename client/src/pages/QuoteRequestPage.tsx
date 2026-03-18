@@ -17,7 +17,7 @@ import {
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
 const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
+const PUBLIC_KEY = (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string) ?? "qt_5lcSYSB6Vp2Ll3";
 
 const QuoteRequestPage = () => {
   const [formData, setFormData] = useState({
