@@ -1,41 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { 
-  Globe, 
-  Smartphone, 
-  Code,
-  Search,
-  Share2,
-  FileText,
-  Palette,
-  Cloud,
-  Zap,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { formatPrice } from "@/shared/utils";
 
 const ExtraServicesSection = () => {
   const services = [
     {
       category: "AI & Content Services",
-      icon: Sparkles,
       shopCategory: null,
       priceFrom: null,
       services: [
-        "AI Content Humanizer - Remove AI detection markers",
-        "Turnitin Checkout - Pass plagiarism checks",
+        "AI Content Humanizer",
+        "Turnitin Checkout",
         "AI Rewriting & Paraphrasing",
         "Content Originality Enhancement",
-        "AI Detection Removal"
+        "AI Detection Removal",
       ],
-      color: "from-purple-500 to-pink-500",
-      bgColor: "from-purple-50 to-pink-50",
-      borderColor: "border-purple-200"
     },
     {
       category: "Web Development",
-      icon: Globe,
       shopCategory: "Web Development",
       priceFrom: 6500,
       services: [
@@ -43,253 +25,192 @@ const ExtraServicesSection = () => {
         "E-commerce Platforms",
         "Landing Page Design",
         "Website Redesign",
-        "Progressive Web Apps (PWAs)"
+        "Progressive Web Apps (PWAs)",
       ],
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "from-blue-50 to-cyan-50",
-      borderColor: "border-blue-200"
     },
     {
       category: "Mobile Development",
-      icon: Smartphone,
       shopCategory: null,
       priceFrom: null,
       services: [
         "Mobile App Development (iOS & Android)",
         "Cross-Platform Apps",
         "App Maintenance & Updates",
-        "Mobile Optimization"
+        "Mobile Optimization",
       ],
-      color: "from-green-500 to-emerald-500",
-      bgColor: "from-green-50 to-emerald-50",
-      borderColor: "border-green-200"
     },
     {
       category: "Social Media",
-      icon: Share2,
       shopCategory: "Social Media",
       priceFrom: 1300,
       services: [
         "Social Media Posts",
         "Content Creation",
         "Social Media Management",
-        "Engagement & Analytics"
+        "Engagement & Analytics",
       ],
-      color: "from-pink-500 to-rose-500",
-      bgColor: "from-pink-50 to-rose-50",
-      borderColor: "border-pink-200"
     },
     {
       category: "Digital Marketing",
-      icon: Search,
       shopCategory: "Digital Marketing",
       priceFrom: 2600,
       services: [
         "SEO Optimization",
         "Digital Marketing Strategy",
         "Content Marketing",
-        "Social Media Management"
+        "Social Media Management",
       ],
-      color: "from-orange-500 to-amber-500",
-      bgColor: "from-orange-50 to-amber-50",
-      borderColor: "border-orange-200"
     },
     {
       category: "Business Solutions",
-      icon: Code,
       shopCategory: null,
       priceFrom: null,
       services: [
         "Business Automation",
         "CRM Development",
         "Dashboard & Analytics",
-        "API Integration"
+        "API Integration",
       ],
-      color: "from-indigo-500 to-violet-500",
-      bgColor: "from-indigo-50 to-violet-50",
-      borderColor: "border-indigo-200"
     },
     {
       category: "Content",
-      icon: FileText,
       shopCategory: "Content",
       priceFrom: 3250,
       services: [
         "Blog Posts",
         "Articles",
         "Content Packages",
-        "SEO-Optimized Copy"
+        "SEO-Optimized Copy",
       ],
-      color: "from-amber-500 to-yellow-500",
-      bgColor: "from-amber-50 to-yellow-50",
-      borderColor: "border-amber-200"
     },
     {
       category: "Design Services",
-      icon: Palette,
       shopCategory: "Design",
       priceFrom: 1950,
       services: [
         "UI/UX Design",
         "Brand Identity Design",
         "Graphic Design",
-        "Design Systems"
+        "Design Systems",
       ],
-      color: "from-rose-500 to-pink-500",
-      bgColor: "from-rose-50 to-pink-50",
-      borderColor: "border-rose-200"
     },
     {
       category: "Cloud & Infrastructure",
-      icon: Cloud,
       shopCategory: null,
       priceFrom: null,
       services: [
         "Cloud Migration",
         "DevOps & CI/CD",
         "Server Setup & Configuration",
-        "Infrastructure Management"
+        "Infrastructure Management",
       ],
-      color: "from-slate-500 to-gray-500",
-      bgColor: "from-slate-50 to-gray-50",
-      borderColor: "border-slate-200"
     },
     {
       category: "Specialized Services",
-      icon: Zap,
       shopCategory: null,
       priceFrom: null,
       services: [
         "Blockchain Development",
         "AI/ML Integration",
         "Voice & Chatbot Development",
-        "Custom Software Solutions"
+        "Custom Software Solutions",
       ],
-      color: "from-yellow-500 to-amber-500",
-      bgColor: "from-yellow-50 to-amber-50",
-      borderColor: "border-yellow-200"
     },
   ];
 
   const handleContact = (service?: string) => {
-    const subject = service 
+    const subject = service
       ? `Inquiry about ${service}`
       : "Inquiry about Extra Services";
     const message = service
       ? `Hello, I'm interested in learning more about your ${service} service. Please provide more details and pricing.`
       : "Hello, I'm interested in learning more about your extra services. Please provide more details and pricing.";
-    
     window.location.href = `/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`;
   };
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-gradient-to-b from-slate-50 to-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+    <section className="bg-slate-50 py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-            Check Our Extra Services
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            Our Services
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Beyond our core offerings, we provide a wide range of digital solutions to meet all your business needs.
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            A full range of digital solutions to cover every aspect of your business.
           </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {services.map((category, index) => {
-            const Icon = category.icon;
-            const shopCategory = (category as { shopCategory?: string | null }).shopCategory;
-            const priceFrom = (category as { priceFrom?: number | null }).priceFrom;
-            return (
-              <div
-                key={index}
-                className={`bg-gradient-to-br ${category.bgColor} border-2 ${category.borderColor} rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group flex flex-col`}
-              >
-                {/* Icon */}
-                <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${category.color} rounded-xl text-white mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <Icon className="h-6 w-6" />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+          {services.map((category, index) => (
+            <div
+              key={index}
+              className="border border-slate-200 rounded-xl p-5 bg-white flex flex-col hover:border-slate-300 transition-colors"
+            >
+              <h3 className="font-semibold text-base text-slate-900 mb-1">
+                {category.category}
+              </h3>
+              {category.priceFrom != null ? (
+                <p className="text-xs text-emerald-600 font-medium mb-3">from {formatPrice(category.priceFrom)}</p>
+              ) : (
+                <div className="mb-3" />
+              )}
 
-                {/* Category Title & Price */}
-                <h3 className="font-bold text-lg mb-1 text-slate-900">
-                  {category.category}
-                </h3>
-                {priceFrom != null && (
-                  <p className="text-sm font-semibold text-emerald-700 mb-4">from {formatPrice(priceFrom)}</p>
-                )}
-                {priceFrom == null && <div className="mb-4" />}
+              <ul className="space-y-1.5 mb-4 flex-1">
+                {category.services.map((service, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-500">
+                    <Check className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-600" />
+                    <span>{service}</span>
+                  </li>
+                ))}
+              </ul>
 
-                {/* Services List */}
-                <ul className="space-y-2 mb-4 flex-1">
-                  {category.services.map((service, serviceIndex) => (
-                    <li key={serviceIndex} className="flex items-start gap-2 text-sm text-slate-700">
-                      <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
-                      <span>{service}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA Button */}
-                {shopCategory ? (
-                  <Button
-                    onClick={() => window.location.href = `/shop?category=${encodeURIComponent(shopCategory)}`}
-                    variant="outline"
-                    size="sm"
-                    className="w-full mt-auto border-2"
-                  >
-                    View in Shop <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => handleContact(category.category)}
-                    variant="outline"
-                    size="sm"
-                    className="w-full mt-auto border-2"
-                  >
-                    Get Quote <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                )}
-              </div>
-            );
-          })}
+              {category.shopCategory ? (
+                <Button
+                  onClick={() => window.location.href = `/shop?category=${encodeURIComponent(category.shopCategory!)}`}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-auto border-slate-200 text-slate-600 hover:bg-slate-50"
+                >
+                  View in Shop <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => handleContact(category.category)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-auto border-slate-200 text-slate-600 hover:bg-slate-50"
+                >
+                  Get Quote <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Button>
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,0.1) 35px, rgba(255,255,255,0.1) 70px)'
-            }} />
-          </div>
-          
-          <div className="relative z-10">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Need One of These Services?
-            </h3>
-            <p className="text-lg mb-6 text-white/90 max-w-2xl mx-auto">
-              Get in touch and let's discuss how we can help with your specific needs. We offer custom solutions tailored to your business.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                onClick={() => handleContact()}
-                size="lg"
-                className="bg-white text-emerald-600 hover:bg-slate-50 px-8 py-6 text-lg font-semibold shadow-lg"
-              >
-                Get a Custom Quote
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                onClick={() => window.location.href = '/about'}
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white/20 px-8 py-6 text-lg"
-              >
-                Learn More About Us
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
+        <div className="bg-slate-900 rounded-xl p-8 md:p-12 text-center">
+          <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+            Need a Custom Solution?
+          </h3>
+          <p className="text-slate-400 mb-8 max-w-xl mx-auto">
+            Get in touch and let's discuss how we can help with your specific needs.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button
+              onClick={() => handleContact()}
+              size="lg"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white px-8"
+            >
+              Get a Custom Quote
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => window.location.href = '/about'}
+              size="lg"
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8"
+            >
+              Learn More About Us
+            </Button>
           </div>
         </div>
       </div>
