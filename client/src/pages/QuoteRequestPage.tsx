@@ -1,19 +1,23 @@
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Header } from "@/shared/components/Header";
-import { sendEmailViaFormSpree } from "@/utils/emailService";
-import { 
-  Mail, 
-  Phone, 
-  User, 
+import {
+  Mail,
+  Phone,
+  User,
   FileText,
   Send,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
+
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
 const QuoteRequestPage = () => {
   const [formData, setFormData] = useState({
@@ -29,9 +33,11 @@ const QuoteRequestPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,81 +45,42 @@ const QuoteRequestPage = () => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
-    const emailContent = {
-      to_email: "pwriter455@gmail.com",
-      to_name: "McGibs Digital Solutions",
-      from_name: formData.name,
-      from_email: formData.email,
-      phone: formData.phone,
-      company: formData.company || 'N/A',
-      project_type: formData.projectType || 'Not specified',
-      budget: formData.budget || 'Not specified',
-      timeline: formData.timeline || 'Not specified',
-      description: formData.description,
-      subject: `Quote Request - ${formData.projectType || 'Digital Solutions'}`,
-      message: `Hello McGibs Digital Solutions,
-
-I would like to request a quote for my project.
-
-CONTACT INFORMATION:
-- Name: ${formData.name}
-- Email: ${formData.email}
-- Phone: ${formData.phone}
-- Company: ${formData.company || 'N/A'}
-
-PROJECT DETAILS:
-- Project Type: ${formData.projectType || 'Not specified'}
-- Budget Range: ${formData.budget || 'Not specified'}
-- Timeline: ${formData.timeline || 'Not specified'}
-
-PROJECT DESCRIPTION:
-${formData.description}
-
----
-This quote request was submitted through the website form.`
-    };
-
     try {
-      // Try to send email via FormSpree (simpler, no setup needed initially)
-      // Falls back to mailto if FormSpree is not configured
-      const emailSent = await sendEmailViaFormSpree({
-        to_email: emailContent.to_email,
-        to_name: emailContent.to_name,
-        from_name: emailContent.from_name,
-        from_email: emailContent.from_email,
-        subject: emailContent.subject,
-        message: emailContent.message,
-        phone: emailContent.phone,
-        company: emailContent.company,
-        project_type: emailContent.project_type,
-        budget: emailContent.budget,
-        timeline: emailContent.timeline,
-      });
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          to_email: "help@mcgibsdigitalsolutions.com",
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone,
+          company: formData.company || "N/A",
+          project_type: formData.projectType || "Not specified",
+          budget: formData.budget || "Not specified",
+          timeline: formData.timeline || "Not specified",
+          message: formData.description,
+        },
+        PUBLIC_KEY
+      );
 
-      if (emailSent) {
-        setSubmitStatus("success");
-        setIsSubmitting(false);
-        
-        // Reset form after showing success
-        setTimeout(() => {
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            company: "",
-            projectType: "",
-            budget: "",
-            timeline: "",
-            description: "",
-          });
-          setSubmitStatus("idle");
-        }, 3000);
-      } else {
-        setSubmitStatus("error");
-        setIsSubmitting(false);
-      }
+      setSubmitStatus("success");
+      setIsSubmitting(false);
+
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          company: "",
+          projectType: "",
+          budget: "",
+          timeline: "",
+          description: "",
+        });
+        setSubmitStatus("idle");
+      }, 3000);
     } catch (error) {
-      console.error('Email send error:', error);
+      console.error("EmailJS error:", error);
       setSubmitStatus("error");
       setIsSubmitting(false);
     }
@@ -161,7 +128,6 @@ This quote request was submitted through the website form.`
                         value={formData.name}
                         onChange={handleInputChange}
                         placeholder="John Doe"
-                        className="w-full"
                       />
                     </div>
                     <div>
@@ -176,7 +142,6 @@ This quote request was submitted through the website form.`
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="john@example.com"
-                        className="w-full"
                       />
                     </div>
                   </div>
@@ -192,13 +157,12 @@ This quote request was submitted through the website form.`
                         required
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+1 (555) 123-4567"
-                        className="w-full"
+                        placeholder="+254 7XX XXX XXX"
                       />
                     </div>
                     <div>
                       <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">
-                        Company/Organization
+                        Company / Organization
                       </label>
                       <Input
                         id="company"
@@ -207,7 +171,6 @@ This quote request was submitted through the website form.`
                         value={formData.company}
                         onChange={handleInputChange}
                         placeholder="Acme Inc. (optional)"
-                        className="w-full"
                       />
                     </div>
                   </div>
@@ -298,9 +261,8 @@ This quote request was submitted through the website form.`
                     required
                     value={formData.description}
                     onChange={handleInputChange}
-                    placeholder="Tell us about your project, requirements, goals, and any specific features or functionality you need..."
+                    placeholder="Tell us about your project, requirements, goals, and any specific features you need..."
                     rows={6}
-                    className="w-full"
                   />
                   <p className="text-xs text-slate-500 mt-2">
                     The more details you provide, the more accurate our quote will be.
@@ -309,14 +271,17 @@ This quote request was submitted through the website form.`
 
                 {submitStatus === "success" && (
                   <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span>Form submitted! Your email client should open. If not, please check your email settings.</span>
+                    <CheckCircle2 className="w-5 h-5 shrink-0" />
+                    <span>Quote request sent! We'll get back to you within 24 hours.</span>
                   </div>
                 )}
 
                 {submitStatus === "error" && (
                   <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
-                    Something went wrong. Please try again or contact us directly at pwriter455@gmail.com
+                    Something went wrong. Please try again or contact us at{" "}
+                    <a href="mailto:help@mcgibsdigitalsolutions.com" className="underline">
+                      help@mcgibsdigitalsolutions.com
+                    </a>
                   </div>
                 )}
 
@@ -329,7 +294,7 @@ This quote request was submitted through the website form.`
                   {isSubmitting ? (
                     <>
                       <Send className="w-5 h-5 mr-2 animate-spin" />
-                      Opening Email Client...
+                      Sending...
                     </>
                   ) : (
                     <>
@@ -341,14 +306,14 @@ This quote request was submitted through the website form.`
                 </Button>
               </form>
 
-              {/* Additional Info */}
+              {/* Contact info */}
               <div className="mt-8 pt-8 border-t border-slate-200">
                 <div className="flex flex-col sm:flex-row items-start gap-6">
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div>
                       <h3 className="font-semibold text-sm text-slate-900 mb-1">Email</h3>
-                      <p className="text-sm text-slate-600">pwriter455@gmail.com</p>
+                      <p className="text-sm text-slate-600">help@mcgibsdigitalsolutions.com</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -360,7 +325,7 @@ This quote request was submitted through the website form.`
                   </div>
                 </div>
                 <p className="text-xs text-slate-500 mt-4">
-                  After submitting, your email client will open with a pre-filled message. Simply review and send to receive your quote within 24 hours.
+                  We typically respond within 24 hours on business days.
                 </p>
               </div>
             </div>
@@ -372,4 +337,3 @@ This quote request was submitted through the website form.`
 };
 
 export default QuoteRequestPage;
-
