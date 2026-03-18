@@ -6,16 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useWhatsApp } from "@/shared/hooks/useWhatsApp";
 import { Header } from "@/shared/components/Header";
-import { 
-  Mail, 
-  Phone, 
-  MessageCircle, 
-  Clock, 
-  Send, 
+import emailjs from "@emailjs/browser";
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  Clock,
+  Send,
   CheckCircle2,
   Zap,
   ShoppingCart
 } from "lucide-react";
+
+const SERVICE_ID = "service_f2b2p85";
+const TEMPLATE_ID = "template_contact";
+const PUBLIC_KEY = "qt_5lcSYSB6Vp2Ll3";
 
 const ContactPage = () => {
   const { sendMessage } = useWhatsApp();
@@ -52,38 +57,22 @@ const ContactPage = () => {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
-    // Create email body with form data
-    const emailBody = `Hello McGibs Digital Solutions,
-
-I'd like to get in touch regarding: ${formData.subject}
-
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-
-Message:
-${formData.message}
-
----
-This message was sent from the contact form on your website.`;
-
-    const emailSubject = encodeURIComponent(formData.subject || "Inquiry from Contact Form");
-    const emailBodyEncoded = encodeURIComponent(emailBody);
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      phone: formData.phone || "Not provided",
+      subject: formData.subject,
+      message: formData.message,
+    };
 
     try {
-      // Open email client with pre-filled form data
-      window.location.href = `mailto:pwriter455@gmail.com?subject=${emailSubject}&body=${emailBodyEncoded}`;
-      
-      // Simulate success (since mailto doesn't give feedback)
-      setTimeout(() => {
-        setSubmitStatus("success");
-        setIsSubmitting(false);
-        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-        
-        // Reset success message after 5 seconds
-        setTimeout(() => setSubmitStatus("idle"), 5000);
-      }, 500);
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+      setSubmitStatus("success");
+      setIsSubmitting(false);
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
+      console.error("EmailJS error:", error);
       setSubmitStatus("error");
       setIsSubmitting(false);
     }
@@ -105,8 +94,8 @@ This message was sent from the contact form on your website.`;
     {
       icon: Mail,
       title: "Email",
-      description: "pwriter455@gmail.com",
-      action: () => window.location.href = "mailto:pwriter455@gmail.com",
+      description: "help@mcgibsdigitalsolutions.com",
+      action: () => window.location.href = "mailto:help@mcgibsdigitalsolutions.com",
       color: "bg-blue-500",
       hoverColor: "hover:bg-blue-600",
     },
@@ -158,7 +147,7 @@ This message was sent from the contact form on your website.`;
               </div>
             </div>
           )}
-          
+
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className="space-y-8">
@@ -213,7 +202,7 @@ This message was sent from the contact form on your website.`;
                     type="tel"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+254 7XX XXX XXX"
                     className="w-full"
                   />
                 </div>
@@ -259,7 +248,10 @@ This message was sent from the contact form on your website.`;
 
                 {submitStatus === "error" && (
                   <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg">
-                    Something went wrong. Please try again or contact us directly.
+                    Something went wrong. Please try again or email us at{" "}
+                    <a href="mailto:help@mcgibsdigitalsolutions.com" className="underline">
+                      help@mcgibsdigitalsolutions.com
+                    </a>
                   </div>
                 )}
 
@@ -325,8 +317,8 @@ This message was sent from the contact form on your website.`;
                   <div>
                     <h3 className="font-semibold text-lg text-slate-900 mb-2">Office Hours</h3>
                     <div className="space-y-1 text-sm text-slate-600">
-                      <p><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM EST</p>
-                      <p><strong>Saturday:</strong> 10:00 AM - 4:00 PM EST</p>
+                      <p><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM EAT</p>
+                      <p><strong>Saturday:</strong> 10:00 AM - 4:00 PM EAT</p>
                       <p><strong>Sunday:</strong> Closed</p>
                     </div>
                   </div>
@@ -400,4 +392,3 @@ This message was sent from the contact form on your website.`;
 };
 
 export default ContactPage;
-

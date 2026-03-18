@@ -16,10 +16,28 @@ interface BlogPost {
   createdAt: string;
 }
 
+const ADMIN_PASSWORD = "mcgibs2024admin";
+
 const AdminBlogPage = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => sessionStorage.getItem("admin_auth") === "true"
+  );
+  const [passwordInput, setPasswordInput] = useState("");
+  const [authError, setAuthError] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      sessionStorage.setItem("admin_auth", "true");
+      setIsAuthenticated(true);
+      setAuthError(false);
+    } else {
+      setAuthError(true);
+    }
+  };
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -128,6 +146,37 @@ const AdminBlogPage = () => {
     setEditingPost(null);
     setIsCreating(false);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Header />
+        <MainLayout>
+          <section className="container mx-auto px-4 pt-24 pb-16">
+            <div className="max-w-sm mx-auto">
+              <h1 className="text-2xl font-bold mb-6 text-slate-900">Admin Access</h1>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                  <Input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="Enter admin password"
+                    autoFocus
+                  />
+                  {authError && (
+                    <p className="text-red-600 text-sm mt-2">Incorrect password.</p>
+                  )}
+                </div>
+                <Button type="submit" className="w-full">Login</Button>
+              </form>
+            </div>
+          </section>
+        </MainLayout>
+      </>
+    );
+  }
 
   return (
     <>
