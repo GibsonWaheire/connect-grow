@@ -1,4 +1,4 @@
-const MPESA_BASE = 'https://sandbox.safaricom.co.ke';
+const MPESA_BASE = 'https://api.safaricom.co.ke';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -66,9 +66,13 @@ async function handleSTKPush(request, env) {
     return json({ error: 'M-Pesa credentials not configured on server' }, 500);
   }
 
-  const shortCode = env.MPESA_SHORTCODE || '174379';
-  const passkey = env.MPESA_PASSKEY || 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
-  const callbackUrl = env.MPESA_CALLBACK_URL || 'https://connect-grow.workers.dev/api/mpesa/callback';
+  const shortCode = env.MPESA_SHORTCODE;
+  const passkey = env.MPESA_PASSKEY;
+  const callbackUrl = env.MPESA_CALLBACK_URL || 'https://connect-grow.pwriter455.workers.dev/api/mpesa/callback';
+
+  if (!shortCode || !passkey) {
+    return json({ error: 'M-Pesa shortcode and passkey not configured on server' }, 500);
+  }
 
   try {
     const timestamp = getTimestamp();
