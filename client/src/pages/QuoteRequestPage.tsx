@@ -355,7 +355,7 @@ This quote request was submitted through the website form.`
                     <Phone className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div>
                       <h3 className="font-semibold text-sm text-slate-900 mb-1">Phone</h3>
-                      <p className="text-sm text-slate-600">+1 (443) 869-7500</p>
+                      <p className="text-sm text-slate-600">+254726899113</p>
                     </div>
                   </div>
                 </div>

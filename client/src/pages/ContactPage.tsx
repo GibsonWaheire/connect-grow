@@ -113,8 +113,8 @@ This message was sent from the contact form on your website.`;
     {
       icon: Phone,
       title: "Phone",
-      description: "+1 (443) 869-7500",
-      action: () => window.location.href = "tel:+14438697500",
+      description: "+254726899113",
+      action: () => window.location.href = "tel:+254726899113",
       color: "bg-purple-500",
       hoverColor: "hover:bg-purple-600",
     },

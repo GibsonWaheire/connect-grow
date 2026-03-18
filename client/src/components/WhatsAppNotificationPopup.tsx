@@ -101,7 +101,7 @@ const WhatsAppNotificationPopup: React.FC<WhatsAppNotificationPopupProps> = ({
         <div className="my-4 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center justify-center gap-2 text-lg font-medium text-green-800">
             <MessageCircle className="h-5 w-5" />
-            <span>+1 443 869 7500</span>
+            <span>+254726899113</span>
           </div>
         </div>
 

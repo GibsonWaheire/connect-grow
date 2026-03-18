@@ -4,7 +4,7 @@ export const config = {
     timeout: 10000,
   },
   whatsapp: {
-    number: import.meta.env.VITE_WHATSAPP_NUMBER || '14438697500', // +1 443 869 7500 (no spaces for WhatsApp links)
+    number: import.meta.env.VITE_WHATSAPP_NUMBER || '254726899113', // +254 726 899 113 (no spaces for WhatsApp links)
     defaultMessage: "Hi Peter! I'd like to place an order",
   },
   // Payment Providers Configuration
@@ -53,7 +53,7 @@ export const config = {
   },
   contact: {
     email: 'peter@schoolhelp.com',
-    phone: '+1 (443) 869-7500',
+    phone: '+254726899113',
   },
 } as const;
 
