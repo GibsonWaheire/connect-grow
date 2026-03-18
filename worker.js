@@ -120,11 +120,17 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === '/api/mpesa/stkpush') {
+    // API routes FIRST
+    if (url.pathname === '/api/mpesa/stkpush' && request.method === 'POST') {
       return handleSTKPush(request, env);
     }
 
-    // Serve static assets for all other requests
+    // OPTIONS preflight for the API route
+    if (url.pathname === '/api/mpesa/stkpush' && request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS });
+    }
+
+    // Static assets LAST
     return env.ASSETS.fetch(request);
   },
 };
