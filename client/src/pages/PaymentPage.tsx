@@ -37,7 +37,7 @@ export default function PaymentPage() {
     setLoading(true);
     setResult(null);
     try {
-      const res = await fetch('/api/mpesa/stkpush', {
+      const res = await fetch('https://connect-grow.pwriter455.workers.dev/api/mpesa/stkpush', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, amount: Number(amount), description: service }),
