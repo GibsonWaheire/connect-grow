@@ -1,4 +1,6 @@
-const MPESA_BASE = 'https://api.safaricom.co.ke';
+// Set MPESA_ENV secret to "production" to use live API, defaults to sandbox
+const MPESA_BASE_SANDBOX    = 'https://sandbox.safaricom.co.ke';
+const MPESA_BASE_PRODUCTION = 'https://api.safaricom.co.ke';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -17,9 +19,9 @@ function getTimestamp() {
   return new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
 }
 
-async function getAccessToken(consumerKey, consumerSecret) {
+async function getAccessToken(consumerKey, consumerSecret, base) {
   const credentials = btoa(`${consumerKey}:${consumerSecret}`);
-  const res = await fetch(`${MPESA_BASE}/oauth/v1/generate?grant_type=client_credentials`, {
+  const res = await fetch(`${base}/oauth/v1/generate?grant_type=client_credentials`, {
     headers: { Authorization: `Basic ${credentials}` },
   });
   if (!res.ok) {
@@ -42,7 +44,8 @@ function getMpesaCredentials(env) {
   const consumerSecret = env.MPESA_CONSUMER_SECRET;
   const shortCode      = env.MPESA_SHORTCODE;
   const passkey        = env.MPESA_PASSKEY;
-  return { consumerKey, consumerSecret, shortCode, passkey };
+  const base           = env.MPESA_ENV === 'production' ? MPESA_BASE_PRODUCTION : MPESA_BASE_SANDBOX;
+  return { consumerKey, consumerSecret, shortCode, passkey, base };
 }
 
 async function handleSTKPush(request, env) {
@@ -58,7 +61,7 @@ async function handleSTKPush(request, env) {
     return json({ error: 'phone and amount are required' }, 400);
   }
 
-  const { consumerKey, consumerSecret, shortCode, passkey } = getMpesaCredentials(env);
+  const { consumerKey, consumerSecret, shortCode, passkey, base } = getMpesaCredentials(env);
   if (!consumerKey || !consumerSecret) {
     return json({ error: 'M-Pesa credentials not configured on server' }, 500);
   }
@@ -71,7 +74,7 @@ async function handleSTKPush(request, env) {
   try {
     const timestamp = getTimestamp();
     const password = btoa(`${shortCode}${passkey}${timestamp}`);
-    const accessToken = await getAccessToken(consumerKey, consumerSecret);
+    const accessToken = await getAccessToken(consumerKey, consumerSecret, base);
     const normalizedPhone = normalizePhone(phone);
 
     const payload = {
@@ -88,7 +91,7 @@ async function handleSTKPush(request, env) {
       TransactionDesc: description || 'Payment for digital services',
     };
 
-    const stkRes = await fetch(`${MPESA_BASE}/mpesa/stkpush/v1/processrequest`, {
+    const stkRes = await fetch(`${base}/mpesa/stkpush/v1/processrequest`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -127,7 +130,7 @@ async function handleSTKQuery(request, env) {
     return json({ error: 'checkoutRequestId is required' }, 400);
   }
 
-  const { consumerKey, consumerSecret, shortCode, passkey } = getMpesaCredentials(env);
+  const { consumerKey, consumerSecret, shortCode, passkey, base } = getMpesaCredentials(env);
   if (!consumerKey || !consumerSecret || !shortCode || !passkey) {
     return json({ error: 'M-Pesa credentials not configured on server' }, 500);
   }
@@ -135,9 +138,9 @@ async function handleSTKQuery(request, env) {
   try {
     const timestamp = getTimestamp();
     const password = btoa(`${shortCode}${passkey}${timestamp}`);
-    const accessToken = await getAccessToken(consumerKey, consumerSecret);
+    const accessToken = await getAccessToken(consumerKey, consumerSecret, base);
 
-    const queryRes = await fetch(`${MPESA_BASE}/mpesa/stkpushquery/v1/query`, {
+    const queryRes = await fetch(`${base}/mpesa/stkpushquery/v1/query`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
