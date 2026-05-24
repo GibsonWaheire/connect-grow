@@ -82,7 +82,7 @@ const BlogPostPage = () => {
     <>
       <Header />
       <MainLayout>
-        <article className="container mx-auto px-4 pt-24 pb-16 max-w-4xl">
+        <article className="container mx-auto px-4 pt-[88px] pb-16 max-w-4xl">
           <a href="/blog" className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-6">
             <ArrowLeft className="w-4 h-4" />
             Back to Blog

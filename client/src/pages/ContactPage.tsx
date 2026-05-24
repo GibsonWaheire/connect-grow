@@ -114,7 +114,7 @@ const ContactPage = () => {
       <Header />
       <MainLayout>
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 pt-24 pb-12">
+        <section className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 pt-[88px] pb-12">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">

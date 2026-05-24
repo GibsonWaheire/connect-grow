@@ -50,7 +50,7 @@ Looking forward to hearing from you!`;
       <Header />
       <MainLayout>
         {/* Hero Section */}
-        <section className="container mx-auto px-4 pt-24 pb-16">
+        <section className="container mx-auto px-4 pt-[88px] pb-16">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900">
               About McGibs Digital Solutions

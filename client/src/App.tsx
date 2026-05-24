@@ -14,6 +14,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/shared/contexts/AppContext";
+import { CartProvider } from "@/shared/contexts/CartContext";
 import { Analytics } from "@vercel/analytics/react";
 import DigitalHomePage from "./pages/DigitalHomePage";
 import ContactPage from "./pages/ContactPage";
@@ -36,6 +37,12 @@ import AboutPage from "./pages/AboutPage";
 import QuoteRequestPage from "./pages/QuoteRequestPage";
 import GetStartedPage from "./pages/GetStartedPage";
 import Index from "./pages/Index";
+import ShopPage from "./pages/ShopPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderSuccessPage from "./pages/OrderSuccessPage";
+import ElectronicsLandingPage from "./pages/ElectronicsLandingPage";
 import MarketingPopup from "./components/MarketingPopup";
 import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
@@ -53,6 +60,7 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AppProvider>
+      <CartProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -82,6 +90,12 @@ const App = () => (
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:id" element={<BlogPostPage />} />
             <Route path="/admin/blog" element={<AdminBlogPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/:id" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/shop-checkout" element={<CheckoutPage />} />
+            <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/electronics" element={<ElectronicsLandingPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment" element={<PaymentLandingPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -103,6 +117,7 @@ const App = () => (
         </BrowserRouter>
         <Analytics />
       </TooltipProvider>
+      </CartProvider>
     </AppProvider>
   </QueryClientProvider>
 );

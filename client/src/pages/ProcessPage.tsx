@@ -6,7 +6,7 @@ const ProcessPage = () => {
     <>
       <Header />
       <MainLayout>
-        <section className="container mx-auto px-4 pt-24 pb-16">
+        <section className="container mx-auto px-4 pt-[88px] pb-16">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">Our Process</h1>
           <p className="text-gray-600 mb-12">How we work to deliver exceptional results</p>
 

@@ -152,7 +152,7 @@ const AdminBlogPage = () => {
       <>
         <Header />
         <MainLayout>
-          <section className="container mx-auto px-4 pt-24 pb-16">
+          <section className="container mx-auto px-4 pt-[88px] pb-16">
             <div className="max-w-sm mx-auto">
               <h1 className="text-2xl font-bold mb-6 text-slate-900">Admin Access</h1>
               <form onSubmit={handleLogin} className="space-y-4">
@@ -182,7 +182,7 @@ const AdminBlogPage = () => {
     <>
       <Header />
       <MainLayout>
-        <section className="container mx-auto px-4 pt-24 pb-16">
+        <section className="container mx-auto px-4 pt-[88px] pb-16">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl md:text-4xl font-bold">Blog Admin</h1>
             <Button onClick={() => setIsCreating(true)}>

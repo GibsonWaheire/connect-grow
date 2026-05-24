@@ -6,7 +6,7 @@ const PaymentLandingPage = () => {
   return (
     <>
       <Header />
-      <div className="pt-16">
+      <div className="pt-[88px]">
         <MainLayout>
           <PaymentLandingComponent flutterwavePaymentUrl="https://flutterwave.com/pay/qqtucsukcxrs" />
         </MainLayout>

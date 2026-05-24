@@ -44,7 +44,7 @@ const FAQPage = () => {
     <>
       <Header />
       <MainLayout>
-        <section className="container mx-auto px-4 pt-24 pb-16">
+        <section className="container mx-auto px-4 pt-[88px] pb-16">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h1>
             <p className="text-gray-600 mb-12 text-center">Everything you need to know about working with us</p>

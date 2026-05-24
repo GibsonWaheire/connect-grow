@@ -7,7 +7,7 @@ const TestimonialsPage = () => {
     <>
       <Header />
       <MainLayout>
-        <section className="container mx-auto px-4 pt-24 pb-16">
+        <section className="container mx-auto px-4 pt-[88px] pb-16">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">What Our Clients Say</h1>
             <p className="text-gray-600 max-w-2xl mx-auto">Don't just take our word for it. Hear from businesses we've helped transform their digital presence.</p>

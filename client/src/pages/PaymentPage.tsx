@@ -54,7 +54,7 @@ export default function PaymentPage() {
     <>
       <Header />
       <MainLayout>
-        <section className="container mx-auto px-4 pt-24 pb-16 max-w-lg">
+        <section className="container mx-auto px-4 pt-[88px] pb-16 max-w-lg">
           <div className="mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Complete Payment</h1>
             <p className="text-gray-500 text-sm">{service}</p>

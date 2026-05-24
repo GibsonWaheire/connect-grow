@@ -1,225 +1,195 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { OptimizedImage } from '@/shared/components/OptimizedImage';
+import { useState, useRef, useEffect } from 'react';
 import { useWhatsApp } from '@/shared/hooks/useWhatsApp';
-import { ChevronDown } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { ChevronDown, Menu, X, Phone, MapPin, Mail, Clock, Truck } from 'lucide-react';
 
-interface DropdownItem {
-  label: string;
-  href: string;
-  action?: 'whatsapp';
-  external?: boolean;
-}
+// ── Ticker items ──────────────────────────────────────────────────────────────
+const tickerItems = [
+  { icon: Phone,   text: 'Call / WhatsApp: +254 726 899 113' },
+  { icon: MapPin,  text: 'Nairobi, Kenya' },
+  { icon: Mail,    text: 'help@mcgibsdigitalsolutions.com' },
+  { icon: Clock,   text: 'Mon – Sat: 8 AM – 8 PM' },
+  { icon: Truck,   text: 'Free delivery in Nairobi on orders above KES 5,000' },
+  { icon: Phone,   text: 'Phones · Laptops · Speakers · MikroTik Routers — Shop Now' },
+  { icon: Clock,   text: 'Same-day delivery available in Nairobi CBD' },
+  { icon: Truck,   text: 'M-Pesa accepted — pay on delivery available' },
+  { icon: MapPin,  text: 'We deliver to Westlands, Kasarani, Kiambu, Thika & beyond' },
+  { icon: Phone,   text: 'WhatsApp us for instant quotes & availability' },
+  { icon: Mail,    text: 'Web design · Mobile apps · E-commerce · Branding' },
+  { icon: Clock,   text: 'Fast turnaround — most orders ready within 24 hrs' },
+  { icon: Truck,   text: 'Samsung · Apple · HP · Lenovo · Dell · JBL · Sony · MikroTik' },
+  { icon: Phone,   text: 'Student discounts available — ask us on WhatsApp' },
+  { icon: MapPin,  text: 'Serving clients across Kenya and East Africa' },
+  { icon: Mail,    text: 'Custom software development — request a free quote today' },
+  { icon: Clock,   text: 'All electronics come with warranty — genuine products only' },
+  { icon: Truck,   text: 'MikroTik installation & configuration support included' },
+  { icon: Phone,   text: 'Bulk orders welcome — call +254 726 899 113 for pricing' },
+  { icon: MapPin,  text: 'Online orders shipped nationwide via courier' },
+];
 
-interface NavigationItem {
-  name: string;
-  href: string;
-  dropdown?: DropdownItem[];
-  external?: boolean;
-}
+// Duplicate for seamless loop
+const allTicker = [...tickerItems, ...tickerItems];
 
-const navigationItems: NavigationItem[] = [
-  {
-    name: 'Digital',
-    href: '/',
-    dropdown: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Services Overview', href: '/services-overview' },
-      { label: 'Our Process', href: '/process' },
-      { label: 'Pricing', href: '/pricing' },
-      { label: 'Tech Stack', href: '/tech-stack' },
-      { label: 'Case Studies', href: '/case-studies' },
-      { label: 'Testimonials', href: '/testimonials' },
-      { label: 'FAQ', href: '/faq' },
-    ],
-  },
-  {
-    name: 'Services',
-    href: '/services',
-  },
-  {
-    name: 'Portfolio',
-    href: 'https://portfolio-main-two-bice.vercel.app/',
-    external: true,
-  },
-  {
-    name: 'Blog',
-    href: '/blog',
-  },
-  {
-    name: 'Course Help',
-    href: '/course-help',
-  },
-  {
-    name: 'Contact',
-    href: '/contact',
-  },
+// ── Main nav (slim) ───────────────────────────────────────────────────────────
+const mainNav = [
+  { label: 'Services', href: '/services' },
+  { label: 'Shop',     href: '/shop' },
+  { label: 'Blog',     href: '/blog' },
+  { label: 'Contact',  href: '/contact' },
+];
+
+// ── "More" hamburger menu ─────────────────────────────────────────────────────
+const moreItems = [
+  { label: 'About Us',      href: '/about' },
+  { label: 'Pricing',       href: '/pricing' },
+  { label: 'Get a Quote',   href: '/quote' },
+  { label: 'Get Started',   href: '/get-started' },
+  { label: 'Course Help',   href: '/course-help' },
+  { label: 'Portfolio',     href: 'https://portfolio-main-two-bice.vercel.app/', external: true },
+  { label: 'Case Studies',  href: '/case-studies' },
+  { label: 'Our Process',   href: '/process' },
+  { label: 'Tech Stack',    href: '/tech-stack' },
+  { label: 'Testimonials',  href: '/testimonials' },
+  { label: 'FAQ',           href: '/faq' },
 ];
 
 export const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
   const { sendMessage } = useWhatsApp();
 
-  const handleContact = () => {
-    // Redirect to quote form page
-    window.location.href = '/quote';
-  };
-
-  const handleWhatsApp = () => {
-    sendMessage("Hi! I'd like to get in touch.");
-  };
+  // Close "More" dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm safe-area-top">
-      <div className="container mx-auto px-3 sm:px-4">
-        <div className="flex items-center justify-between h-14 sm:h-16">
-          {/* Logo */}
-          <a href="/" className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 flex-shrink">
-            <OptimizedImage
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=32&h=32&fit=crop&crop=center"
-              alt="McGibs Digital Solutions"
-              width={32}
-              height={32}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded flex-shrink-0"
-            />
-            <span className="text-base sm:text-xl font-bold text-primary truncate">McGibs Digital Solutions</span>
-          </a>
+    <>
+      {/* ── Ticker bar ────────────────────────────────────────────────────── */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900 text-white overflow-hidden h-8 flex items-center">
+        <div
+          className="flex items-center whitespace-nowrap"
+          style={{ animation: 'tickerScroll 80s linear infinite' }}
+        >
+          {allTicker.map((item, i) => (
+            <span key={i} className="inline-flex items-center gap-1.5 mr-12 text-xs">
+              <item.icon className="w-3 h-3 text-emerald-400 shrink-0" />
+              {item.text}
+              <span className="ml-12 text-slate-600">|</span>
+            </span>
+          ))}
+        </div>
+        <style>{`
+          @keyframes tickerScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}</style>
+      </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-            {navigationItems.map((item) => {
-              if (item.dropdown && item.dropdown.length > 0) {
-                return (
-                  <DropdownMenu key={item.name}>
-                    <DropdownMenuTrigger className="flex items-center gap-1 text-gray-700 hover:text-primary transition-colors font-medium">
-                      {item.name}
-                      <ChevronDown className="w-4 h-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56">
-                      <DropdownMenuLabel>{item.name}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {item.dropdown.map((subItem) => (
-                        <DropdownMenuItem
-                          key={subItem.label}
-                          onClick={() => {
-                            if (subItem.action === 'whatsapp') {
-                              handleWhatsApp();
-                            } else if (!subItem.href.startsWith('http') && !subItem.href.startsWith('mailto') && !subItem.href.startsWith('#')) {
-                              window.location.href = subItem.href;
-                            }
-                          }}
-                        >
-                          {subItem.external || item.external ? (
-                            <a
-                              href={subItem.href}
-                              target={subItem.external || item.external ? '_blank' : undefined}
-                              rel={subItem.external || item.external ? 'noopener noreferrer' : undefined}
-                              className="w-full"
-                            >
-                              {subItem.label}
-                            </a>
-                          ) : subItem.href.startsWith('#') ? (
-                            <a href={subItem.href} className="w-full">{subItem.label}</a>
-                          ) : (
-                            <a href={subItem.href} className="w-full">{subItem.label}</a>
-                          )}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                );
-              }
-              return (
+      {/* ── Main header ───────────────────────────────────────────────────── */}
+      <header className="fixed top-8 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
+
+            {/* Logo */}
+            <a href="/" className="flex items-center gap-2 shrink-0">
+              <div className="w-7 h-7 bg-emerald-600 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">M</span>
+              </div>
+              <span className="font-bold text-slate-900 text-base">McGibs</span>
+              <span className="font-bold text-emerald-600 text-base hidden sm:inline">Digital</span>
+            </a>
+
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex items-center gap-6">
+              {mainNav.map(item => (
                 <a
-                  key={item.name}
+                  key={item.label}
                   href={item.href}
-                  className="text-gray-700 hover:text-primary transition-colors font-medium"
-                  target={item.external ? '_blank' : undefined}
-                  rel={item.external ? 'noopener noreferrer' : undefined}
+                  className="text-sm font-medium text-slate-700 hover:text-emerald-600 transition-colors"
                 >
-                  {item.name}
+                  {item.label}
                 </a>
-              );
-            })}
-            <Button
-              onClick={handleContact}
-              variant="default" 
-              size="sm"
-            >
-              Get Quote
-            </Button>
-          </nav>
+              ))}
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2 -mr-2 touch-manipulation"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+              {/* More dropdown */}
+              <div className="relative" ref={moreRef}>
+                <button
+                  onClick={() => setMoreOpen(v => !v)}
+                  className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-emerald-600 transition-colors"
+                >
+                  More <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {moreOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                    {moreItems.map(item => (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </nav>
+
+            {/* Mobile hamburger */}
+            <button
+              className="lg:hidden p-2 text-slate-700"
+              onClick={() => setMobileOpen(v => !v)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200 max-h-[calc(100vh-4rem)] overflow-y-auto safe-area-bottom">
-            <nav className="flex flex-col space-y-4">
-              {navigationItems.map((item) => (
-                <div key={item.name}>
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="lg:hidden border-t border-gray-100 bg-white max-h-[80vh] overflow-y-auto">
+            <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
+              {mainNav.map(item => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="py-2.5 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                >
+                  {item.label}
+                </a>
+              ))}
+              <div className="border-t border-gray-100 mt-2 pt-2">
+                <p className="text-xs text-slate-400 px-3 mb-2 uppercase tracking-wider">More</p>
+                {moreItems.map(item => (
                   <a
+                    key={item.label}
                     href={item.href}
-                    className="text-gray-700 hover:text-primary transition-colors font-medium block"
-                    onClick={() => setIsMenuOpen(false)}
                     target={item.external ? '_blank' : undefined}
                     rel={item.external ? 'noopener noreferrer' : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    className="py-2.5 px-3 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition-colors block"
                   >
-                    {item.name}
+                    {item.label}
                   </a>
-                  {item.dropdown && item.dropdown.length > 0 && (
-                    <div className="ml-4 mt-2 space-y-2">
-                      {item.dropdown.map((subItem) => (
-                        <a
-                          key={subItem.label}
-                          href={subItem.href}
-                          className="text-sm text-gray-600 hover:text-primary block"
-                          onClick={() => {
-                            setIsMenuOpen(false);
-                            if (subItem.action === 'whatsapp') {
-                              handleWhatsApp();
-                            }
-                          }}
-                          target={subItem.external || item.external ? '_blank' : undefined}
-                          rel={subItem.external || item.external ? 'noopener noreferrer' : undefined}
-                        >
-                          {subItem.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-              <Button onClick={() => { handleContact(); setIsMenuOpen(false); }} variant="default" size="sm" className="w-full">
-                Get Quote
-              </Button>
+                ))}
+              </div>
             </nav>
           </div>
         )}
-      </div>
-    </header>
+      </header>
+    </>
   );
 };

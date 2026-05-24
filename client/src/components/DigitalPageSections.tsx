@@ -83,26 +83,39 @@ export const FAQSection = () => {
   ];
 
   return (
-    <section id="faq" className="bg-slate-50 py-20 text-slate-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-        <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center text-slate-900">Frequently Asked Questions</h2>
-        <div className="space-y-2">
-          {faqs.map((faq, i) => (
-            <div key={i} className="border border-slate-200 rounded-lg overflow-hidden bg-white">
-              <button
-                className="w-full px-5 py-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors"
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              >
-                <span className="font-medium text-sm md:text-base text-slate-900">{faq.q}</span>
-                <svg className={`w-4 h-4 transition-transform flex-shrink-0 text-slate-400 ${openIndex === i ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {openIndex === i && (
-                <div className="px-5 pb-4 text-slate-500 text-sm leading-relaxed">{faq.a}</div>
-              )}
-            </div>
-          ))}
+    <section id="faq" className="bg-white py-14 text-slate-900">
+      <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Left label */}
+          <div className="lg:col-span-1">
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Questions</h2>
+            <p className="text-slate-500 text-sm">Common things clients ask before getting started.</p>
+            <a href="/faq" className="inline-block mt-6 text-sm font-semibold text-emerald-600 hover:text-emerald-700 border-b border-emerald-600 pb-0.5 transition-colors">
+              See all FAQs →
+            </a>
+          </div>
+
+          {/* Right Q&A list */}
+          <div className="lg:col-span-2 divide-y divide-slate-100">
+            {faqs.map((faq, i) => (
+              <div key={i}>
+                <button
+                  className="w-full py-5 text-left flex items-start justify-between gap-4 group"
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                >
+                  <span className={`font-semibold text-sm leading-snug transition-colors ${openIndex === i ? 'text-emerald-600' : 'text-slate-900 group-hover:text-emerald-600'}`}>
+                    {faq.q}
+                  </span>
+                  <span className={`text-lg leading-none shrink-0 mt-0.5 transition-transform ${openIndex === i ? 'text-emerald-600' : 'text-slate-300'}`}>
+                    {openIndex === i ? '−' : '+'}
+                  </span>
+                </button>
+                {openIndex === i && (
+                  <p className="pb-5 text-slate-500 text-sm leading-relaxed">{faq.a}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
