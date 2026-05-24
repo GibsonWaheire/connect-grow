@@ -7,6 +7,10 @@ main = "worker.js"
 [assets]
 directory = "client/dist"
 
+[[kv_namespaces]]
+binding = "PAYMENTS"
+id = "51d5b8b69efb44de97d43110be21aea9"
+
 [vars]
 VITE_EMAILJS_SERVICE_ID = "service_f2b2p85"
-VITE_EMAILJS_TEMPLATE_ID = "template_uevit9n"
+VITE_EMAILJS_TEMPLATE_ID = "template_contact"

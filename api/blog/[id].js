@@ -1,44 +1,29 @@
-// Individual blog post API
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+// Individual blog post API — Cloudflare Workers compatible
+import { blogPosts } from './data.js';
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
 
-  const { id } = req.query;
-
-  if (req.method === 'GET') {
-    try {
-      // In production: const post = await db.collection('posts').findOne({ _id: id });
-      const post = null; // Placeholder
-      if (!post) {
-        return res.status(404).json({ success: false, error: 'Post not found' });
-      }
-      res.json({ success: true, post });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else if (req.method === 'PUT') {
-    try {
-      const { title, content, excerpt, imageUrl, tags } = req.body;
-      // In production: const post = await db.collection('posts').findOneAndUpdate({ _id: id }, { $set: { title, content, excerpt, imageUrl, tags, updatedAt: new Date() } }, { returnDocument: 'after' });
-      res.json({ success: true, message: 'Post updated' });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else if (req.method === 'DELETE') {
-    try {
-      // In production: await db.collection('posts').deleteOne({ _id: id });
-      res.json({ success: true, message: 'Post deleted' });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
-  }
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS },
+  });
 }
+
+export default {
+  async fetch(request) {
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
+    if (request.method !== 'GET') return json({ success: false, error: 'Method not allowed' }, 405);
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    const post = blogPosts.find(p => p.id === id) || null;
+    if (!post) return json({ success: false, error: 'Post not found' }, 404);
+    return json({ success: true, post });
+  },
+};
 

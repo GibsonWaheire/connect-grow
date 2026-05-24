@@ -1,41 +1,28 @@
-// Blog API endpoints
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+// Blog API endpoints — Cloudflare Workers compatible
+import { blogPosts } from './data.js';
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
 
-  // In production, use a real database (MongoDB, PostgreSQL, etc.)
-  // For now, using in-memory storage (use localStorage/file system for persistence)
-  
-  if (req.method === 'GET') {
-    try {
-      // Get all blog posts
-      // In production: const posts = await db.collection('posts').find().toArray();
-      const posts = []; // Placeholder - implement with your database
-      res.json({ success: true, posts });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else if (req.method === 'POST') {
-    try {
-      const { title, content, author, excerpt, imageUrl, tags } = req.body;
-      // Validate required fields
-      if (!title || !content) {
-        return res.status(400).json({ success: false, error: 'Title and content are required' });
-      }
-      // In production: const post = await db.collection('posts').insertOne({ title, content, author, excerpt, imageUrl, tags, createdAt: new Date(), updatedAt: new Date() });
-      const post = { id: Date.now().toString(), title, content, author, excerpt, imageUrl, tags, createdAt: new Date(), updatedAt: new Date() };
-      res.json({ success: true, post });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
-  }
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS },
+  });
 }
+
+export default {
+  async fetch(request) {
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
+    if (request.method !== 'GET') return json({ success: false, error: 'Method not allowed' }, 405);
+
+    const posts = blogPosts.map(({ id, title, excerpt, author, imageUrl, createdAt, tags }) => ({
+      id, title, excerpt, author, imageUrl, createdAt, tags,
+    }));
+    return json({ success: true, posts });
+  },
+};
 

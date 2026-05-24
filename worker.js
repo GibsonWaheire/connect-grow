@@ -1,3 +1,5 @@
+import { blogPosts } from './api/blog/data.js';
+
 // Set MPESA_ENV secret to "production" to use live API, defaults to sandbox
 const MPESA_BASE_SANDBOX    = 'https://sandbox.safaricom.co.ke';
 const MPESA_BASE_PRODUCTION = 'https://api.safaricom.co.ke';
@@ -5,6 +7,12 @@ const MPESA_BASE_PRODUCTION = 'https://api.safaricom.co.ke';
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+const BLOG_CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
@@ -117,6 +125,45 @@ async function handleSTKPush(request, env) {
   }
 }
 
+async function handleCallback(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON' }, 400);
+  }
+
+  const stk = body?.Body?.stkCallback;
+  if (!stk) return json({ ResultCode: 0, ResultDesc: 'Accepted' });
+
+  const checkoutRequestId = stk.CheckoutRequestID;
+  const resultCode = stk.ResultCode;
+
+  let record;
+  if (resultCode === 0) {
+    const items = stk.CallbackMetadata?.Item || [];
+    const get = (name) => items.find(i => i.Name === name)?.Value;
+    record = {
+      status: 'success',
+      amount: get('Amount'),
+      receipt: get('MpesaReceiptNumber'),
+      phone: get('PhoneNumber'),
+      date: get('TransactionDate'),
+    };
+  } else {
+    record = {
+      status: resultCode === 1032 ? 'cancelled' : 'failed',
+      resultDesc: stk.ResultDesc,
+    };
+  }
+
+  if (env.PAYMENTS && checkoutRequestId) {
+    await env.PAYMENTS.put(checkoutRequestId, JSON.stringify(record), { expirationTtl: 3600 });
+  }
+
+  return json({ ResultCode: 0, ResultDesc: 'Accepted' });
+}
+
 async function handleSTKQuery(request, env) {
   let body;
   try {
@@ -136,6 +183,23 @@ async function handleSTKQuery(request, env) {
   }
 
   try {
+    // Check KV first — populated by the Safaricom callback
+    if (env.PAYMENTS) {
+      const cached = await env.PAYMENTS.get(checkoutRequestId);
+      if (cached) {
+        const record = JSON.parse(cached);
+        if (record.status === 'success') {
+          return json({ status: 'success', message: `Payment confirmed. Receipt: ${record.receipt}` });
+        }
+        if (record.status === 'cancelled') {
+          return json({ status: 'cancelled', message: 'Payment was cancelled.' });
+        }
+        if (record.status === 'failed') {
+          return json({ status: 'failed', message: record.resultDesc || 'Payment failed.' });
+        }
+      }
+    }
+
     const timestamp = getTimestamp();
     const password = btoa(`${shortCode}${passkey}${timestamp}`);
     const accessToken = await getAccessToken(consumerKey, consumerSecret, base);
@@ -191,6 +255,33 @@ export default {
       return handleSTKQuery(request, env);
     }
 
-    return env.ASSETS.fetch(request);
+    if (url.pathname === '/api/mpesa/callback' && request.method === 'POST') {
+      return handleCallback(request, env);
+    }
+
+    // Blog routes
+    if (url.pathname === '/api/blog') {
+      if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: BLOG_CORS });
+      if (request.method !== 'GET') return json({ success: false, error: 'Method not allowed' }, 405);
+      const posts = blogPosts.map(({ id, title, excerpt, author, imageUrl, createdAt, tags }) => ({
+        id, title, excerpt, author, imageUrl, createdAt, tags,
+      }));
+      return json({ success: true, posts });
+    }
+
+    const blogMatch = url.pathname.match(/^\/api\/blog\/(.+)$/);
+    if (blogMatch) {
+      if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: BLOG_CORS });
+      if (request.method !== 'GET') return json({ success: false, error: 'Method not allowed' }, 405);
+      const post = blogPosts.find(p => p.id === blogMatch[1]) || null;
+      if (!post) return json({ success: false, error: 'Post not found' }, 404);
+      return json({ success: true, post });
+    }
+
+    try {
+      return await env.ASSETS.fetch(request);
+    } catch (err) {
+      return new Response('Not found', { status: 404 });
+    }
   },
 };
