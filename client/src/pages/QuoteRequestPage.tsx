@@ -13,12 +13,11 @@ import {
   Send,
   CheckCircle2,
   ArrowRight,
-  Smartphone,
 } from "lucide-react";
 
-const SERVICE_ID = "service_f2b2p85";
-const TEMPLATE_ID = "template_uevit9n";
-const PUBLIC_KEY = "qt_5lcSYSB6Vp2Ll3";
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
+const TEMPLATE_ID = "template_contact";
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
 const QuoteRequestPage = () => {
   const [formData, setFormData] = useState({
@@ -34,11 +33,6 @@ const QuoteRequestPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const [mpesaPhone, setMpesaPhone] = useState("");
-  const [mpesaAmount, setMpesaAmount] = useState("");
-  const [mpesaStatus, setMpesaStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [mpesaMessage, setMpesaMessage] = useState("");
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -52,7 +46,6 @@ const QuoteRequestPage = () => {
     setSubmitStatus("idle");
 
     const templateParams = {
-      to_email: "help@mcgibsdigitalsolutions.com",
       from_name: formData.name,
       from_email: formData.email,
       phone: formData.phone,
@@ -61,19 +54,12 @@ const QuoteRequestPage = () => {
       budget: formData.budget || "Not specified",
       timeline: formData.timeline || "Not specified",
       message: formData.description,
-      // also send as plain {{name}} and {{email}} in case template uses defaults
-      name: formData.name,
-      email: formData.email,
     };
-
-    console.log("EmailJS templateParams:", templateParams);
 
     try {
       await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
-
       setSubmitStatus("success");
       setIsSubmitting(false);
-
       setTimeout(() => {
         setFormData({
           name: "",
@@ -91,34 +77,6 @@ const QuoteRequestPage = () => {
       console.error("EmailJS error:", error);
       setSubmitStatus("error");
       setIsSubmitting(false);
-    }
-  };
-
-  const handleMpesaPay = async () => {
-    if (!mpesaPhone || !mpesaAmount) return;
-    setMpesaStatus("loading");
-    setMpesaMessage("");
-    try {
-      const res = await fetch("/api/mpesa/stkpush", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: mpesaPhone,
-          amount: mpesaAmount,
-          description: "Deposit — McGibs Digital Services",
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMpesaStatus("success");
-        setMpesaMessage(data.message);
-      } else {
-        setMpesaStatus("error");
-        setMpesaMessage(data.error || "Payment request failed. Please try again.");
-      }
-    } catch {
-      setMpesaStatus("error");
-      setMpesaMessage("Network error. Please check your connection and try again.");
     }
   };
 
@@ -341,76 +299,6 @@ const QuoteRequestPage = () => {
                   )}
                 </Button>
               </form>
-
-              {/* M-Pesa Payment Section */}
-              <div className="mt-8 pt-8 border-t border-slate-200">
-                <h2 className="text-xl font-bold mb-1 text-slate-900 flex items-center gap-2">
-                  <Smartphone className="w-5 h-5 text-green-600" />
-                  Pay Deposit via M-Pesa (Optional)
-                </h2>
-                <p className="text-sm text-slate-500 mb-4">
-                  Want to secure your slot now? Send a deposit straight from your phone.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      M-Pesa Phone Number
-                    </label>
-                    <Input
-                      type="tel"
-                      value={mpesaPhone}
-                      onChange={(e) => setMpesaPhone(e.target.value)}
-                      placeholder="0712 345 678"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Amount (KES)
-                    </label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={mpesaAmount}
-                      onChange={(e) => setMpesaAmount(e.target.value)}
-                      placeholder="e.g. 500"
-                    />
-                  </div>
-                </div>
-
-                {mpesaStatus === "success" && (
-                  <div className="mt-3 bg-green-50 border border-green-200 text-green-800 p-3 rounded-lg flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-4 h-4 shrink-0" />
-                    <span>{mpesaMessage}</span>
-                  </div>
-                )}
-                {mpesaStatus === "error" && (
-                  <div className="mt-3 bg-red-50 border border-red-200 text-red-800 p-3 rounded-lg text-sm">
-                    {mpesaMessage}
-                  </div>
-                )}
-
-                <Button
-                  type="button"
-                  onClick={handleMpesaPay}
-                  disabled={mpesaStatus === "loading" || !mpesaPhone || !mpesaAmount}
-                  className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-                >
-                  {mpesaStatus === "loading" ? (
-                    <>
-                      <Smartphone className="w-4 h-4 mr-2 animate-spin" />
-                      Sending STK Push...
-                    </>
-                  ) : (
-                    <>
-                      <Smartphone className="w-4 h-4 mr-2" />
-                      Send M-Pesa Request
-                    </>
-                  )}
-                </Button>
-                <p className="text-xs text-slate-400 mt-2">
-                  Sandbox mode — no real money will be charged during testing.
-                </p>
-              </div>
 
               {/* Contact info */}
               <div className="mt-8 pt-8 border-t border-slate-200">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import emailjs from "@emailjs/browser";
 import { useLocation } from 'react-router-dom';
 import {
   AlertDialog,
@@ -54,12 +55,24 @@ const MarketingPopup: React.FC<MarketingPopupProps> = ({
     setHasShownBefore(true);
   };
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the email to your newsletter service
-    console.log('Newsletter signup:', email);
-    // You can integrate with services like Mailchimp, ConvertKit, etc.
-    alert('Thank you for subscribing! Check your email for your discount code.');
+    try {
+      await emailjs.send(
+        "service_f2b2p85",
+        "template_contact",
+        {
+          from_name: "Newsletter Subscriber",
+          from_email: email,
+          phone: "Not provided",
+          subject: "Newsletter Subscription — 20% Offer Claimed",
+          message: `New newsletter subscription from: ${email}`,
+        },
+        "qt_5lcSYSB6Vp2Ll3"
+      );
+    } catch (error) {
+      console.error("EmailJS error:", error);
+    }
     handleClose();
   };
 

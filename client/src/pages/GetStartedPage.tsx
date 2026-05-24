@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
 import { MainLayout } from "@/layouts/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,22 @@ const GetStartedPage = () => {
   const [expanded, setExpanded] = useState<"bank" | "card" | null>(null);
 
   const { status, message, pay, reset } = useMpesaPayment();
+  const notifiedRef = useRef(false);
+
+  useEffect(() => {
+    if (status === 'success' && !notifiedRef.current && selectedPkg) {
+      notifiedRef.current = true;
+      const params = {
+        from_name: `${formData.firstName} ${formData.lastName}`.trim(),
+        from_email: formData.email,
+        phone: formData.phone,
+        subject: `New Payment: ${selectedPkg.name}`,
+        message: `${formData.firstName} ${formData.lastName} paid KES ${selectedPkg.price.toLocaleString()} for "${selectedPkg.name}" via M-Pesa.\n\nEmail: ${formData.email}\nPhone: ${formData.phone}\n\n${message}`,
+      };
+      emailjs.send('service_f2b2p85', 'template_contact', params, 'qt_5lcSYSB6Vp2Ll3').catch(() => {});
+    }
+    if (status === 'idle') notifiedRef.current = false;
+  }, [status]);
 
   const selectedPkg = formData.packageIndex !== "" ? packages[Number(formData.packageIndex)] : null;
 

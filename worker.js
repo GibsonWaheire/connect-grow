@@ -278,10 +278,13 @@ export default {
       return json({ success: true, post });
     }
 
+    // Serve static assets; fall back to index.html for SPA client-side routes
+    const assetReq = new Request(request);
     try {
-      return await env.ASSETS.fetch(request);
-    } catch (err) {
-      return new Response('Not found', { status: 404 });
-    }
+      const res = await env.ASSETS.fetch(assetReq);
+      if (res.status !== 404) return res;
+    } catch (_) {}
+    // Fallback: serve index.html for any unmatched path (React Router handles it)
+    return env.ASSETS.fetch(new Request(new URL('/', request.url), { method: 'GET', headers: request.headers }));
   },
 };
