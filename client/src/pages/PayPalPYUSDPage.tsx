@@ -452,7 +452,7 @@ export default function PayPalPYUSDPage() {
                 order right away.
               </p>
               <a
-                href="https://wa.me/254726899113"
+                href="https://wa.me/14438697500"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 mt-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
@@ -500,7 +500,7 @@ export default function PayPalPYUSDPage() {
 
         <p className="text-xs text-gray-400 text-center mt-10 pb-6">
           Need help?{' '}
-          <a href="https://wa.me/254726899113" target="_blank" rel="noreferrer" className="text-[#0070ba] hover:underline">
+          <a href="https://wa.me/14438697500" target="_blank" rel="noreferrer" className="text-[#0070ba] hover:underline">
             Chat with us on WhatsApp
           </a>
         </p>
