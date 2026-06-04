@@ -156,7 +156,7 @@ const cardThemes = {
   wise: "border-l-4 border-l-teal-500 bg-teal-50/50 hover:bg-teal-50 hover:border-teal-600",
   flutterwave: "border-l-4 border-l-blue-500 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-600",
   apple: "border-l-4 border-l-slate-400",
-  paypal: "border-l-4 border-l-slate-400",
+  paypal: "border-l-4 border-l-[#003087] bg-[#003087]/5 hover:bg-[#003087]/10 hover:border-[#003087]",
   remitly: "border-l-4 border-l-sky-500 bg-sky-50/50 hover:bg-sky-50 hover:border-sky-600",
   remit: "border-l-4 border-l-amber-500 bg-amber-50/50 hover:bg-amber-50 hover:border-amber-600",
   emoney: "border-l-4 border-l-violet-500 bg-violet-50/50 hover:bg-violet-50 hover:border-violet-600",
@@ -168,7 +168,7 @@ const iconThemes = {
   wise: "bg-teal-100 text-teal-600",
   flutterwave: "bg-blue-100 text-blue-600",
   apple: "bg-slate-200 text-slate-400",
-  paypal: "bg-slate-200 text-slate-400",
+  paypal: "bg-[#003087] text-white",
   remitly: "bg-sky-100 text-sky-600",
   remit: "bg-amber-100 text-amber-600",
   emoney: "bg-violet-100 text-violet-600",
@@ -186,8 +186,6 @@ export const PaymentLandingPage = ({
   flutterwavePaymentUrl = "https://flutterwave.com/pay/qqtucsukcxrs",
 }: PaymentLandingPageProps) => {
   const { t, i18n } = useTranslation();
-  const isDev = import.meta.env.DEV;
-
   useEffect(() => {
     i18n.changeLanguage("ar");
   }, []);
@@ -272,28 +270,22 @@ export const PaymentLandingPage = ({
       onOpen: () => setRemitlyOpen(true),
       badge: undefined,
     },
-    ...(isDev
-      ? [{
-          id: "apple" as const,
-          name: t("payment.methods.apple"),
-          type: "modal" as const,
-          icon: Apple,
-          onOpen: () => setIntasendOpen(true),
-          badge: undefined,
-        }]
-      : [{
-          id: "apple" as const,
-          name: t("payment.methods.apple"),
-          type: "inactive" as const,
-          icon: Apple,
-          badge: undefined,
-        }]),
+    {
+      id: "apple" as const,
+      name: t("payment.methods.apple"),
+      type: "link" as const,
+      href: "https://draftit.co.ke/pay",
+      icon: Apple,
+      badge: t("payment.recommended"),
+    },
     {
       id: "paypal" as const,
-      name: t("payment.methods.paypal"),
-      type: "inactive" as const,
+      name: "PayPal · PYUSD",
+      type: "link" as const,
+      href: "/pay-pyusd",
+      internal: true,
       icon: CircleDollarSign,
-      badge: undefined,
+      badge: t("payment.recommended"),
     },
     {
       id: "remit" as const,
@@ -333,7 +325,7 @@ export const PaymentLandingPage = ({
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hi, I have a question about my payment.")}`;
 
   const onlineMethods = paymentMethods.filter((m) =>
-    ["wise", "flutterwave", "remitly", "apple", "paypal"].includes(m.id)
+    ["wise", "flutterwave", "remitly"].includes(m.id)
   );
   const walletMethods = paymentMethods.filter((m) =>
     ["remit", "emoney", "alansari"].includes(m.id)
@@ -347,13 +339,13 @@ export const PaymentLandingPage = ({
     const badge = "badge" in method ? method.badge : undefined;
 
     if (method.type === "link") {
+      const isInternal = "internal" in method && method.internal;
       return (
         <div key={method.id} className="space-y-2">
           <a
             href={method.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Open ${method.name} payment page in a new tab`}
+            {...(!isInternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            aria-label={`Open ${method.name} payment page`}
             className={cn(
               "flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 min-h-[52px] touch-manipulation transition-all hover:shadow-md active:scale-[0.99]",
               cardTheme
@@ -506,6 +498,52 @@ export const PaymentLandingPage = ({
                 <span className="text-xs font-medium text-muted-foreground" dir="rtl">{t("payment.instructionAr")}</span>
               </div>
             </div>
+            {/* PayPal PYUSD — Primary featured card */}
+            <a
+              href="/pay-pyusd"
+              className="group flex items-center justify-between gap-4 rounded-2xl bg-[#003087] px-5 py-5 shadow-2xl shadow-[#003087]/40 ring-2 ring-[#003087]/20 transition-all hover:bg-[#00256e] hover:shadow-[#003087]/50 hover:scale-[1.01] active:scale-[0.99] touch-manipulation"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-md">
+                  <CircleDollarSign className="h-7 w-7 text-[#003087]" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-base font-bold text-white">PayPal · PYUSD</span>
+                    <span className="rounded-full bg-[#0070ba] px-2.5 py-0.5 text-[10px] font-bold text-white uppercase tracking-wide">
+                      {t("payment.recommended")}
+                    </span>
+                  </div>
+                  <span className="text-xs text-white/60">1 PYUSD = $1 · Instant on Solana</span>
+                </div>
+              </div>
+              <ExternalLink className="h-5 w-5 shrink-0 text-white/50 group-hover:text-white/80 transition-colors" />
+            </a>
+
+            {/* Apple Pay — Secondary featured card */}
+            <a
+              href="https://draftit.co.ke/pay"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-4 rounded-2xl bg-slate-900 px-5 py-4 shadow-lg shadow-slate-900/20 ring-1 ring-slate-800/30 transition-all hover:bg-black hover:shadow-slate-900/30 hover:scale-[1.005] active:scale-[0.99] touch-manipulation"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white">
+                  <Apple className="h-6 w-6 text-black" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm sm:text-base font-semibold text-white">{t("payment.methods.apple")}</span>
+                    <span className="rounded-full bg-white/15 border border-white/20 px-2 py-0.5 text-[10px] font-semibold text-white/90 uppercase tracking-wide">
+                      {t("payment.recommended")}
+                    </span>
+                  </div>
+                  <span className="text-xs text-white/40">{t("payment.opensNewTab")}</span>
+                </div>
+              </div>
+              <ExternalLink className="h-4 w-4 shrink-0 text-white/40" />
+            </a>
+
             {/* Payment Methods - Vertical layout */}
             <div className="space-y-6">
               <div>
