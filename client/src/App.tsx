@@ -43,6 +43,7 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import ElectronicsLandingPage from "./pages/ElectronicsLandingPage";
+import PayPalPYUSDPage from "./pages/PayPalPYUSDPage";
 import MarketingPopup from "./components/MarketingPopup";
 import { WhatsAppChatbot } from "./components/WhatsAppChatbot";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/electronics" element={<ElectronicsLandingPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment" element={<PaymentLandingPage />} />
+            <Route path="/pay-pyusd" element={<PayPalPYUSDPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             {/* Legacy HTML routes - redirect handled by HtmlRedirects component */}
             <Route path="/about.html" element={<AboutPage />} />
