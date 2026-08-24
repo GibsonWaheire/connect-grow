@@ -58,17 +58,48 @@ export const HeroSection = () => {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ backgroundColor: '#060d1b' }}
     >
-      {/* Dot grid */}
-      <div className="absolute inset-0 bg-dot-grid" />
+      {/* Aurora blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Blob 1 — blue, top-left */}
+        <div
+          className="aurora-blob-1 absolute rounded-full"
+          style={{
+            width: '700px',
+            height: '700px',
+            top: '-200px',
+            left: '-150px',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 70%)',
+            filter: 'blur(72px)',
+          }}
+        />
+        {/* Blob 2 — indigo, top-right */}
+        <div
+          className="aurora-blob-2 absolute rounded-full"
+          style={{
+            width: '600px',
+            height: '600px',
+            top: '-100px',
+            right: '-100px',
+            background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+        />
+        {/* Blob 3 — cyan, bottom-center */}
+        <div
+          className="aurora-blob-3 absolute rounded-full"
+          style={{
+            width: '500px',
+            height: '500px',
+            bottom: '-100px',
+            left: '35%',
+            background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+            filter: 'blur(90px)',
+          }}
+        />
+      </div>
 
-      {/* Blue radial glow from top */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.18), transparent)',
-        }}
-      />
+      {/* Dot grid — sits on top of blobs */}
+      <div className="absolute inset-0 bg-dot-grid" />
 
       <div className="relative z-10 container mx-auto px-4 py-28">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
