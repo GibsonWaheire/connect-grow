@@ -1,25 +1,30 @@
 import { MainLayout } from "@/layouts/MainLayout";
 import { Header } from "@/shared/components/Header";
-import { ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const CYCLING_WORDS = ["Websites", "Mobile Apps", "E-commerce", "Web Apps"];
-
-const terminalLines = [
-  { type: 'cmd',     text: '$ init-project --name="client-portal" --stack="React+TS"' },
-  { type: 'blank',   text: '' },
-  { type: 'info',    text: 'Scaffolding project structure...' },
-  { type: 'success', text: '✓  TypeScript + ESLint configured' },
-  { type: 'success', text: '✓  CI/CD pipeline set up (GitHub Actions)' },
-  { type: 'success', text: '✓  Database schema migrated' },
-  { type: 'success', text: '✓  Deployed to production (Vercel)' },
-  { type: 'blank',   text: '' },
-  { type: 'result',  text: '> Build complete. Site is live.' },
+const SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1920&q=80',
+    accent: '#3b82f6',
+    label: 'Web Development',
+    word: 'Websites',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1920&q=80',
+    accent: '#6366f1',
+    label: 'Full-Stack Apps',
+    word: 'Web Apps',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1920&q=80',
+    accent: '#06b6d4',
+    label: 'Cloud & DevOps',
+    word: 'Mobile Apps',
+  },
 ];
-
-const lineDelays = [0, 350, 700, 1300, 2000, 2700, 3400, 4000, 4800];
 
 const SERVICES = [
   {
@@ -101,35 +106,34 @@ const FAQS = [
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const DigitalHomePage = () => {
-  const [wordIdx, setWordIdx]         = useState(0);
   const [wordVisible, setWordVisible] = useState(true);
-  const [visible, setVisible]         = useState<number[]>([]);
+  const [slideIdx, setSlideIdx]       = useState(0);
+  const [paused, setPaused]           = useState(false);
   const [faqOpen, setFaqOpen]         = useState<number | null>(null);
+  const bgRef                         = useRef<HTMLDivElement>(null);
 
-  // Cycling headline word
-  useEffect(() => {
-    const t = setInterval(() => {
-      setWordVisible(false);
-      setTimeout(() => {
-        setWordIdx(i => (i + 1) % CYCLING_WORDS.length);
-        setWordVisible(true);
-      }, 350);
-    }, 3000);
-    return () => clearInterval(t);
+  // Slide auto-advance — word fades in sync with slide
+  const advance = useCallback(() => {
+    setWordVisible(false);
+    setTimeout(() => {
+      setSlideIdx(i => (i + 1) % SLIDES.length);
+      setWordVisible(true);
+    }, 350);
   }, []);
-
-  // Terminal animation
   useEffect(() => {
-    const handles: ReturnType<typeof setTimeout>[] = [];
-    const run = () => {
-      setVisible([]);
-      lineDelays.forEach((delay, i) => {
-        handles.push(setTimeout(() => setVisible(p => [...p, i]), delay));
-      });
-      handles.push(setTimeout(run, 9000));
+    if (paused) return;
+    const id = setInterval(advance, 5500);
+    return () => clearInterval(id);
+  }, [paused, advance]);
+
+  // Parallax scroll
+  useEffect(() => {
+    const onScroll = () => {
+      if (!bgRef.current) return;
+      bgRef.current.style.transform = `translateY(${window.scrollY * 0.38}px)`;
     };
-    handles.push(setTimeout(run, 800));
-    return () => handles.forEach(clearTimeout);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // SEO
@@ -152,130 +156,143 @@ const DigitalHomePage = () => {
 
         {/* ══ Hero ══════════════════════════════════════════════════════════ */}
         <section
-          className="relative min-h-screen flex items-center overflow-hidden pt-[88px]"
+          className="relative min-h-screen flex items-center overflow-hidden"
           style={{ backgroundColor: '#060d1b' }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
-          {/* Dot grid */}
-          <div className="absolute inset-0 bg-dot-grid" />
-          {/* Blue radial glow */}
+          {/* ── Layer 1: Background images — parallax + Ken Burns + crossfade ── */}
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.18), transparent)',
-            }}
+            ref={bgRef}
+            className="absolute pointer-events-none will-change-transform"
+            style={{ inset: 0, top: '-10%', height: '120%' }}
+          >
+            {SLIDES.map((s, i) => (
+              <div
+                key={s.src}
+                className="absolute inset-0 transition-opacity duration-1000"
+                style={{ opacity: i === slideIdx ? 1 : 0 }}
+              >
+                <div
+                  className={`absolute inset-0 bg-center bg-cover ${i === slideIdx ? 'animate-kenburns' : ''}`}
+                  style={{ backgroundImage: `url(${s.src})` }}
+                />
+                {/* Per-slide colour tint */}
+                <div
+                  className="absolute inset-0 opacity-30"
+                  style={{ background: `radial-gradient(ellipse at 70% 50%, ${s.accent}66 0%, transparent 65%)` }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* ── Layer 2: Dark overlays ───────────────────────────────────────── */}
+          {/* Left dark veil — desktop */}
+          <div
+            className="absolute inset-0 z-10 hidden lg:block"
+            style={{ background: 'linear-gradient(to right, rgba(6,13,27,0.92) 0%, rgba(6,13,27,0.75) 40%, rgba(6,13,27,0.3) 70%, transparent 100%)' }}
+          />
+          {/* Full veil — mobile */}
+          <div className="absolute inset-0 z-10 lg:hidden" style={{ background: 'rgba(6,13,27,0.82)' }} />
+          {/* Top fade */}
+          <div
+            className="absolute top-0 left-0 right-0 h-32 z-10 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, #060d1b, transparent)' }}
+          />
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-40 z-10 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, transparent, #060d1b)' }}
           />
 
-          <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto py-16">
-            <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* ── Layer 3: Content ─────────────────────────────────────────────── */}
+          <div className="relative z-20 w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto" style={{ paddingTop: '140px', paddingBottom: '120px' }}>
+            <div className="max-w-2xl">
 
-              {/* Left */}
-              <div className="space-y-8">
-                <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 bg-white/5 border border-white/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm text-slate-300">Open for new projects</span>
-                </div>
-
-                <div>
-                  <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.06] text-slate-100">
-                    We build
-                    <span
-                      className="block text-blue-400 transition-opacity duration-300"
-                      style={{ opacity: wordVisible ? 1 : 0 }}
-                    >
-                      {CYCLING_WORDS[wordIdx]}
-                    </span>
-                    <span className="block text-slate-400 text-4xl lg:text-5xl mt-1 font-semibold">
-                      that ship.
-                    </span>
-                  </h1>
-                  <p className="mt-6 text-lg leading-relaxed max-w-md text-slate-400">
-                    Full-stack development for web, mobile, and e-commerce.
-                    Scalable, production-ready software — delivered on time.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => window.location.href = '/get-started'}
-                    className="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-                  >
-                    Get Started <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => window.location.href = '/quote'}
-                    className="inline-flex items-center gap-2 font-medium px-6 py-3 rounded-lg border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-200 transition-all"
-                  >
-                    Free Quote
-                  </button>
-                </div>
-
-                {/* Stats */}
-                <div
-                  className="grid grid-cols-3 gap-8 pt-6"
-                  style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
-                >
-                  {[
-                    { v: '50+',  l: 'Projects' },
-                    { v: '100+', l: 'Clients' },
-                    { v: '5+',   l: 'Years' },
-                  ].map(s => (
-                    <div key={s.l}>
-                      <div className="text-2xl font-bold text-white">{s.v}</div>
-                      <div className="text-xs mt-0.5 text-slate-500 uppercase tracking-wide">{s.l}</div>
-                    </div>
-                  ))}
-                </div>
+              {/* #2 — Slide category label */}
+              <div className="inline-flex items-center gap-2 mb-6 text-sm font-medium transition-opacity duration-300" style={{ opacity: wordVisible ? 1 : 0 }}>
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: SLIDES[slideIdx].accent }}
+                />
+                <span className="text-white/60 uppercase tracking-widest text-xs">
+                  {SLIDES[slideIdx].label}
+                </span>
               </div>
 
-              {/* Right — Terminal */}
-              <div className="relative">
-                <div
-                  className="rounded-xl overflow-hidden border border-white/[0.08] bg-slate-900"
-                  style={{ boxShadow: '0 0 60px rgba(59,130,246,0.08)' }}
+              <h1 className="text-6xl lg:text-7xl font-black tracking-tight leading-[1.04] text-white mb-6">
+                We build
+                <span
+                  className="block transition-opacity duration-300"
+                  style={{ opacity: wordVisible ? 1 : 0, color: SLIDES[slideIdx].accent }}
                 >
-                  {/* Title bar */}
-                  <div
-                    className="flex items-center gap-1.5 px-4 py-3"
-                    style={{
-                      borderBottom: '1px solid rgba(255,255,255,0.07)',
-                      background: 'rgba(0,0,0,0.25)',
-                    }}
-                  >
-                    <span className="w-3 h-3 rounded-full bg-red-400/80" />
-                    <span className="w-3 h-3 rounded-full bg-yellow-400/80" />
-                    <span className="w-3 h-3 rounded-full bg-green-400/80" />
-                    <span className="ml-4 text-xs font-mono text-slate-500">
-                      mcgibs — dev terminal
-                    </span>
-                  </div>
-                  {/* Body */}
-                  <div className="p-5 font-mono text-sm min-h-[280px]">
-                    {terminalLines.map((line, i) => {
-                      if (!visible.includes(i)) return null;
-                      if (line.type === 'blank') return <div key={i} className="h-3" />;
-                      const cls =
-                        line.type === 'cmd'     ? 'text-slate-300' :
-                        line.type === 'success' ? 'text-green-400'  :
-                        line.type === 'info'    ? 'text-slate-500'  :
-                        line.type === 'result'  ? 'text-blue-400'   :
-                                                  'text-slate-400';
-                      const isLast = i === terminalLines.length - 1;
-                      return (
-                        <div key={i} className={cls} style={{ lineHeight: '1.8' }}>
-                          {line.text}
-                          {isLast && (
-                            <span className="inline-block w-2 h-[0.85em] bg-blue-400 align-middle ml-1 cursor-blink" />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="absolute -inset-6 -z-10 rounded-2xl blur-3xl bg-blue-500/[0.06]" />
+                  {SLIDES[slideIdx].word}
+                </span>
+                {/* #3 — stronger "that ship." */}
+                <span className="block text-white/70 text-5xl lg:text-6xl mt-1 font-semibold">
+                  that ship.
+                </span>
+              </h1>
+
+              <p className="text-xl leading-relaxed text-white/60 mb-10 max-w-lg">
+                Full-stack development for web, mobile, and e-commerce.
+                Scalable, production-ready software — delivered on time.
+              </p>
+
+              <div className="flex flex-wrap gap-4 mb-16">
+                <button
+                  onClick={() => window.location.href = '/get-started'}
+                  className="inline-flex items-center gap-2 font-semibold px-8 py-4 rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-colors text-base"
+                >
+                  Get Started <ArrowRight className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => window.location.href = '/quote'}
+                  className="inline-flex items-center gap-2 font-medium px-8 py-4 rounded-xl text-white transition-all text-base"
+                  style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)' }}
+                >
+                  Free Quote
+                </button>
               </div>
 
+              <div
+                className="flex flex-wrap gap-10 pt-8"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}
+              >
+                {[
+                  { v: '50+',  l: 'Projects' },
+                  { v: '100+', l: 'Clients' },
+                  { v: '5+',   l: 'Years' },
+                ].map(s => (
+                  <div key={s.l}>
+                    <div className="text-3xl font-bold text-white">{s.v}</div>
+                    <div className="text-sm mt-1 text-white/60 uppercase tracking-wide">{s.l}</div>
+                  </div>
+                ))}
+              </div>
             </div>
+          </div>
+
+          {/* ── Slide dots ───────────────────────────────────────────────────── */}
+          <div className="absolute bottom-8 left-6 sm:left-10 z-30 flex items-center gap-2">
+            {SLIDES.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => { setWordVisible(false); setTimeout(() => { setSlideIdx(i); setWordVisible(true); }, 350); }}
+                className="rounded-full transition-all duration-400"
+                style={{
+                  width:  i === slideIdx ? 28 : 8,
+                  height: 8,
+                  background: i === slideIdx ? SLIDES[slideIdx].accent : 'rgba(255,255,255,0.25)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* #4 — Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1 pointer-events-none">
+            <span className="text-white/30 text-xs uppercase tracking-widest">Scroll</span>
+            <ChevronDown className="w-5 h-5 text-white/30 animate-bounce" />
           </div>
         </section>
 
