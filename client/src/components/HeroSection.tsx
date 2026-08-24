@@ -68,7 +68,7 @@ export const HeroSection = () => {
             height: '700px',
             top: '-200px',
             left: '-150px',
-            background: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.42) 0%, transparent 70%)',
             filter: 'blur(72px)',
           }}
         />
@@ -80,7 +80,7 @@ export const HeroSection = () => {
             height: '600px',
             top: '-100px',
             right: '-100px',
-            background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(99,102,241,0.36) 0%, transparent 70%)',
             filter: 'blur(80px)',
           }}
         />
@@ -92,7 +92,7 @@ export const HeroSection = () => {
             height: '500px',
             bottom: '-100px',
             left: '35%',
-            background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(6,182,212,0.28) 0%, transparent 70%)',
             filter: 'blur(90px)',
           }}
         />
@@ -106,12 +106,6 @@ export const HeroSection = () => {
 
           {/* ── Left column ─────────────────────────────────────────────── */}
           <div className="space-y-8">
-
-            {/* Status badge */}
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 bg-white/5 border border-white/10">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-sm text-slate-300">Taking orders now</span>
-            </div>
 
             {/* Headline */}
             <div className="space-y-4">
