@@ -1,104 +1,108 @@
-import { Button } from "@/components/ui/button";
-import { OptimizedImage } from "@/shared/components/OptimizedImage";
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 
 export const CTASection = () => {
   const location = useLocation();
 
   const handleGetStarted = () => {
-    // If on course-help page, ALWAYS scroll to services section - NEVER redirect
     if (location.pathname === '/course-help' || location.pathname === '/course-help/') {
-      const scrollToServices = () => {
-        const servicesSection = document.getElementById('services');
-        if (servicesSection) {
-          servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          // Retry after a short delay if element not found yet
-          setTimeout(scrollToServices, 100);
-        }
-      };
-      scrollToServices();
+      const el = document.getElementById('services');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    // Otherwise redirect to services page
     window.location.href = '/services';
   };
 
-  const handleEmail = () => {
-    const subject = encodeURIComponent("School Help Inquiry - Ready to Get Started");
-    const body = encodeURIComponent(`Hi McGibs Digital Solutions,
-
-I'm ready to get started with your academic writing services!
-
-Could you please provide:
-- Current pricing for your services
-- Available turnaround times
-- How to place an order
-- Any current special offers
-
-I'm looking forward to working with you!
-
-Best regards,
-[Your name]`);
-    
-    window.open(`mailto:pwriter455@gmail.com?subject=${subject}&body=${body}`, '_blank');
-  };
-
   return (
-    <section className="py-20 gradient-hero relative overflow-hidden">
-      <div className="absolute inset-0 bg-black/20"></div>
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-white/90 mb-12 leading-relaxed">
-            Join hundreds of satisfied students who trust us with their academic needs. Professional writing, technical courses, and exam help with 100% human research.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button 
-              variant="hero" 
-              size="xl" 
-              onClick={handleGetStarted}
-              className="group bg-white text-primary hover:bg-white/90 shadow-hover w-full sm:w-auto"
+    <section
+      className="py-24 relative overflow-hidden"
+      style={{ backgroundColor: '#060d1b' }}
+    >
+      {/* Glow from bottom */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(59,130,246,0.12), transparent)',
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-4">
+        <div className="max-w-2xl mx-auto">
+
+          {/* Terminal box */}
+          <div
+            className="rounded-xl overflow-hidden mb-10"
+            style={{
+              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(13,24,41,0.9)',
+            }}
+          >
+            <div
+              className="flex items-center gap-1.5 px-4 py-3"
+              style={{
+                borderBottom: '1px solid rgba(255,255,255,0.07)',
+                background: 'rgba(0,0,0,0.2)',
+              }}
             >
-              <OptimizedImage 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=24&h=24&fit=crop&crop=center" 
-                alt="Get Started"
-                className="h-6 w-6 group-hover:scale-110 transition-transform rounded object-cover"
-              />
-              View Services & Order
-            </Button>
-            <Button 
-              variant="outline" 
-              size="xl" 
-              onClick={handleEmail}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary w-full sm:w-auto"
-            >
-              <OptimizedImage 
-                src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=24&h=24&fit=crop&crop=center" 
-                alt="Email"
-                className="h-6 w-6 rounded object-cover"
-              />
-              Contact Us
-            </Button>
-          </div>
-          
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/70">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span className="text-sm">24/7 Support</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+              <span className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+              <span className="ml-3 text-xs font-mono text-slate-500">get-started.sh</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span className="text-sm">Turnitin Reports</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span className="text-sm">Human Research Only</span>
+
+            <div className="p-6 font-mono text-sm space-y-1">
+              <div className="text-slate-600"># 3 steps to get your assignment done</div>
+              <div className="h-2" />
+              <div>
+                <span className="text-blue-400">1.</span>
+                <span className="text-slate-300 ml-2">Message us your assignment details</span>
+              </div>
+              <div>
+                <span className="text-blue-400">2.</span>
+                <span className="text-slate-300 ml-2">Confirm your order and pay securely</span>
+              </div>
+              <div>
+                <span className="text-blue-400">3.</span>
+                <span className="text-slate-300 ml-2">Receive your work with Turnitin report</span>
+              </div>
+              <div className="h-2" />
+              <div className="flex items-center gap-1">
+                <span className="text-green-400">$ contact us now</span>
+                <span
+                  className="inline-block w-2 h-[0.85em] bg-green-400 align-middle cursor-blink"
+                />
+              </div>
             </div>
           </div>
+
+          {/* Headline + CTAs */}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-3">Ready to start?</h2>
+            <p className="text-slate-400 mb-8">
+              Join 500+ students who trust McGibs for academic help.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={handleGetStarted}
+                className="inline-flex items-center justify-center gap-2 font-semibold px-7 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+              >
+                View Services
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <a
+                href="https://wa.me/14438697500"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 font-medium px-7 py-3 rounded-lg border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-200 transition-all"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                WhatsApp Us
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

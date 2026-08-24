@@ -1,72 +1,112 @@
 import { MainLayout } from "@/layouts/MainLayout";
-import { Button } from "@/components/ui/button";
-import { OptimizedImage } from "@/shared/components/OptimizedImage";
 import { Header } from "@/shared/components/Header";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FAQSection } from "@/components/DigitalPageSections";
 
-const HERO_IMAGES = [
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1400&h=900&fit=crop",
-  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1400&h=900&fit=crop",
-  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&h=900&fit=crop",
+// ── Data ──────────────────────────────────────────────────────────────────────
+
+const CYCLING_WORDS = ["Websites", "Mobile Apps", "E-commerce", "Web Apps"];
+
+const terminalLines = [
+  { type: 'cmd',     text: '$ init-project --name="client-portal" --stack="React+TS"' },
+  { type: 'blank',   text: '' },
+  { type: 'info',    text: 'Scaffolding project structure...' },
+  { type: 'success', text: '✓  TypeScript + ESLint configured' },
+  { type: 'success', text: '✓  CI/CD pipeline set up (GitHub Actions)' },
+  { type: 'success', text: '✓  Database schema migrated' },
+  { type: 'success', text: '✓  Deployed to production (Vercel)' },
+  { type: 'blank',   text: '' },
+  { type: 'result',  text: '> Build complete. Site is live.' },
 ];
 
-const CYCLING_WORDS = ["Websites", "Mobile Apps", "E-commerce", "Digital Products"];
+const lineDelays = [0, 350, 700, 1300, 2000, 2700, 3400, 4000, 4800];
 
 const SERVICES = [
   {
-    num: "01",
-    title: "Websites & CMS",
-    desc: "Marketing sites, blogs, landing pages, and headless CMS platforms built for speed and SEO.",
-    tags: ["Responsive Design", "SEO Optimised", "Fast Loading"],
+    num: '01',
+    title: 'Websites & CMS',
+    desc: 'Marketing sites, blogs, landing pages, and headless CMS platforms built for speed and SEO.',
+    tags: ['Responsive', 'SEO-optimised', 'Fast loading'],
   },
   {
-    num: "02",
-    title: "Web Applications",
-    desc: "Full-stack apps with user authentication, real-time data, dashboards, and admin panels.",
-    tags: ["User Auth", "Real-time Data", "Scalable Backend"],
+    num: '02',
+    title: 'Web Applications',
+    desc: 'Full-stack apps with user auth, real-time data, dashboards, and admin panels.',
+    tags: ['User auth', 'Real-time data', 'Scalable backend'],
   },
   {
-    num: "03",
-    title: "Mobile Apps",
-    desc: "Cross-platform iOS and Android apps with offline support and push notifications.",
-    tags: ["React Native", "Offline Support", "Push Notifications"],
+    num: '03',
+    title: 'Mobile Apps',
+    desc: 'Cross-platform iOS and Android apps with offline support and push notifications.',
+    tags: ['React Native', 'Offline support', 'Push notifications'],
   },
   {
-    num: "04",
-    title: "E-commerce Platforms",
-    desc: "Complete online stores — product management, M-Pesa payments, order tracking, and admin tools.",
-    tags: ["M-Pesa / Card", "Inventory Management", "Order Tracking"],
+    num: '04',
+    title: 'E-commerce Platforms',
+    desc: 'Complete online stores — product management, M-Pesa payments, and order tracking.',
+    tags: ['M-Pesa / Card', 'Inventory mgmt', 'Order tracking'],
   },
   {
-    num: "05",
-    title: "UI/UX Design",
-    desc: "Wireframes, prototypes, and full design systems. Clean, user-centred interfaces that convert.",
-    tags: ["Wireframes", "Prototypes", "Design Systems"],
+    num: '05',
+    title: 'UI / UX Design',
+    desc: 'Wireframes, prototypes, and full design systems. Clean, conversion-focused interfaces.',
+    tags: ['Wireframes', 'Prototypes', 'Design systems'],
   },
   {
-    num: "06",
-    title: "Cloud & DevOps",
-    desc: "CI/CD pipelines, cloud hosting, monitoring dashboards, and scalable infrastructure.",
-    tags: ["CI/CD Pipelines", "Cloud Hosting", "Uptime Monitoring"],
+    num: '06',
+    title: 'Cloud & DevOps',
+    desc: 'CI/CD pipelines, cloud hosting, monitoring dashboards, and scalable infrastructure.',
+    tags: ['CI/CD', 'Cloud hosting', 'Uptime monitoring'],
   },
 ];
 
+const PRICING = [
+  { name: 'Social Media Post',  desc: 'Copy + design, 1 platform',           price: 'KES 1,300',  unit: 'per post',  hot: false },
+  { name: 'Logo Design',        desc: '2 concepts, 2 revisions, PNG + SVG',   price: 'KES 1,950',  unit: 'one-time',  hot: false },
+  { name: 'SEO Audit',          desc: 'Site analysis, keywords, action plan', price: 'KES 2,600',  unit: 'one-time',  hot: true  },
+  { name: 'Social Media Mgmt',  desc: '12 posts/mo, analytics, 1 platform',   price: 'KES 4,550',  unit: 'per month', hot: false },
+  { name: 'Landing Page',       desc: 'Responsive, SEO-ready, contact form',  price: 'KES 6,500',  unit: 'one-time',  hot: false },
+  { name: 'Brand Identity Kit', desc: 'Logo, palette, typography, guidelines',price: 'KES 9,750',  unit: 'one-time',  hot: false },
+  { name: 'Website Starter',    desc: '1–2 pages, mobile-ready, forms',       price: 'KES 19,500', unit: 'one-time',  hot: true  },
+  { name: 'Full Web App',       desc: 'Auth, dashboard, DB, deployment',      price: 'Custom',     unit: 'quote',     hot: false },
+];
+
+const FAQS = [
+  {
+    q: 'How long does a typical project take?',
+    a: 'A simple website takes 2–4 weeks, web apps 4–8 weeks, and mobile apps 6–12 weeks. We provide detailed timelines during the discovery phase.',
+  },
+  {
+    q: 'Do you provide support after launch?',
+    a: 'Yes. We offer maintenance packages, bug fixes, feature updates, and 24/7 support. Many clients work with us long-term for ongoing improvements.',
+  },
+  {
+    q: 'What technologies do you use?',
+    a: 'React, TypeScript, Node.js, React Native, Tailwind CSS, and cloud platforms like Vercel. We choose the best tool for each project.',
+  },
+  {
+    q: 'Can you work with our existing team?',
+    a: 'Absolutely. We integrate with in-house teams via Slack, GitHub, and project management tools for smooth collaboration.',
+  },
+  {
+    q: "What's included in your pricing?",
+    a: 'Design, development, testing, deployment, documentation, and initial training. Additional scope or revisions are discussed upfront — no surprises.',
+  },
+  {
+    q: 'Do you handle hosting and deployment?',
+    a: 'Yes. We set up and manage hosting, CI/CD pipelines, monitoring, and backups on Vercel, AWS, or your preferred cloud provider.',
+  },
+];
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 const DigitalHomePage = () => {
-  const [heroSlide, setHeroSlide] = useState(0);
-  const [wordIdx, setWordIdx]     = useState(0);
+  const [wordIdx, setWordIdx]         = useState(0);
   const [wordVisible, setWordVisible] = useState(true);
+  const [visible, setVisible]         = useState<number[]>([]);
+  const [faqOpen, setFaqOpen]         = useState<number | null>(null);
 
-  // Crossfade every 5 s
-  useEffect(() => {
-    const t = setInterval(() => {
-      setHeroSlide(s => (s + 1) % HERO_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(t);
-  }, []);
-
-  // Cycle headline word every 3 s with fade
+  // Cycling headline word
   useEffect(() => {
     const t = setInterval(() => {
       setWordVisible(false);
@@ -78,9 +118,24 @@ const DigitalHomePage = () => {
     return () => clearInterval(t);
   }, []);
 
+  // Terminal animation
   useEffect(() => {
-    document.title = "McGibs Digital Solutions | Web, Mobile & E‑commerce";
-    const desc = "McGibs Digital Solutions builds production‑grade websites, web apps, mobile apps, and e‑commerce with modern stacks and reliable delivery.";
+    const handles: ReturnType<typeof setTimeout>[] = [];
+    const run = () => {
+      setVisible([]);
+      lineDelays.forEach((delay, i) => {
+        handles.push(setTimeout(() => setVisible(p => [...p, i]), delay));
+      });
+      handles.push(setTimeout(run, 9000));
+    };
+    handles.push(setTimeout(run, 800));
+    return () => handles.forEach(clearTimeout);
+  }, []);
+
+  // SEO
+  useEffect(() => {
+    document.title = 'McGibs Digital Solutions | Web, Mobile & E-commerce';
+    const desc = 'McGibs Digital Solutions builds production-grade websites, web apps, mobile apps, and e-commerce with modern stacks and reliable delivery.';
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement('meta');
@@ -88,310 +143,432 @@ const DigitalHomePage = () => {
       document.head.appendChild(meta);
     }
     meta.setAttribute('content', desc);
-
-    const ogTags = [
-      { property: 'og:title', content: 'McGibs Digital Solutions | Web, Mobile & E‑commerce' },
-      { property: 'og:description', content: desc },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: window.location.href },
-    ];
-    ogTags.forEach(tag => {
-      let el = document.querySelector(`meta[property="${tag.property}"]`);
-      if (!el) {
-        el = document.createElement('meta');
-        el.setAttribute('property', tag.property);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', tag.content);
-    });
-
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "McGibs Digital Solutions",
-      "url": window.location.origin,
-      "logo": `${window.location.origin}/logo.png`,
-      "description": desc,
-      "sameAs": ["https://portfolio-main-two-bice.vercel.app/"],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "Customer Service",
-        "email": "pwriter455@gmail.com"
-      },
-      "offers": [
-        { "@type": "Offer", "name": "Social Media Post", "price": "1300", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Logo Design", "price": "1950", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "SEO Audit", "price": "2600", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Content Creation", "price": "3250", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Social Media Management", "price": "4550", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Landing Page Design", "price": "6500", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Brand Identity Kit", "price": "9750", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Content Package", "price": "13000", "priceCurrency": "KES" },
-        { "@type": "Offer", "name": "Website Starter Kit", "price": "19500", "priceCurrency": "KES" }
-      ]
-    };
-    let script = document.querySelector('script[type="application/ld+json"]');
-    if (!script) {
-      script = document.createElement('script');
-      script.setAttribute('type', 'application/ld+json');
-      document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(structuredData);
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href && href !== '#') {
-          e.preventDefault();
-          const target = document.querySelector(href);
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
-      });
-    });
   }, []);
 
   return (
     <>
       <Header />
       <MainLayout>
-        {/* ── Hero — split layout, crossfade right panel ── */}
-        <section className="flex pt-[88px]" style={{ minHeight: '480px', maxHeight: '600px', height: '55vh' }}>
 
-          {/* Left — text panel */}
-          <div className="bg-slate-900 text-white flex items-center w-full lg:w-1/2 px-8 sm:px-12 py-10 overflow-hidden">
-            <div className="max-w-lg">
-              <p className="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-4">
-                McGibs Digital Solutions
-              </p>
-              <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-6">
-                We Build
-                <span
-                  className="block text-emerald-400 transition-opacity duration-300"
-                  style={{ opacity: wordVisible ? 1 : 0 }}
+        {/* ══ Hero ══════════════════════════════════════════════════════════ */}
+        <section
+          className="relative min-h-screen flex items-center overflow-hidden pt-[88px]"
+          style={{ backgroundColor: '#060d1b' }}
+        >
+          {/* Dot grid */}
+          <div className="absolute inset-0 bg-dot-grid" />
+          {/* Blue radial glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.18), transparent)',
+            }}
+          />
+
+          <div className="relative z-10 w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto py-16">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
+
+              {/* Left */}
+              <div className="space-y-8">
+                <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 bg-white/5 border border-white/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-sm text-slate-300">Open for new projects</span>
+                </div>
+
+                <div>
+                  <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.06] text-slate-100">
+                    We build
+                    <span
+                      className="block text-blue-400 transition-opacity duration-300"
+                      style={{ opacity: wordVisible ? 1 : 0 }}
+                    >
+                      {CYCLING_WORDS[wordIdx]}
+                    </span>
+                    <span className="block text-slate-400 text-4xl lg:text-5xl mt-1 font-semibold">
+                      that ship.
+                    </span>
+                  </h1>
+                  <p className="mt-6 text-lg leading-relaxed max-w-md text-slate-400">
+                    Full-stack development for web, mobile, and e-commerce.
+                    Scalable, production-ready software — delivered on time.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => window.location.href = '/get-started'}
+                    className="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+                  >
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => window.location.href = '/quote'}
+                    className="inline-flex items-center gap-2 font-medium px-6 py-3 rounded-lg border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-200 transition-all"
+                  >
+                    Free Quote
+                  </button>
+                </div>
+
+                {/* Stats */}
+                <div
+                  className="grid grid-cols-3 gap-8 pt-6"
+                  style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
                 >
-                  {CYCLING_WORDS[wordIdx]}
-                </span>
-                <span className="block text-white text-3xl sm:text-4xl mt-1">That Drive Results</span>
-              </h1>
-              <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-                Full-stack development for web, mobile and e-commerce. Scalable, production-ready software — delivered on time.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 mb-8">
-                <Button
-                  size="lg"
-                  onClick={() => window.location.href = '/get-started'}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
-                >
-                  Get Started <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={() => window.location.href = '/quote'}
-                  variant="outline"
-                  className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
-                >
-                  Free Quote
-                </Button>
+                  {[
+                    { v: '50+',  l: 'Projects' },
+                    { v: '100+', l: 'Clients' },
+                    { v: '5+',   l: 'Years' },
+                  ].map(s => (
+                    <div key={s.l}>
+                      <div className="text-2xl font-bold text-white">{s.v}</div>
+                      <div className="text-xs mt-0.5 text-slate-500 uppercase tracking-wide">{s.l}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-10 border-t border-slate-800 pt-8">
-                <div>
-                  <div className="text-3xl font-bold text-emerald-400">50+</div>
-                  <div className="text-xs text-slate-500 mt-0.5 uppercase tracking-wide">Projects</div>
+
+              {/* Right — Terminal */}
+              <div className="relative">
+                <div
+                  className="rounded-xl overflow-hidden border border-white/[0.08] bg-slate-900"
+                  style={{ boxShadow: '0 0 60px rgba(59,130,246,0.08)' }}
+                >
+                  {/* Title bar */}
+                  <div
+                    className="flex items-center gap-1.5 px-4 py-3"
+                    style={{
+                      borderBottom: '1px solid rgba(255,255,255,0.07)',
+                      background: 'rgba(0,0,0,0.25)',
+                    }}
+                  >
+                    <span className="w-3 h-3 rounded-full bg-red-400/80" />
+                    <span className="w-3 h-3 rounded-full bg-yellow-400/80" />
+                    <span className="w-3 h-3 rounded-full bg-green-400/80" />
+                    <span className="ml-4 text-xs font-mono text-slate-500">
+                      mcgibs — dev terminal
+                    </span>
+                  </div>
+                  {/* Body */}
+                  <div className="p-5 font-mono text-sm min-h-[280px]">
+                    {terminalLines.map((line, i) => {
+                      if (!visible.includes(i)) return null;
+                      if (line.type === 'blank') return <div key={i} className="h-3" />;
+                      const cls =
+                        line.type === 'cmd'     ? 'text-slate-300' :
+                        line.type === 'success' ? 'text-green-400'  :
+                        line.type === 'info'    ? 'text-slate-500'  :
+                        line.type === 'result'  ? 'text-blue-400'   :
+                                                  'text-slate-400';
+                      const isLast = i === terminalLines.length - 1;
+                      return (
+                        <div key={i} className={cls} style={{ lineHeight: '1.8' }}>
+                          {line.text}
+                          {isLast && (
+                            <span className="inline-block w-2 h-[0.85em] bg-blue-400 align-middle ml-1 cursor-blink" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div>
-                  <div className="text-3xl font-bold text-white">100+</div>
-                  <div className="text-xs text-slate-500 mt-0.5 uppercase tracking-wide">Clients</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-white">5+</div>
-                  <div className="text-xs text-slate-500 mt-0.5 uppercase tracking-wide">Years</div>
-                </div>
+                <div className="absolute -inset-6 -z-10 rounded-2xl blur-3xl bg-blue-500/[0.06]" />
               </div>
+
             </div>
           </div>
+        </section>
 
-          {/* Right — crossfading image panel */}
-          <div className="relative hidden lg:block lg:w-1/2 overflow-hidden">
-            {HERO_IMAGES.map((src, i) => (
-              <div
-                key={i}
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${src})`,
-                  opacity: heroSlide === i ? 1 : 0,
-                  transition: 'opacity 1.2s ease-in-out',
-                }}
-              />
-            ))}
-            {/* subtle dark overlay so image doesn't clash */}
-            <div className="absolute inset-0 bg-slate-900/20" />
-            {/* slide indicator dots */}
-            <div className="absolute bottom-6 right-6 flex gap-2">
-              {HERO_IMAGES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setHeroSlide(i)}
-                  className="w-2 h-2 rounded-full transition-all"
-                  style={{ background: heroSlide === i ? '#10b981' : 'rgba(255,255,255,0.4)' }}
-                />
+        {/* ══ Services ══════════════════════════════════════════════════════ */}
+        <section id="capabilities" className="py-24" style={{ backgroundColor: '#080f20' }}>
+          <div className="w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto">
+
+            <div className="mb-14">
+              <p className="text-xs font-mono uppercase tracking-widest mb-3 text-blue-400">
+                what we build
+              </p>
+              <h2 className="text-3xl font-bold text-white">
+                Full-stack, from design to deployment.
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {SERVICES.map(item => (
+                <div
+                  key={item.num}
+                  className="rounded-xl p-6 transition-all"
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    background: 'rgba(255,255,255,0.02)',
+                  }}
+                  onMouseOver={e =>
+                    (e.currentTarget.style.borderColor = 'rgba(59,130,246,0.3)')
+                  }
+                  onMouseOut={e =>
+                    (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)')
+                  }
+                >
+                  <div className="text-xs font-mono text-slate-600 mb-3">{item.num}</div>
+                  <h3 className="font-semibold text-white mb-2">{item.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed mb-4">{item.desc}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.tags.map(tag => (
+                      <span
+                        key={tag}
+                        className="text-xs px-2 py-0.5 rounded font-mono"
+                        style={{ background: 'rgba(59,130,246,0.08)', color: '#60a5fa' }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
+
+            <div className="mt-8 text-center">
+              <a
+                href="/services"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                View all services <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         </section>
 
-        {/* ── Services — full-width alternating bands ── */}
-        <section id="capabilities">
-          <div className="bg-white py-10 border-b border-slate-100">
-            <div className="container mx-auto px-4 sm:px-8 max-w-6xl">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-1">What We Build</h2>
-              <p className="text-slate-500">Full-stack development from concept to launch.</p>
+        {/* ══ Pricing ═══════════════════════════════════════════════════════ */}
+        <section id="pricing" className="py-24" style={{ backgroundColor: '#060d1b' }}>
+          <div className="w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto">
+
+            <div className="mb-12">
+              <p className="text-xs font-mono uppercase tracking-widest mb-3 text-blue-400">
+                pricing
+              </p>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                <h2 className="text-3xl font-bold text-white">
+                  Transparent rates. No surprises.
+                </h2>
+                <span className="text-sm text-slate-500">All prices in KES unless noted</span>
+              </div>
             </div>
-          </div>
 
-          {SERVICES.map((item, i) => (
-            <div key={item.num} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-              <div className="container mx-auto px-4 sm:px-8 max-w-6xl py-12">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+            {/* Contained pricing table */}
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              {/* Column headers */}
+              <div
+                className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 text-xs font-mono uppercase tracking-widest text-slate-600"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                <div className="col-span-4">Service</div>
+                <div className="col-span-4">What's included</div>
+                <div className="col-span-2 text-right">Starting at</div>
+                <div className="col-span-2 text-right">Action</div>
+              </div>
 
-                  {/* Large number */}
-                  <div
-                    className="text-[100px] font-black leading-none select-none shrink-0 hidden lg:block"
-                    style={{ color: i % 2 === 0 ? '#f1f5f9' : '#e2e8f0', width: '140px' }}
-                  >
-                    {item.num}
+              {/* Rows */}
+              {PRICING.map((row, i) => (
+                <div
+                  key={row.name}
+                  className="relative grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-6 py-5 items-center transition-colors"
+                  style={{
+                    borderBottom:
+                      i < PRICING.length - 1
+                        ? '1px solid rgba(255,255,255,0.04)'
+                        : undefined,
+                    background: row.hot
+                      ? 'rgba(59,130,246,0.06)'
+                      : 'transparent',
+                  }}
+                  onMouseOver={e =>
+                    !row.hot && (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')
+                  }
+                  onMouseOut={e =>
+                    !row.hot && (e.currentTarget.style.background = 'transparent')
+                  }
+                >
+                  {/* Blue left accent on popular rows */}
+                  {row.hot && (
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-sm"
+                      style={{ background: '#3b82f6' }}
+                    />
+                  )}
+
+                  {/* Service name + badge */}
+                  <div className="md:col-span-4 flex items-center gap-2">
+                    <span className="font-semibold text-white text-sm">{row.name}</span>
+                    {row.hot && (
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide shrink-0"
+                        style={{ background: 'rgba(59,130,246,0.2)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.3)' }}
+                      >
+                        Popular
+                      </span>
+                    )}
                   </div>
 
-                  {/* Title + desc */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xs font-bold text-slate-400 lg:hidden">{item.num}</span>
-                      <h3 className="text-xl font-bold text-slate-900">{item.title}</h3>
-                    </div>
-                    <p className="text-slate-500 leading-relaxed max-w-xl">{item.desc}</p>
+                  {/* Description */}
+                  <div className="md:col-span-4 text-sm text-slate-500">{row.desc}</div>
+
+                  {/* Price */}
+                  <div className="md:col-span-2 md:text-right">
+                    <span className="font-mono font-bold text-white">{row.price}</span>
+                    <span className="text-xs text-slate-600 ml-1.5 md:block md:ml-0">{row.unit}</span>
                   </div>
 
-                  {/* Tags + link */}
-                  <div className="lg:w-64 shrink-0">
-                    <div className="flex flex-wrap gap-y-2 gap-x-3 mb-4">
-                      {item.tags.map(tag => (
-                        <span key={tag} className="text-sm text-slate-600">
-                          — {tag}
-                        </span>
-                      ))}
-                    </div>
+                  {/* Button */}
+                  <div className="md:col-span-2 md:text-right">
                     <a
-                      href="/services"
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                      href="/get-started"
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-semibold transition-all"
+                      style={
+                        row.hot
+                          ? { background: '#3b82f6', color: '#fff' }
+                          : {
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              color: '#94a3b8',
+                              background: 'rgba(255,255,255,0.04)',
+                            }
+                      }
+                      onMouseOver={e => {
+                        if (row.hot) e.currentTarget.style.background = '#2563eb';
+                        else {
+                          e.currentTarget.style.borderColor = 'rgba(59,130,246,0.4)';
+                          e.currentTarget.style.color = '#60a5fa';
+                        }
+                      }}
+                      onMouseOut={e => {
+                        if (row.hot) e.currentTarget.style.background = '#3b82f6';
+                        else {
+                          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                          e.currentTarget.style.color = '#94a3b8';
+                        }
+                      }}
                     >
-                      Learn more <ArrowRight className="w-3.5 h-3.5" />
+                      Order
                     </a>
                   </div>
-
                 </div>
+              ))}
+
+              {/* Footer row */}
+              <div
+                className="px-6 py-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  borderTop: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                <p className="text-sm text-slate-500">
+                  Need something custom? We scope and quote for free.
+                </p>
+                <a
+                  href="/quote"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors shrink-0"
+                >
+                  Get a free quote <ArrowRight className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
-          ))}
+
+          </div>
         </section>
 
-        {/* ── Pricing — rate card table ── */}
-        <section id="pricing" className="bg-slate-50 py-14">
-          <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
-            <div className="mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-1">Pricing</h2>
-              <p className="text-slate-500">Transparent rates. No hidden fees. All packages include free consultation.</p>
-            </div>
+        {/* ══ FAQ ═══════════════════════════════════════════════════════════ */}
+        <section id="faq" className="py-24" style={{ backgroundColor: '#080f20' }}>
+          <div className="w-full px-6 sm:px-10 lg:px-16 max-w-[1440px] mx-auto">
 
-            {/* Table header */}
-            <div className="grid grid-cols-12 gap-4 pb-3 border-b-2 border-slate-900 text-xs font-bold uppercase tracking-widest text-slate-400">
-              <div className="col-span-5">Service</div>
-              <div className="col-span-3">Includes</div>
-              <div className="col-span-2 text-right">From</div>
-              <div className="col-span-2 text-right">Action</div>
-            </div>
-
-            {[
-              { name: "Social Media Post",      desc: "Copy + basic design, 1 platform",        price: "KES 1,300",  unit: "per post",  hot: false },
-              { name: "Logo Design",            desc: "2 concepts, 2 revisions, PNG + SVG",      price: "KES 1,950",  unit: "one-time",  hot: false },
-              { name: "SEO Audit",              desc: "Site analysis, keywords, action plan",    price: "KES 2,600",  unit: "one-time",  hot: true  },
-              { name: "Social Media Mgmt",      desc: "12 posts/mo, analytics, 1 platform",      price: "KES 4,550",  unit: "per month", hot: false },
-              { name: "Landing Page",           desc: "Responsive, SEO, contact form",           price: "KES 6,500",  unit: "one-time",  hot: false },
-              { name: "Brand Identity Kit",     desc: "Logo, palette, typography, guidelines",   price: "KES 9,750",  unit: "one-time",  hot: false },
-              { name: "Website Starter",        desc: "1–2 pages, mobile-ready, contact form",   price: "KES 19,500", unit: "one-time",  hot: true  },
-              { name: "Full Web App",           desc: "Auth, dashboard, DB, deployment",         price: "Custom",     unit: "quote",     hot: false },
-            ].map((row, i) => (
-              <div
-                key={row.name}
-                className={`grid grid-cols-12 gap-4 py-4 border-b border-slate-100 items-center ${row.hot ? 'bg-emerald-50/50' : ''}`}
-              >
-                <div className="col-span-5 flex items-center gap-2">
-                  <span className="font-semibold text-slate-900 text-sm">{row.name}</span>
-                  {row.hot && <span className="text-[10px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded uppercase">Popular</span>}
-                </div>
-                <div className="col-span-3 text-xs text-slate-500">{row.desc}</div>
-                <div className="col-span-2 text-right">
-                  <span className="font-bold text-slate-900 text-sm">{row.price}</span>
-                  <span className="text-xs text-slate-400 block">{row.unit}</span>
-                </div>
-                <div className="col-span-2 text-right">
-                  <a
-                    href="/get-started"
-                    className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
-                  >
-                    Order →
-                  </a>
-                </div>
+            <div className="grid lg:grid-cols-3 gap-12">
+              {/* Left label */}
+              <div className="lg:col-span-1">
+                <p className="text-xs font-mono uppercase tracking-widest mb-3 text-blue-400">faq</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Questions</h2>
+                <p className="text-sm text-slate-500">
+                  Common things clients ask before getting started.
+                </p>
+                <a
+                  href="/faq"
+                  className="inline-block mt-6 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  See all FAQs →
+                </a>
               </div>
-            ))}
 
-            <div className="pt-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <p className="text-sm text-slate-400">Need something custom? We quote based on scope.</p>
-              <a
-                href="/quote"
-                className="text-sm font-semibold text-slate-900 border-b border-slate-900 hover:text-emerald-600 hover:border-emerald-600 transition-colors pb-0.5"
-              >
-                Get a free quote
-              </a>
+              {/* Q&A */}
+              <div className="lg:col-span-2">
+                {FAQS.map((faq, i) => (
+                  <div key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <button
+                      className="w-full py-5 text-left flex items-start justify-between gap-4"
+                      onClick={() => setFaqOpen(faqOpen === i ? null : i)}
+                    >
+                      <span className="font-medium text-sm text-white leading-snug">{faq.q}</span>
+                      <span
+                        className="text-xl leading-none shrink-0 mt-0.5 transition-colors"
+                        style={{ color: faqOpen === i ? '#3b82f6' : '#475569' }}
+                      >
+                        {faqOpen === i ? '−' : '+'}
+                      </span>
+                    </button>
+                    {faqOpen === i && (
+                      <p className="pb-5 text-sm text-slate-500 leading-relaxed">{faq.a}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <FAQSection />
-
-        {/* Final CTA */}
-        <section className="bg-slate-900 py-14">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center">
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Build Something Amazing?</h3>
-            <p className="text-lg text-slate-400 mb-10 max-w-xl mx-auto">
-              Let's discuss your project and turn your vision into a powerful digital solution.
+        {/* ══ Final CTA ═════════════════════════════════════════════════════ */}
+        <section className="py-24 relative overflow-hidden" style={{ backgroundColor: '#060d1b' }}>
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(59,130,246,0.12), transparent)',
+            }}
+          />
+          <div className="relative z-10 w-full px-6 sm:px-10 max-w-3xl mx-auto text-center">
+            <p className="text-xs font-mono uppercase tracking-widest mb-4 text-blue-400">
+              get started
+            </p>
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Ready to build something?
+            </h3>
+            <p className="text-slate-400 mb-10 max-w-lg mx-auto">
+              Let's talk about your project. First call is free — no commitment required.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
+              <button
                 onClick={() => window.location.href = '/get-started'}
-                size="lg"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-8"
+                className="inline-flex items-center gap-2 font-semibold px-7 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors"
               >
-                Get Started
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-              <Button
+                Get Started <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
                 onClick={() => window.location.href = '/quote'}
-                size="lg"
-                variant="outline"
-                className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8"
+                className="inline-flex items-center gap-2 font-medium px-7 py-3 rounded-lg border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-200 transition-all"
               >
-                Get Free Quote
-              </Button>
+                Free Quote
+              </button>
               <a
                 href="/contact"
-                className="px-8 py-2.5 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                className="px-6 py-3 text-sm font-medium text-slate-500 hover:text-white transition-colors"
               >
-                Contact Us
+                Contact →
               </a>
             </div>
           </div>
         </section>
+
       </MainLayout>
     </>
   );

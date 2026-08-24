@@ -1,406 +1,398 @@
 import { useState } from 'react';
-import { OptimizedImage } from "@/shared/components/OptimizedImage";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Check, Star, Zap, Clock, Shield, FileText, Code, Presentation, BookOpen, Calculator, DollarSign } from 'lucide-react';
+import { Shield, CheckCircle2, Clock, Zap, Download, FileText } from 'lucide-react';
 
-// Pricing data
-const pricingData = [
+// ── Why us data ───────────────────────────────────────────────────────────────
+
+const features = [
   {
-    name: "Non-Technical Writing",
-    price: "$8",
-    unit: "per page",
-    description: "Essays, research papers, literature reviews",
-    features: ["275 words per page", "Turnitin report", "Plagiarism-free", "24/7 support"],
-    icon: FileText,
-    color: "bg-blue-500",
-    popular: false
-  },
-  {
-    name: "Technical Writing", 
-    price: "$15",
-    unit: "per page",
-    description: "Programming, data analysis, technical reports",
-    features: ["275 words per page", "Code explanations", "Turnitin report", "Expert review"],
-    icon: Code,
-    color: "bg-green-500",
-    popular: true
-  },
-  {
-    name: "PPT Presentations",
-    price: "$5",
-    unit: "per slide",
-    description: "Professional slides with transcripts included",
-    features: ["Transcript included", "Professional design", "Speaker notes", "Editable format"],
-    icon: Presentation,
-    color: "bg-purple-500",
-    popular: false
-  },
-  {
-    name: "Exam Help",
-    price: "$30",
-    unit: "per exam",
-    description: "Complete exam assistance and guidance",
-    features: ["Full exam support", "Study materials", "Practice questions", "Confidential"],
-    icon: BookOpen,
-    color: "bg-orange-500",
-    popular: false
-  },
-  {
-    name: "AI Work Refinement",
-    price: "$10",
-    unit: "per 500 words",
-    description: "Remove AI detection and improve quality",
-    features: ["AI detection removal", "Human-like writing", "Quality improvement", "Fast turnaround"],
     icon: Shield,
-    color: "bg-red-500",
-    popular: false
-  }
+    title: '100% Human-Written',
+    desc: 'No AI. Every word is researched and written by a real expert — not generated.',
+    accent: '#3b82f6',
+  },
+  {
+    icon: CheckCircle2,
+    title: 'Turnitin Reports',
+    desc: 'Every order ships with a full plagiarism report attached. Always 0% similarity.',
+    accent: '#22c55e',
+  },
+  {
+    icon: Clock,
+    title: 'Fast Delivery',
+    desc: 'Standard 3–5 days. Rush and express options available for tight deadlines.',
+    accent: '#a78bfa',
+  },
+  {
+    icon: Zap,
+    title: '24/7 Support',
+    desc: 'Reach us on WhatsApp any time. We reply fast and keep you updated throughout.',
+    accent: '#f59e0b',
+  },
 ];
 
-// Urgency pricing
-const urgencyOptions = [
-  { name: "Standard", multiplier: 1, time: "3-5 days", color: "bg-gray-100" },
-  { name: "Urgent", multiplier: 1.5, time: "24-48 hours", color: "bg-yellow-100" },
-  { name: "Express", multiplier: 2, time: "12-24 hours", color: "bg-red-100" }
+const technicalSubjects = [
+  'Python', 'Java', 'C++', 'Data Analysis',
+  'Statistics', 'Mathematics', 'Engineering', 'Machine Learning',
 ];
 
-const courses = {
-  technical: [
-    { name: "Python Programming", icon: "🐍" },
-    { name: "Java Development", icon: "☕" },
-    { name: "C++ Programming", icon: "⚡" },
-    { name: "Data Analysis", icon: "📊" },
-    { name: "Statistics", icon: "📈" },
-    { name: "Mathematics", icon: "🔢" },
-    { name: "Engineering", icon: "⚙️" },
-    { name: "Machine Learning", icon: "🤖" }
-  ],
-  nonTechnical: [
-    { name: "English Literature", icon: "📚" },
-    { name: "History", icon: "🏛️" },
-    { name: "Philosophy", icon: "🤔" },
-    { name: "Psychology", icon: "🧠" },
-    { name: "Sociology", icon: "👥" },
-    { name: "Business", icon: "💼" },
-    { name: "Marketing", icon: "📢" },
-    { name: "Economics", icon: "💰" }
-  ]
-};
-
-const samples = [
-  { 
-    name: "Research Paper - Psychology", 
-    subject: "Psychology", 
-    type: "Research Paper", 
-    download: "https://drive.google.com/uc?export=download&id=1POlzd7atqCJQq9B32fi57NhT3HFrzk7e",
-    description: "A+ quality research paper on cognitive psychology"
-  },
-  { 
-    name: "Python Code Analysis", 
-    subject: "Python", 
-    type: "Programming", 
-    download: "https://drive.google.com/uc?export=download&id=1FbD35TWHxrNBYww5siXK23vDS3Cuc1gx",
-    description: "Clean, well-documented Python assignment"
-  },
-  { 
-    name: "Business Case Study", 
-    subject: "Business", 
-    type: "Case Study", 
-    download: "https://drive.google.com/uc?export=download&id=11yuP8eMYWkwHXsIg_nkDxaY2VfOhf-8P",
-    description: "Comprehensive business analysis with real data"
-  },
-  { 
-    name: "Literature Review", 
-    subject: "English", 
-    type: "Literature Review", 
-    download: "https://drive.google.com/uc?export=download&id=1kIrygLick8hSlbzfSLCvaLic2LMkxIUq",
-    description: "Academic literature review with proper citations"
-  },
-  { 
-    name: "Statistics Report", 
-    subject: "Statistics", 
-    type: "Report", 
-    download: "https://drive.google.com/uc?export=download&id=1mPcVy15xUwXqO5lDQg1EQQtY2QQ-eHe2",
-    description: "Statistical analysis with clear explanations"
-  },
-  { 
-    name: "Marketing Presentation", 
-    subject: "Marketing", 
-    type: "PPT", 
-    download: "https://drive.google.com/uc?export=download&id=1FaqfrfEcELZrHUbpOFRCuThJK_UOCb08",
-    description: "Professional marketing presentation slides"
-  }
+const nonTechnicalSubjects = [
+  'English Lit', 'History', 'Philosophy', 'Psychology',
+  'Sociology', 'Business', 'Marketing', 'Economics',
 ];
+
+const deliveryOptions = [
+  { label: 'Standard', time: '3 – 5 days',  rate: 'Base price' },
+  { label: 'Urgent',   time: '24 – 48 h',   rate: '1.5×' },
+  { label: 'Express',  time: '12 – 24 h',   rate: '2×' },
+];
+
+const statsGrid = [
+  { value: '500+', label: 'Students helped' },
+  { value: 'A+',   label: 'Average grade' },
+  { value: '98%',  label: 'On-time delivery' },
+  { value: '0%',   label: 'AI content' },
+];
+
+// ── Props ─────────────────────────────────────────────────────────────────────
 
 interface TrustSectionProps {
   onSubjectClick?: (serviceId: string, subject: string) => void;
 }
 
+// ── TrustSection ──────────────────────────────────────────────────────────────
+
 export const TrustSection = ({ onSubjectClick }: TrustSectionProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<'technical' | 'nonTechnical'>('technical');
+  const [tab, setTab] = useState<'technical' | 'nonTechnical'>('technical');
 
-  const handleDownload = (url: string, name: string) => {
-    if (url.includes('YOUR_FILE_ID_HERE')) {
-      alert('This sample is being updated. Please check back soon!');
-      return;
-    }
-    window.open(url, '_blank');
+  const handleSubject = (name: string) => {
+    const serviceId = tab === 'technical' ? 'technical' : 'non-technical';
+    onSubjectClick?.(serviceId, name);
   };
 
-  const handleSubjectClick = (courseName: string, category: 'technical' | 'nonTechnical') => {
-    // Map category to service ID
-    const serviceId = category === 'technical' ? 'technical' : 'non-technical';
-    onSubjectClick?.(serviceId, courseName);
-  };
+  const subjects = tab === 'technical' ? technicalSubjects : nonTechnicalSubjects;
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section className="py-24" style={{ backgroundColor: '#080f20' }}>
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Transparent Pricing & Services
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Professional school help at unbeatable prices. No hidden fees, no surprises.
+
+        {/* Section label */}
+        <div className="mb-14">
+          <p className="text-xs font-mono uppercase tracking-widest mb-3 text-blue-400">
+            why mcgibs
           </p>
+          <h2 className="text-3xl font-bold text-white">
+            Built for students who need results.
+          </h2>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Pricing Section */}
-          <div className="space-y-8">
-            {/* Why Choose Me */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Star className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-foreground">Why Choose Me</h3>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Shield className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">100% Human-Written</h4>
-                    <p className="text-sm text-muted-foreground">No AI content. Every word is written by me personally.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Check className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Turnitin Reports</h4>
-                    <p className="text-sm text-muted-foreground">Every order comes with a detailed plagiarism report.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Clock className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Fast Turnaround</h4>
-                    <p className="text-sm text-muted-foreground">Standard delivery in 3-5 days, urgent options available.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <Zap className="w-5 h-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">24/7 Support</h4>
-                    <p className="text-sm text-muted-foreground">Always available on WhatsApp for questions and updates.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="grid lg:grid-cols-2 gap-10">
 
-            {/* Quick Stats */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
-              <h3 className="text-xl font-bold mb-4">Quick Stats</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">500+</div>
-                  <div className="text-sm opacity-90">Happy Students</div>
+          {/* ── Left — Features + Delivery table ── */}
+          <div className="space-y-3">
+            {features.map(f => (
+              <div
+                key={f.title}
+                className="flex items-start gap-4 p-5 rounded-xl"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  background: 'rgba(255,255,255,0.02)',
+                }}
+              >
+                <div
+                  className="p-2 rounded-lg shrink-0 mt-0.5"
+                  style={{ background: `${f.accent}18` }}
+                >
+                  <f.icon className="w-4 h-4" style={{ color: f.accent }} />
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">A+</div>
-                  <div className="text-sm opacity-90">Average Grade</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">24/7</div>
-                  <div className="text-sm opacity-90">Support Available</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">100%</div>
-                  <div className="text-sm opacity-90">Human-Written</div>
+                <div>
+                  <h3 className="font-semibold text-white mb-1 text-sm">{f.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
                 </div>
               </div>
+            ))}
+
+            {/* Delivery table */}
+            <div
+              className="rounded-xl overflow-hidden mt-2"
+              style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <div
+                className="px-5 py-3"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">
+                  delivery options
+                </span>
+              </div>
+              {deliveryOptions.map((opt, i) => (
+                <div
+                  key={opt.label}
+                  className="flex items-center justify-between px-5 py-3"
+                  style={{
+                    borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : undefined,
+                  }}
+                >
+                  <span className="text-sm font-medium text-white">{opt.label}</span>
+                  <span className="text-sm text-slate-500">{opt.time}</span>
+                  <span
+                    className="text-xs font-mono px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(59,130,246,0.1)', color: '#60a5fa' }}
+                  >
+                    {opt.rate}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Course Categories */}
-          <div className="space-y-8">
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <h3 className="text-2xl font-bold text-foreground mb-6">Subjects I Help With</h3>
-              <div className="space-y-6">
-                <div className="flex gap-2 mb-4">
-                  <Button
-                    variant={selectedCategory === 'technical' ? 'default' : 'outline'}
-                    onClick={() => setSelectedCategory('technical')}
-                    className="flex-1"
-                  >
-                    Technical
-                  </Button>
-                  <Button
-                    variant={selectedCategory === 'nonTechnical' ? 'default' : 'outline'}
-                    onClick={() => setSelectedCategory('nonTechnical')}
-                    className="flex-1"
-                  >
-                    Non-Technical
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  {courses[selectedCategory].map((course, index) => (
+          {/* ── Right — Subjects + Stats ── */}
+          <div className="space-y-4">
+            <div
+              className="rounded-xl overflow-hidden"
+              style={{
+                border: '1px solid rgba(255,255,255,0.06)',
+                background: 'rgba(255,255,255,0.02)',
+              }}
+            >
+              {/* Tab header */}
+              <div
+                className="p-5"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+              >
+                <h3 className="font-semibold text-white mb-4 text-sm">Subjects we cover</h3>
+                <div className="flex gap-2">
+                  {(['technical', 'nonTechnical'] as const).map(t => (
                     <button
-                      key={index}
-                      onClick={() => handleSubjectClick(course.name, selectedCategory)}
-                      className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 hover:border-primary transition-colors cursor-pointer text-left"
+                      key={t}
+                      onClick={() => setTab(t)}
+                      className="px-4 py-1.5 rounded-md text-sm font-medium transition-all"
+                      style={
+                        tab === t
+                          ? { background: '#3b82f6', color: '#fff' }
+                          : {
+                              background: 'rgba(255,255,255,0.05)',
+                              color: '#94a3b8',
+                              border: '1px solid rgba(255,255,255,0.08)',
+                            }
+                      }
                     >
-                      <span className="text-lg">{course.icon}</span>
-                      <span className="text-sm font-medium">{course.name}</span>
+                      {t === 'technical' ? 'Technical' : 'Non-Technical'}
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Subject grid */}
+              <div className="p-5 grid grid-cols-2 gap-2">
+                {subjects.map(name => (
+                  <button
+                    key={name}
+                    onClick={() => handleSubject(name)}
+                    className="text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-blue-400"
+                    style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.05)',
+                    }}
+                    onMouseOver={e =>
+                      (e.currentTarget.style.borderColor = 'rgba(59,130,246,0.35)')
+                    }
+                    onMouseOut={e =>
+                      (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)')
+                    }
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Combined Urgency & Quality */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Clock className="w-6 h-6 text-orange-600" />
+            {/* Stats 2×2 */}
+            <div className="grid grid-cols-2 gap-3">
+              {statsGrid.map(s => (
+                <div
+                  key={s.label}
+                  className="p-4 rounded-xl text-center"
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    background: 'rgba(255,255,255,0.02)',
+                  }}
+                >
+                  <div className="text-2xl font-bold text-white">{s.value}</div>
+                  <div className="text-xs mt-1 text-slate-500">{s.label}</div>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground">Urgency & Quality</h3>
-              </div>
-              
-              {/* Urgency Options */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-foreground mb-3">Delivery Options</h4>
-                <div className="grid grid-cols-3 gap-3">
-                  {urgencyOptions.map((option, index) => (
-                    <div key={index} className={`p-3 rounded-lg border-2 ${option.color} hover:shadow-md transition-shadow`}>
-                      <div className="text-center">
-                        <h5 className="font-semibold text-foreground text-sm mb-1">{option.name}</h5>
-                        <div className="text-xs text-muted-foreground mb-1">{option.time}</div>
-                        <Badge variant="outline" className="bg-white text-xs">
-                          {option.multiplier === 1 ? 'No extra' : `${option.multiplier}x`}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quality Guarantee */}
-              <div>
-                <h4 className="font-semibold text-foreground mb-3">Quality Guarantee</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-600" />
-                    <span>Turnitin Report</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-600" />
-                    <span>No AI Detection</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-600" />
-                    <span>Plagiarism-Free</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-green-600" />
-                    <span>24/7 Support</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
+
         </div>
       </div>
     </section>
   );
 };
 
-export const SamplesSection = () => {
-  const handleDownload = (url: string, filename: string) => {
-    if (url === "https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE") {
-      // Show message for placeholder links
-      alert("Please update the Google Drive links with your actual sample files. Contact Peter for samples.");
-      return;
-    }
-    
-    // Open download link in new tab
-    window.open(url, '_blank');
-  };
+// ── Samples ───────────────────────────────────────────────────────────────────
 
+const samples = [
+  {
+    name: 'Research Paper — Psychology',
+    subject: 'Psychology',
+    type: 'Research Paper',
+    download: 'https://drive.google.com/uc?export=download&id=1POlzd7atqCJQq9B32fi57NhT3HFrzk7e',
+    desc: 'A+ quality paper on cognitive psychology with proper citations.',
+  },
+  {
+    name: 'Python Code Analysis',
+    subject: 'Python',
+    type: 'Programming',
+    download: 'https://drive.google.com/uc?export=download&id=1FbD35TWHxrNBYww5siXK23vDS3Cuc1gx',
+    desc: 'Clean, documented Python assignment with line-by-line explanations.',
+  },
+  {
+    name: 'Business Case Study',
+    subject: 'Business',
+    type: 'Case Study',
+    download: 'https://drive.google.com/uc?export=download&id=11yuP8eMYWkwHXsIg_nkDxaY2VfOhf-8P',
+    desc: 'Comprehensive business analysis backed by real market data.',
+  },
+  {
+    name: 'Literature Review',
+    subject: 'English',
+    type: 'Lit Review',
+    download: 'https://drive.google.com/uc?export=download&id=1kIrygLick8hSlbzfSLCvaLic2LMkxIUq',
+    desc: 'Academic literature review with proper formatting and citations.',
+  },
+  {
+    name: 'Statistics Report',
+    subject: 'Statistics',
+    type: 'Report',
+    download: 'https://drive.google.com/uc?export=download&id=1mPcVy15xUwXqO5lDQg1EQQtY2QQ-eHe2',
+    desc: 'Statistical analysis with clear explanations and visualisations.',
+  },
+  {
+    name: 'Marketing Presentation',
+    subject: 'Marketing',
+    type: 'PPT',
+    download: 'https://drive.google.com/uc?export=download&id=1FaqfrfEcELZrHUbpOFRCuThJK_UOCb08',
+    desc: 'Professional slide deck with speaker notes included.',
+  },
+];
+
+export const SamplesSection = () => {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-24" style={{ backgroundColor: '#060d1b' }}>
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Sample Work
+
+        <div className="mb-12">
+          <p className="text-xs font-mono uppercase tracking-widest mb-3 text-blue-400">
+            sample work
+          </p>
+          <h2 className="text-3xl font-bold text-white">
+            See the quality before you order.
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Download samples to see the quality of work I deliver
+          <p className="mt-2 text-slate-400">
+            Real work, real grades. Download any sample free.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {samples.map((sample, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="text-lg">{sample.name}</CardTitle>
-                <div className="flex gap-2 mb-3">
-                  <Badge variant="secondary">{sample.subject}</Badge>
-                  <Badge variant="outline">{sample.type}</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">{sample.description}</p>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => handleDownload(sample.download, sample.name)}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {samples.map((s, i) => (
+            <div
+              key={i}
+              className="flex flex-col rounded-xl p-5 transition-all group"
+              style={{
+                border: '1px solid rgba(255,255,255,0.07)',
+                background: 'rgba(255,255,255,0.02)',
+              }}
+              onMouseOver={e =>
+                (e.currentTarget.style.borderColor = 'rgba(59,130,246,0.25)')
+              }
+              onMouseOut={e =>
+                (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)')
+              }
+            >
+              {/* Tags */}
+              <div className="flex items-center gap-2 mb-3">
+                <div
+                  className="p-1.5 rounded"
+                  style={{ background: 'rgba(59,130,246,0.12)' }}
                 >
-                  Download Sample
-                </Button>
-              </CardContent>
-            </Card>
+                  <FileText className="w-3.5 h-3.5 text-blue-400" />
+                </div>
+                <span
+                  className="text-xs font-mono px-2 py-0.5 rounded"
+                  style={{
+                    background: 'rgba(255,255,255,0.06)',
+                    color: '#94a3b8',
+                  }}
+                >
+                  {s.type}
+                </span>
+                <span
+                  className="text-xs font-mono px-2 py-0.5 rounded"
+                  style={{
+                    background: 'rgba(34,197,94,0.1)',
+                    color: '#4ade80',
+                  }}
+                >
+                  {s.subject}
+                </span>
+              </div>
+
+              <h3 className="font-semibold text-white mb-1 text-sm">{s.name}</h3>
+              <p className="text-sm text-slate-500 flex-1 mb-5 leading-relaxed">{s.desc}</p>
+
+              <button
+                onClick={() => window.open(s.download, '_blank')}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-blue-400"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.09)',
+                  background: 'rgba(255,255,255,0.03)',
+                }}
+                onMouseOver={e =>
+                  (e.currentTarget.style.borderColor = 'rgba(59,130,246,0.35)')
+                }
+                onMouseOut={e =>
+                  (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)')
+                }
+              >
+                <Download className="w-3.5 h-3.5" />
+                Download Sample
+              </button>
+            </div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 max-w-4xl mx-auto">
-            <h3 className="text-xl font-bold text-blue-900 mb-3">Quality Guarantee</h3>
-            <p className="text-blue-800 mb-4">
-              Every order comes with <strong>Turnitin report</strong> and <strong>plagiarism report</strong> attached. 
-              I deliver <strong>100% human-written work</strong> - no AI content.
+        {/* Quality bar */}
+        <div
+          className="mt-8 rounded-xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4"
+          style={{
+            border: '1px solid rgba(34,197,94,0.15)',
+            background: 'rgba(34,197,94,0.04)',
+          }}
+        >
+          <div>
+            <p className="font-semibold text-white text-sm">Quality you can verify</p>
+            <p className="text-sm mt-0.5 text-slate-500">
+              Every order ships with a Turnitin report and plagiarism scan. 100% human-written.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-blue-700">
-              <span>✓ Turnitin Report</span>
-              <span>✓ Plagiarism Report</span>
-              <span>✓ Human-Written Only</span>
-              <span>✓ No AI Content</span>
-            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            {['Turnitin Report', 'Plagiarism-Free', 'Human Only'].map(t => (
+              <span
+                key={t}
+                className="text-xs px-3 py-1 rounded-full"
+                style={{
+                  border: '1px solid rgba(34,197,94,0.25)',
+                  color: '#4ade80',
+                  background: 'rgba(34,197,94,0.08)',
+                }}
+              >
+                {t}
+              </span>
+            ))}
           </div>
         </div>
       </div>

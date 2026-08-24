@@ -94,17 +94,26 @@ export const Header = () => {
       </div>
 
       {/* ── Main header ───────────────────────────────────────────────────── */}
-      <header className="fixed top-8 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+      <header
+        className="fixed top-8 left-0 right-0 z-40 backdrop-blur-md"
+        style={{
+          background: 'rgba(6,13,27,0.92)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-14">
 
             {/* Logo */}
             <a href="/" className="flex items-center gap-2 shrink-0">
-              <div className="w-7 h-7 bg-emerald-600 rounded flex items-center justify-center">
+              <div
+                className="w-7 h-7 rounded flex items-center justify-center"
+                style={{ background: '#3b82f6' }}
+              >
                 <span className="text-white font-bold text-xs">M</span>
               </div>
-              <span className="font-bold text-slate-900 text-base">McGibs</span>
-              <span className="font-bold text-emerald-600 text-base hidden sm:inline">Digital</span>
+              <span className="font-bold text-white text-base">McGibs</span>
+              <span className="font-bold text-blue-400 text-base hidden sm:inline">Digital</span>
             </a>
 
             {/* Desktop nav */}
@@ -113,7 +122,7 @@ export const Header = () => {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-sm font-medium text-slate-700 hover:text-emerald-600 transition-colors"
+                  className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
                 >
                   {item.label}
                 </a>
@@ -123,12 +132,19 @@ export const Header = () => {
               <div className="relative" ref={moreRef}>
                 <button
                   onClick={() => setMoreOpen(v => !v)}
-                  className="flex items-center gap-1 text-sm font-medium text-slate-700 hover:text-emerald-600 transition-colors"
+                  className="flex items-center gap-1 text-sm font-medium text-slate-400 hover:text-white transition-colors"
                 >
                   More <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {moreOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                  <div
+                    className="absolute right-0 top-full mt-2 w-52 rounded-xl py-2 z-50"
+                    style={{
+                      background: '#0d1829',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                    }}
+                  >
                     {moreItems.map(item => (
                       <a
                         key={item.label}
@@ -136,7 +152,10 @@ export const Header = () => {
                         target={item.external ? '_blank' : undefined}
                         rel={item.external ? 'noopener noreferrer' : undefined}
                         onClick={() => setMoreOpen(false)}
-                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                        className="block px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors"
+                        style={{ background: 'transparent' }}
+                        onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         {item.label}
                       </a>
@@ -148,7 +167,7 @@ export const Header = () => {
 
             {/* Mobile hamburger */}
             <button
-              className="lg:hidden p-2 text-slate-700"
+              className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
               onClick={() => setMobileOpen(v => !v)}
               aria-label="Toggle menu"
             >
@@ -159,20 +178,26 @@ export const Header = () => {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white max-h-[80vh] overflow-y-auto">
+          <div
+            className="lg:hidden max-h-[80vh] overflow-y-auto"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.07)', background: '#0a1322' }}
+          >
             <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
               {mainNav.map(item => (
                 <a
                   key={item.label}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="py-2.5 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-600 transition-colors"
+                  className="py-2.5 px-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                  style={{ background: 'transparent' }}
+                  onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                  onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                 >
                   {item.label}
                 </a>
               ))}
-              <div className="border-t border-gray-100 mt-2 pt-2">
-                <p className="text-xs text-slate-400 px-3 mb-2 uppercase tracking-wider">More</p>
+              <div className="mt-2 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-xs text-slate-600 px-3 mb-2 uppercase tracking-wider">More</p>
                 {moreItems.map(item => (
                   <a
                     key={item.label}
@@ -180,7 +205,10 @@ export const Header = () => {
                     target={item.external ? '_blank' : undefined}
                     rel={item.external ? 'noopener noreferrer' : undefined}
                     onClick={() => setMobileOpen(false)}
-                    className="py-2.5 px-3 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition-colors block"
+                    className="py-2.5 px-3 rounded-lg text-sm text-slate-400 hover:text-white transition-colors block"
+                    style={{ background: 'transparent' }}
+                    onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                    onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
                   >
                     {item.label}
                   </a>
